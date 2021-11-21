@@ -12,31 +12,33 @@
 
 ---
 
+## Presentation
+
+This project is a landmark on my career as a DataOps Engineer, a role which one week ago I didn't even know that exists, and that pushed me to decide to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues of a DevOps squad close to me. On the other hand, I've recently achieved the Azure AZ-900 and DP-900 certifications, which gave me a general understanding of cloud computing.
+
 ## Project Description
 
-In this DataOps project, I mounted a Docker image containing a simple Python + Django API application. The application is able to access a PostgreSQL database on a different Host. For lowering latency, I sat up a REDIS in-memory database.
+Appart from being a database administrator, I am a software developer. So, I started my learning path by writing a simple Python + Django API, and I've mounted a Docker image with it. The application is able to access a PostgreSQL database on a different Host.
 
-Than, using Terraform, both the application host and the database host are provisioned to the AWS cloud, in different EC2 instances but in the same availability zone.
+My most recent step was learning to use Terraform, and both the application host and the database host are now provisioned on the AWS cloud, in different EC2 instances but at the same availability zone. I chose to use a modular aproach for the Terraform project, once this is considered the best practice for companies with multiple teams using the IaaS tool.
 
-Finally, a database replication cluster is provisioned, with a PostgreSQL instance in a third EC2 instance, now in a different Region.
+So far, it took me most of the week strugling to provision my VMs. I figured out later that among my many mistakes, also a default subnet has to be created for my brand new AWS account's vpc.
 
----
+Now, I'm about to learn and use Ansible to setup both the working environment. Alongside, I'll setup a high availability sollution, replicating the environment to a different Region.
 
-## What is not in this project yet:
+## Next steps
 
-The following items will be added in a near future:
+My first step as soon as the application gets operational, will be to setup a CI/CD pipeline using either Github Actions or Jenkins. So, as a way to achieve low latency on the database requests, I will refactor the API, to make use of REDIS in-memory database.
 
-- Automatic fail over in case of the main database server stops working;
-- Provisioning the application in a Kubernets cluster;
-- Using Github Actions for CI/CD;
+After that, it will be Kubernetes' turn to take action, scaling instances of the API. So, I will set up Celery for queue controlling.
 
-</p>
+Wish me luck!
 
 ---
 
 ## Table of contents
 
-This table of contents is under construction. Items without a link aren't documented yet.
+This table of contents is under construction. Items without a link aren't documented yet, as well as items with a link may propably be weakly documented.
 
 - [ ] Installing Django
 - [ ] Creating and setting up a Django Project
