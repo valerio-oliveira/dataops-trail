@@ -1,8 +1,8 @@
 ---
 - hosts: postgres-servers
   remote_user: admin
-  roles:
-    - postgres
   vars:
     vars_files:
       - vars.yml
+  roles:
+    - postgres

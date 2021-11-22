@@ -28,8 +28,8 @@ This table of contents is under construction. Unchecked items aren't documented 
 - [x] [Dockerizing](#dockerizing)
 - [x] [Terraformation](#terraformation)
 - [ ] [Ansible in action](#ansible-in-action)
-  - 🚩 [Database server]
-  - [Application server]
+  - 🚩 Database server
+  - Application server
 - [ ] [Failover solution](#failover-solution)
 - [ ] [Automation with Jenkins](#automation-with-jenkins)
 - [ ] [Redis in memory database](#redis-in-memory-database)
@@ -68,35 +68,35 @@ This is the tree of contents so far:
 ```shell
 ❯ tree -D -I __pycache__
 .
-├── [Nov 22 01:21]  ansible
+├── [Nov 22 03:20]  ansible
 │   ├── [Nov 21 22:32]  ansible.cfg
 │   ├── [Nov 21 22:57]  api.yml
 │   ├── [Nov 21 22:19]  inventories
 │   │   └── [Nov 21 22:24]  hosts
-│   ├── [Nov 22 00:43]  postgres.yml
-│   ├── [Nov 21 23:43]  roles
-│   │   ├── [Nov 21 22:57]  api
-│   │   │   └── [Nov 21 22:58]  tasks
-│   │   │       └── [Nov 21 22:58]  main.yml
-│   │   └── [Nov 21 22:20]  postgres
-│   │       └── [Nov 22 00:30]  tasks
-│   │           └── [Nov 22 01:17]  main.yml
-│   └── [Nov 22 01:16]  vars.yml
-├── [Nov 21 21:11]  aws
+│   ├── [Nov 22 03:15]  postgres.yml
+│   └── [Nov 21 23:43]  roles
+│       ├── [Nov 21 22:57]  api
+│       │   └── [Nov 21 22:58]  tasks
+│       │       └── [Nov 21 22:58]  main.yml
+│       └── [Nov 21 22:20]  postgres
+│           └── [Nov 22 03:20]  tasks
+│               ├── [Nov 22 03:17]  main.yml
+│               └── [Nov 22 03:20]  vars.yml
+├── [Nov 22 12:38]  aws
 │   ├── [Nov 21 20:46]  aws.tf
 │   ├── [Nov 21 02:04]  modules
 │   │   ├── [Nov 19 08:20]  apis
-│   │   │   ├── [Nov 21 20:25]  main.tf
+│   │   │   ├── [Nov 22 12:40]  main.tf
 │   │   │   ├── [Nov 21 15:58]  outputs.tf
 │   │   │   └── [Nov 21 20:26]  variables.tf
 │   │   └── [Nov 21 02:03]  databases
-│   │       ├── [Nov 21 21:38]  main.tf
+│   │       ├── [Nov 22 12:40]  main.tf
 │   │       ├── [Nov 21 15:38]  outputs.tf
 │   │       └── [Nov 21 16:18]  variables.tf
 │   ├── [Nov 21 20:26]  outputs.tf
-│   ├── [Nov 21 20:47]  revolut_plan
-│   ├── [Nov 21 20:48]  terraform.tfstate
-│   ├── [Nov 21 20:48]  terraform.tfstate.backup
+│   ├── [Nov 22 12:37]  revolut_plan
+│   ├── [Nov 22 12:38]  terraform.tfstate
+│   ├── [Nov 22 12:37]  terraform.tfstate.backup
 │   ├── [Nov 21 20:47]  variables.auto.tfvars
 │   └── [Nov 21 20:47]  variables.tf
 ├── [Nov 21 22:09]  hometaskproject
@@ -123,9 +123,9 @@ This is the tree of contents so far:
 │   │   └── [Nov 17 00:17]  wsgi.py
 │   ├── [Nov 17 00:17]  manage.py
 │   └── [Nov 20 16:05]  requirements.txt
-├── [Nov 22 01:33]  README.md
+├── [Nov 22 02:42]  README.md
 ├── [Nov 21 12:18]  r.gif
-└── [Nov 21 16:58]  vo-revolut-exam-01.pem
+└── [Nov 22 12:04]  vo-revolut-exam-01.pem
 ```
 
 ## Installing tools
