@@ -15,11 +15,11 @@
 
 This project is a landmark on my career as a DataOps Engineer, a role that I didn't even know that exists one week ago and pushed me to decide to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues of a DevOps squad close to me.
 
-Just to mention my previous experience before taking this chalenge, appart from being a database administrator I am a software developer, and I've recently achieved the Azure AZ-900 and DP-900 certifications, both gave me a general understanding of cloud computing.
+Just to mention my previous experience before taking this chalenge, appart from being a database administrator I am a software developer, and I've recently achieved the Azure AZ-900 and DP-900 certifications, both giving me a general understanding of cloud computing.
 
 ## Table of contents
 
-This table of contents is under construction. Items without a link aren't documented yet, as well as items with a link may propably be weakly documented.
+This table of contents is under construction. Unchecked items aren't documented yet, as well as checked items may probably be weakly documented.
 
 - [x] [Project description](#project-description)
 - [x] [Project tree](#project-tree)
@@ -28,8 +28,8 @@ This table of contents is under construction. Items without a link aren't docume
 - [x] [Dockerizing](#dockerizing)
 - [x] [Terraformation](#terraformation)
 - [ ] [Ansible in action](#ansible-in-action)
-  - 🚩 [Database server](#database-server)
-  - [ ] [Application server](#application-server)
+  - 🚩 [Database server]
+  - [Application server]
 - [ ] [Failover solution](#failover-solution)
 - [ ] [Automation with Jenkins](#automation-with-jenkins)
 - [ ] [Redis in memory database](#redis-in-memory-database)
