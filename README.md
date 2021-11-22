@@ -21,24 +21,25 @@ Just to mention my previous experience before taking this chalenge, appart from 
 
 This table of contents is under construction. Items without a link aren't documented yet, as well as items with a link may propably be weakly documented.
 
-- [x] [Project Description](#project-escription)
+- [x] [Project description](#project-description)
 - [x] [Project tree](#project-tree)
 - [x] [Installing tools](#installing-tools)
-- [x] [Application environment](#application-setup)
+- [x] [Application environment](#application-environment)
 - [x] [Dockerizing](#dockerizing)
 - [x] [Terraformation](#terraformation)
 - [ ] [Ansible in action](#ansible-in-action)
-  - 🔹 [Database server](#database-server)
-  - [ ] [Application server](#database-server)
+  - 🚩 [Database server](#database-server)
+  - [ ] [Application server](#application-server)
 - [ ] [Failover solution](#failover-solution)
-- [ ] [Automation with Jenkins](#automation-with-enkins)
-- [ ] [Redis setup](#redis-setup)
-- [ ] [Orchestration with Kubernetes](#orchestration-with-Kubernetes)
+- [ ] [Automation with Jenkins](#automation-with-jenkins)
+- [ ] [Redis in memory database](#redis-in-memory-database)
+- [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [ ] [Queue controlling](#queue-controlling)
+- [ ] [References](#references)
 
 ---
 
-## Project Description
+## Project description
 
 I started my learning path by writing a simple Python + Django API, and I've mounted a Docker image with it. The application is able to access a PostgreSQL database on a different Host.
 
@@ -375,7 +376,7 @@ Environment variables
 
 ---
 
-## Redis setup
+## Redis in memory database
 
 ---
 
@@ -387,9 +388,9 @@ Environment variables
 
 ---
 
-## Refferences
+## References
 
-These are some links I made used of.
+These are some of the many links I made used of.
 
 [Installing Python](https://linuxhint.com/install-python-3-9-linux-mint/)
 
