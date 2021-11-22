@@ -160,10 +160,10 @@ Installing Docker
 
 ```shell
 ❯ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-❯ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu ❯(. /etc/os-release; echo "❯UBUNTU_CODENAME") stable"
+❯ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(. /etc/os-release; echo "$UBUNTU_CODENAME") stable"
 ❯ sudo apt update
 ❯ sudo apt install docker
-❯ sudo usermod -aG docker ❯USER
+❯ sudo usermod -aG docker $USER
 ```
 
 Installing PostgreSQL (just for refference)
@@ -177,7 +177,7 @@ Installing Terraform
 ```shell
 ❯ sudo apt update
 ❯ curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-❯ sudo apt-add-repository "deb [arch=❯(dpkg --print-architecture)] https://apt.releases.hashicorp.com ❯(lsb_release -cs) main"
+❯ sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
 ❯ sudo apt install terraform
 ```
 
