@@ -7,7 +7,6 @@ variable "vm_connetion_ports_db" {
   type    = list(number)
   default = [22]
 }
-
 variable "username" {
   type = string
 }
@@ -20,10 +19,10 @@ variable "ssh_private_key" {
   type = string
 }
 
-variable "ssh_public_key" {
-  type    = string
-  default = "~/.ssh/aws.pub"
-}
+# variable "ssh_public_key" {
+#   type    = string
+#   default = "~/.ssh/aws.pub"
+# }
 
 variable "sec_group_name" {
   type = string

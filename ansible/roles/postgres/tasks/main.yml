@@ -1,0 +1,63 @@
+
+- name: Install PostgreSQL
+  apt: pkg={{ item }} update_cache=yes state=present
+  sudo: yes
+  tags: postgres
+  with_items:
+  - postgresql-{{ postgresql_version }}
+  - postgresql-client-{{ postgresql_version }}
+  - postgresql-contrib-{{ postgresql_version }}
+  - libpq-dev
+
+- name: Configure PostgreSQL. Set listen_addresses.
+  lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    regexp="listen_addresses =" line="listen_addresses = '*'" state=present
+  notify: restart postgresql
+  sudo: yes
+  tags: postgres
+
+- name: Create PostgreSQL DB
+  postgresql_db: name={{ postgresql_db_name }}
+  sudo: yes
+  sudo_user: postgres
+  tags: postgres
+
+- name: Create PostgreSQL user and grant access
+  postgresql_user: db={{ postgresql_db_name }} user={{ postgresql_db_user }} password={{ postgresql_db_user_password }}
+  sudo: yes
+  sudo_user: postgres
+  tags: postgres
+
+  
+- name: Create schema "base"
+  postgresql_schema: db={{ postgresql_db_name }} name=base
+  sudo: yes
+  sudo_user: postgres
+  tags: postgres
+
+- name: Create table
+  postgresql_table: db={{ postgresql_db_name }}
+    name: base.users
+    columns:
+      - username    varchar(20) not null primary key
+      - birthday    date        not null
+  sudo: yes
+  sudo_user: postgres
+  tags: postgres
+
+- name: Create user having only necessary access privileges
+  postgresql_user: db={{ postgresql_db_name }} name={{ postgresql_db_user }} password= {{ postgresql_db_user_password }}
+    priv: "CONNECT/base:USAGE/base.users:SELECT,INSERT,UPDATE"
+  sudo: yes
+  sudo_user: postgres
+  tags: postgres
+
+# - name: Grant USAGE to the read only user on the specified schema itself
+#   postgresql_privs:
+#     db: "your_db_name"
+#     obj: your_db_schema
+#     type: schema
+#     privs: USAGE
+#     role: "your_db_username"
+#     grant_option: no
+"

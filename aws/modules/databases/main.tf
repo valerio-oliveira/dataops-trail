@@ -3,4 +3,8 @@ resource "aws_instance" "dbhost01" {
   key_name        = var.ssh_key_name
   instance_type   = "t2.micro"
   security_groups = [var.sec_group_name]
+
+  tags = {
+    Name = "dbhost01"
+  }
 }

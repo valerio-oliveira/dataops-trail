@@ -14,10 +14,10 @@ provider "aws" {
   secret_key = var.provider_secret_key
 }
 
-resource "aws_key_pair" "ssh_key" {
-  key_name   = "ssh_key"
-  public_key = file(var.ssh_public_key)
-}
+# resource "aws_key_pair" "ssh_key" {
+#   key_name   = "ssh_key"
+#   public_key = file(var.ssh_public_key)
+# }
 
 resource "aws_security_group" "ec2_api_ports" {
   name = "ec2_api_ports"
@@ -74,9 +74,10 @@ module "apis" {
   source         = "./modules/apis"
   username       = var.username
   counter        = count.index
-  ssh_key_name   = aws_key_pair.ssh_key.key_name
+  ssh_key_name   = var.ssh_key_name # aws_key_pair.ssh_key.key_name
   sec_group_name = aws_security_group.ec2_api_ports.name
-  private_key    = file(var.ssh_private_key)
+  #public_key     = file(var.ssh_private_key)
+  private_key = file(var.ssh_private_key)
 }
 
 module "databases" {
@@ -84,7 +85,7 @@ module "databases" {
   source         = "./modules/databases"
   username       = var.username
   counter        = count.index
-  ssh_key_name   = aws_key_pair.ssh_key.key_name
+  ssh_key_name   = var.ssh_key_name # aws_key_pair.ssh_key.key_name
   sec_group_name = aws_security_group.ec2_db_ports.name
   private_key    = file(var.ssh_private_key)
 }

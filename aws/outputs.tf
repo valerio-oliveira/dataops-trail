@@ -1,24 +1,15 @@
-output "apihost_private_ip" {
-  value = aws_instance.apihost.private_ip
+output "api_public_ip" {
+  value = module.apis.*.public_ip
 }
 
-output "apihost_public_ip" {
-  value = aws_instance.apihost.public_ip
+output "api_public_dns" {
+  value = module.apis.*.public_dns
 }
 
-output "apihost_public_dns" {
-  value = aws_instance.apihost.public_dns
+output "db_public_ip" {
+  value = module.databases.*.public_ip
 }
 
-output "dbhost01_private_ip" {
-  value = aws_instance.dbhost01.private_ip
+output "db_public_dns" {
+  value = module.databases.*.public_dns
 }
-
-output "dbhost01_public_ip" {
-  value = aws_instance.dbhost01.public_ip
-}
-
-output "dbhost01_public_dns" {
-  value = aws_instance.dbhost01.public_dns
-}
-

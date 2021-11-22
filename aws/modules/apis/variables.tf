@@ -4,13 +4,13 @@ variable "private_key" {
 }
 
 variable "vm_connetion_ports" {
-  description = "Ports to connect"
+  description = "Ports to connect to"
   type        = list(number)
   default     = [22]
 }
 
 variable "username" {
-  description = "username for provisioner ssh connection"
+  description = "Username for provisioner ssh connection"
   type        = string
 }
 
