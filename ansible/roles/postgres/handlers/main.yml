@@ -1,0 +1,6 @@
+---
+# handlers file for em_si_mesmo
+- name: restart postgresql
+  service:
+    name: postgresql
+    state: restarted

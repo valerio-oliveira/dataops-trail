@@ -1,8 +1,16 @@
 ---
 - hosts: postgres-servers
   remote_user: admin
-  vars:
-    vars_files:
-      - vars.yml
   roles:
     - postgres
+
+  # pre_tasks:
+  #   - name: Update APT cache
+  #     raw: apt update
+  #     become: True
+  #     changed_when: false
+
+  #   - name: Install PIP
+  #     raw: apt install -yq python-pip
+  #     become: True
+  #     changed_when: false

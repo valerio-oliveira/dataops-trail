@@ -1,55 +1,88 @@
-- name: Install PostgreSQL
+- name: Install Admin Tools
   apt: pkg={{ item }} update_cache=yes state=present
   become: yes
-  tags: postgres
   with_items:
-    - postgresql
-    - postgresql-client
-    - postgresql-contrib
-    - libpq-dev
+    - htop
+  tags:
+    - dependencies
 
-- name: Configure PostgreSQL. Set listen_addresses.
-  lineinfile: dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
-    regexp="listen_addresses =" line="listen_addresses = '*'" state=present
-  notify: restart postgresql
+    # - vim
+    # - build-essential
+    # - libssl-dev
+    # - libffi-dev
+    # - net-tools
+    # - python3-dev
+    # - python3-pip
+    # - python-setuptools
+
+- block:
+    - name: Install PostgreSQL
+      apt: pkg={{ item }} update_cache=yes state=present
+      with_items:
+        - postgresql-{{ postgresql_version }}
+        - postgresql-client-{{ postgresql_version }}
+        - postgresql-contrib-{{ postgresql_version }}
+        - libpq-dev
+
+    - name: Configure PostgreSQL. Set listen_addresses.
+      lineinfile:
+        dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+        regexp="listen_addresses =" line="listen_addresses = '*'" state=present
+      notify: restart postgresql
+
+    - name: Install psycopg2 python package
+      pip:
+        name: psycopg2
+
   become: yes
-  tags: postgres
+  tags: postgres2
 
-- name: Create PostgreSQL DB
-  postgresql_db: name={{ postgresql_db_name }}
+- block:
+    - name: Create PostgreSQL DB
+      postgresql_db:
+        name: "{{ postgresql_db_name }}"
+
+    - name: Create PostgreSQL user and grant access
+      postgresql_user:
+        db: "{{ postgresql_db_name }}"
+        user: "{{ postgresql_db_user }}"
+        password: "{{ postgresql_db_user_password }}"
+
+    - name: Create schema "base"
+      postgresql_schema:
+        db: "{{ postgresql_db_name }}"
+        name: base
+
+    - name: Create table "users"
+      postgresql_table:
+        db: "{{ postgresql_db_name }}"
+        name: base.users
+        columns:
+          - username    varchar(20) not null primary key
+          - birthday    date        not null
+
+    - name: Create user "{{ postgresql_db_user }}"
+      postgresql_user:
+        db: "{{ postgresql_db_name }}"
+        name: "{{ postgresql_db_user }}"
+        password: "{{ postgresql_db_user_password }}"
+        priv: "CONNECT"
+
+    - name: Grant usage on "base"
+      postgresql_privs:
+        db: "{{ postgresql_db_name }}"
+        privs: USAGE
+        type: schema
+        objs: base
+        role: "{{ postgresql_db_user }}"
+
+    - name: Grant table access no table "users"
+      postgresql_privs:
+        db: library
+        privs: SELECT,INSERT,UPDATE
+        objs: base.users
+        roles: "{{ postgresql_db_user }}"
+        grant_option: yes
   become: yes
   become_user: postgres
-  tags: postgres
-
-- name: Create PostgreSQL user and grant access
-  postgresql_user: db={{ postgresql_db_name }} user={{ postgresql_db_user }} password={{ postgresql_db_user_password }}
-  become: yes
-  become_user: postgres
-  tags: postgres
-
-- name: Create schema "base"
-  postgresql_schema: db={{ postgresql_db_name }} name=base
-  become: yes
-  become_user: postgres
-  tags: postgres
-
-- name: Create table
-  postgresql_table:
-    db: "{{ postgresql_db_name }}"
-    name: base.users
-    columns:
-      - username    varchar(20) not null primary key
-      - birthday    date        not null
-  become: yes
-  become_user: postgres
-  tags: postgres
-
-- name: Create user having only necessary access privileges
-  postgresql_user:
-    db: "{{ postgresql_db_name }}"
-    name: "{{ postgresql_db_user }}"
-    password: "{{ postgresql_db_user_password }}"
-    priv: "CONNECT/base:USAGE/base.users:SELECT,INSERT,UPDATE"
-  become: yes
-  become_user: postgres
-  tags: postgres
+  tags: postgres ddl

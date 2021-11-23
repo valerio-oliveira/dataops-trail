@@ -1,0 +1,8 @@
+postgresql_version: 11
+postgresql_host_ip: "172.31.21.140"
+postgresql_port: 5432
+postgresql_db_name: "revolutdb"
+postgresql_db_user: "dbuser"
+postgresql_db_user_password: "QL8hIxv7PaYN3if"
+
+application_name: "Birthday API"
