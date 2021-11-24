@@ -78,7 +78,7 @@
 
     - name: Grant table access no table "users"
       postgresql_privs:
-        db: library
+        db: "{{ postgresql_db_name }}"
         privs: SELECT,INSERT,UPDATE
         objs: base.users
         roles: "{{ postgresql_db_user }}"

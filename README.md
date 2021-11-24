@@ -68,64 +68,74 @@ This is the tree of contents so far:
 ```shell
 ❯ tree -D -I __pycache__
 .
-├── [Nov 22 03:20]  ansible
-│   ├── [Nov 21 22:32]  ansible.cfg
-│   ├── [Nov 21 22:57]  api.yml
-│   ├── [Nov 21 22:19]  inventories
-│   │   └── [Nov 21 22:24]  hosts
-│   ├── [Nov 22 03:15]  postgres.yml
-│   └── [Nov 21 23:43]  roles
-│       ├── [Nov 21 22:57]  api
-│       │   └── [Nov 21 22:58]  tasks
-│       │       └── [Nov 21 22:58]  main.yml
-│       └── [Nov 21 22:20]  postgres
-│           └── [Nov 22 03:20]  tasks
-│               ├── [Nov 22 03:17]  main.yml
-│               └── [Nov 22 03:20]  vars.yml
-├── [Nov 22 12:38]  aws
-│   ├── [Nov 21 20:46]  aws.tf
-│   ├── [Nov 21 02:04]  modules
-│   │   ├── [Nov 19 08:20]  apis
-│   │   │   ├── [Nov 22 12:40]  main.tf
-│   │   │   ├── [Nov 21 15:58]  outputs.tf
-│   │   │   └── [Nov 21 20:26]  variables.tf
-│   │   └── [Nov 21 02:03]  databases
-│   │       ├── [Nov 22 12:40]  main.tf
-│   │       ├── [Nov 21 15:38]  outputs.tf
-│   │       └── [Nov 21 16:18]  variables.tf
-│   ├── [Nov 21 20:26]  outputs.tf
-│   ├── [Nov 22 12:37]  revolut_plan
-│   ├── [Nov 22 12:38]  terraform.tfstate
-│   ├── [Nov 22 12:37]  terraform.tfstate.backup
-│   ├── [Nov 21 20:47]  variables.auto.tfvars
-│   └── [Nov 21 20:47]  variables.tf
+├── [Nov 22 17:55]  ansible
+│   ├── [Nov 21 22:32]  ansible.cfg
+│   ├── [Nov 21 22:57]  api.yml
+│   ├── [Nov 21 22:19]  inventories
+│   │   └── [Nov 22 22:04]  hosts
+│   ├── [Nov 22 22:09]  postgres.yml
+│   └── [Nov 21 23:43]  roles
+│       ├── [Nov 21 22:57]  api
+│       │   └── [Nov 21 22:58]  tasks
+│       │       └── [Nov 21 22:58]  main.yml
+│       └── [Nov 22 21:03]  postgres
+│           ├── [Nov 22 19:53]  defaults
+│           │   └── [Nov 22 19:53]  main.yml
+│           ├── [Nov 22 19:53]  files
+│           ├── [Nov 22 19:33]  handlers
+│           │   └── [Nov 22 20:40]  main.yml
+│           ├── [Nov 22 19:52]  meta
+│           │   └── [Nov 22 19:52]  main.yml
+│           ├── [Nov 22 17:49]  tasks
+│           │   └── [Nov 22 22:06]  main.yml
+│           ├── [Nov 22 18:24]  templates
+│           │   └── [Nov 22 20:36]  pg_hba.conf.j2
+│           └── [Nov 22 17:55]  vars
+│               └── [Nov 22 19:29]  main.yml
+├── [Nov 22 22:14]  aws
+│   ├── [Nov 21 20:46]  aws.tf
+│   ├── [Nov 21 02:04]  modules
+│   │   ├── [Nov 19 08:20]  apis
+│   │   │   ├── [Nov 22 12:40]  main.tf
+│   │   │   ├── [Nov 21 15:58]  outputs.tf
+│   │   │   └── [Nov 21 20:26]  variables.tf
+│   │   └── [Nov 21 02:03]  databases
+│   │       ├── [Nov 22 12:40]  main.tf
+│   │       ├── [Nov 22 19:19]  outputs.tf
+│   │       └── [Nov 21 16:18]  variables.tf
+│   ├── [Nov 21 20:26]  outputs.tf
+│   ├── [Nov 22 12:37]  revolut_plan
+│   ├── [Nov 22 22:14]  terraform.tfstate
+│   ├── [Nov 22 22:12]  terraform.tfstate.backup
+│   ├── [Nov 21 20:47]  variables.auto.tfvars
+│   └── [Nov 21 20:47]  variables.tf
 ├── [Nov 21 22:09]  hometaskproject
-│   ├── [Nov 17 02:54]  db.sqlite3
-│   ├── [Nov 20 18:10]  Dockerfile
-│   ├── [Nov 19 11:49]  hometaskapp
-│   │   ├── [Nov 17 00:17]  admin.py
-│   │   ├── [Nov 17 00:17]  apps.py
-│   │   ├── [Nov 21 21:27]  dao
-│   │   │   ├── [Nov 21 21:27]  conpg.py
-│   │   │   └── [Nov 19 15:57]  username.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 02:54]  migrations
-│   │   │   └── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 00:17]  models.py
-│   │   ├── [Nov 17 00:17]  tests.py
-│   │   ├── [Nov 17 03:41]  urls.py
-│   │   └── [Nov 19 11:49]  views.py
-│   ├── [Nov 20 01:43]  hometaskproject
-│   │   ├── [Nov 17 00:17]  asgi.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 20 01:43]  settings.py
-│   │   ├── [Nov 17 01:10]  urls.py
-│   │   └── [Nov 17 00:17]  wsgi.py
-│   ├── [Nov 17 00:17]  manage.py
-│   └── [Nov 20 16:05]  requirements.txt
-├── [Nov 22 02:42]  README.md
+│   ├── [Nov 17 02:54]  db.sqlite3
+│   ├── [Nov 20 18:10]  Dockerfile
+│   ├── [Nov 19 11:49]  hometaskapp
+│   │   ├── [Nov 17 00:17]  admin.py
+│   │   ├── [Nov 17 00:17]  apps.py
+│   │   ├── [Nov 21 21:27]  dao
+│   │   │   ├── [Nov 21 21:27]  conpg.py
+│   │   │   └── [Nov 19 15:57]  username.py
+│   │   ├── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 17 02:54]  migrations
+│   │   │   └── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 17 00:17]  models.py
+│   │   ├── [Nov 17 00:17]  tests.py
+│   │   ├── [Nov 17 03:41]  urls.py
+│   │   └── [Nov 19 11:49]  views.py
+│   ├── [Nov 20 01:43]  hometaskproject
+│   │   ├── [Nov 17 00:17]  asgi.py
+│   │   ├── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 20 01:43]  settings.py
+│   │   ├── [Nov 17 01:10]  urls.py
+│   │   └── [Nov 17 00:17]  wsgi.py
+│   ├── [Nov 17 00:17]  manage.py
+│   └── [Nov 20 16:05]  requirements.txt
+├── [Nov 22 13:21]  README.md
 ├── [Nov 21 12:18]  r.gif
-└── [Nov 22 12:04]  vo-revolut-exam-01.pem
+└── [Nov 21 16:58]  vo-revolut-exam-01.pem
 ```
 
 ## Installing tools
@@ -285,8 +295,7 @@ Set the following variables which will be user by Terrafor.
 >
 > username = ""           # Your user name
 >
-> ssh_private_key = "~/.ssh/my_aws"      # Your private key's location
-> ssh_public_key  = "~/.ssh/my_aws.pub"  # Your public key's location
+> ssh_private_key = "~/.ssh/aws" # Generate a key pair and set here your private key's location
 >
 > provider_access_key = "AKI..." # Replace with your AWS access key
 > provider_secret_key = "..."    # Replace with your AWS secret key
@@ -333,6 +342,9 @@ Setting up .pem file to access to the remote hosts
 > ```shell
 > # Add the path of your .PEM file.
 > private_key_file = /path/my_pem_file.pem
+>
+> # Enable this param in order to avoid issues
+> allow_world_readable_tmpfiles=true
 > ```
 
 Environment variables
