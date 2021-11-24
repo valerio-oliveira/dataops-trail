@@ -83,32 +83,15 @@ This is the tree of contents so far:
 │           │   └── [Nov 22 19:53]  main.yml
 │           ├── [Nov 22 19:53]  files
 │           ├── [Nov 22 19:33]  handlers
-│           │   └── [Nov 22 20:40]  main.yml
+│           │   └── [Nov 23 00:35]  main.yml
 │           ├── [Nov 22 19:52]  meta
 │           │   └── [Nov 22 19:52]  main.yml
 │           ├── [Nov 22 17:49]  tasks
-│           │   └── [Nov 22 22:06]  main.yml
+│           │   └── [Nov 23 00:54]  main.yml
 │           ├── [Nov 22 18:24]  templates
 │           │   └── [Nov 22 20:36]  pg_hba.conf.j2
 │           └── [Nov 22 17:55]  vars
-│               └── [Nov 22 19:29]  main.yml
-├── [Nov 22 22:14]  aws
-│   ├── [Nov 21 20:46]  aws.tf
-│   ├── [Nov 21 02:04]  modules
-│   │   ├── [Nov 19 08:20]  apis
-│   │   │   ├── [Nov 22 12:40]  main.tf
-│   │   │   ├── [Nov 21 15:58]  outputs.tf
-│   │   │   └── [Nov 21 20:26]  variables.tf
-│   │   └── [Nov 21 02:03]  databases
-│   │       ├── [Nov 22 12:40]  main.tf
-│   │       ├── [Nov 22 19:19]  outputs.tf
-│   │       └── [Nov 21 16:18]  variables.tf
-│   ├── [Nov 21 20:26]  outputs.tf
-│   ├── [Nov 22 12:37]  revolut_plan
-│   ├── [Nov 22 22:14]  terraform.tfstate
-│   ├── [Nov 22 22:12]  terraform.tfstate.backup
-│   ├── [Nov 21 20:47]  variables.auto.tfvars
-│   └── [Nov 21 20:47]  variables.tf
+│               └── [Nov 23 00:54]  main.yml
 ├── [Nov 21 22:09]  hometaskproject
 │   ├── [Nov 17 02:54]  db.sqlite3
 │   ├── [Nov 20 18:10]  Dockerfile
@@ -133,8 +116,30 @@ This is the tree of contents so far:
 │   │   └── [Nov 17 00:17]  wsgi.py
 │   ├── [Nov 17 00:17]  manage.py
 │   └── [Nov 20 16:05]  requirements.txt
-├── [Nov 22 13:21]  README.md
+├── [Nov 23 00:54]  README.md
 ├── [Nov 21 12:18]  r.gif
+├── [Nov 24 13:55]  terraform
+│   ├── [Nov 24 13:54]  main.tf
+│   ├── [Nov 24 01:10]  modules
+│   │   ├── [Nov 19 08:20]  apis
+│   │   │   ├── [Nov 24 03:14]  main.tf
+│   │   │   ├── [Nov 24 03:15]  outputs.tf
+│   │   │   └── [Nov 24 03:30]  variables.tf
+│   │   ├── [Nov 24 12:35]  aws
+│   │   │   ├── [Nov 24 13:47]  aws_main.tf
+│   │   │   ├── [Nov 24 03:18]  aws_outputs.tf
+│   │   │   └── [Nov 24 13:46]  aws_variables.tf
+│   │   ├── [Nov 24 01:06]  databases
+│   │   │   ├── [Nov 24 02:55]  main.tf
+│   │   │   ├── [Nov 24 03:15]  outputs.tf
+│   │   │   └── [Nov 24 03:30]  variables.tf
+│   │   └── [Nov 24 12:35]  security
+│   │       ├── [Nov 24 02:58]  sec_main.tf
+│   │       └── [Nov 24 01:37]  variables.tf
+│   ├── [Nov 23 23:03]  outputs.tf
+│   ├── [Nov 23 21:06]  revolut_plan
+│   ├── [Nov 24 12:35]  variables.auto.tfvars
+│   └── [Nov 24 12:35]  variables.tf
 └── [Nov 21 16:58]  vo-revolut-exam-01.pem
 ```
 
