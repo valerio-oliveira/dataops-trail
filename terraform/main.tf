@@ -19,6 +19,7 @@ terraform {
 module "us_east_1" {
   source = "./per-region"
   providers = { aws = aws.us-east-1 }
+  security_ports = var.security_ports
   cidr = var.cidr
 }
 
@@ -47,12 +48,12 @@ module "peering_1" {
   }
 }
 
-module "peering_2" {
-  source = "./vpc-peering"
-  accepting_vpc_id = module.us_east_1.vpc_id
-  requesting_vpc_id = module.us_east_2.vpc_id
-  providers = {
-    aws = aws.us-east-1
-    aws.requesting = aws.us-east-2
-  }
-}
+# module "peering_2" {
+#   source = "./vpc-peering"
+#   accepting_vpc_id = module.us_east_1.vpc_id
+#   requesting_vpc_id = module.us_east_2.vpc_id
+#   providers = {
+#     aws = aws.us-east-1
+#     aws.requesting = aws.us-east-2
+#   }
+# }

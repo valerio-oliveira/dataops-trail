@@ -5,12 +5,7 @@ variable "cidr" {
   }
 }
 
-variable "database_ports" {
+variable "security_ports" {
   type    = list(number)
-  default = [22, 5432]
-}
-
-variable "application_ports" {
-  type    = list(number)
-  default = [22, 5432]
+  default = [22]
 }
