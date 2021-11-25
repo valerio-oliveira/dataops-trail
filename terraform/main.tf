@@ -1,56 +1,58 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
+      source = "hashicorp/aws"
+      version = "~> 3.27.0"
     }
   }
 }
 
-# data "terraform_remote_state" "aws_global" {
-#   backend = "s3"
-#   config {
-#     region = "us-east-1"
-#     bucket = "com.example.bucketname"
-#     key = "${var.unixid}/terraform/env/${var.name}/terraform.tfstate"
-#   }
-# }
-
-
-module "security" {
-  source                  = "./modules/security"
-  conn_ports_api          = var.conn_ports_api
-  conn_ports_db           = var.conn_ports_db
-  security_group_name_api = var.security_group_name_api
-  security_group_name_db  = var.security_group_name_db
+# The "per-region" module creates resources in a single region. We call it for
+# each region (not particularly DRY) because terraform currently doesn't support
+# looping over providers (https://github.com/hashicorp/terraform/issues/19932)
+#
+# There's no default provider (all have alias keyword), so every module,
+# resource and data provider needs to have the provider explicitly set.
+#
+# We call the "per-region" module 3 times, each time with a different provider
+# (different AWS region)
+module "us_east_1" {
+  source = "./per-region"
+  providers = { aws = aws.us-east-1 }
+  cidr = var.cidr
 }
 
-module "aws-region-main" {
-  source                  = "./modules/aws"
-  profile                 = "default"
-  region                  = "us-east-1"
-  ec2_instance_type       = var.ec2_instance_type
-  vpc_prefix              = format("%s", var.vpc_prefix)
-  subnet_prefix           = format("%s.%s", var.vpc_prefix, "1")
-  ami_linux_distro        = var.ami_linux_distro
-  aws_access_key          = var.aws_access_key
-  aws_secret_key          = var.aws_secret_key
-  ssh_key_name            = var.ssh_key_name
-  security_group_name_api = var.security_group_name_api
-  security_group_name_db  = var.security_group_name_db
+module "us_east_2" {
+  source = "./per-region"
+  providers = { aws = aws.us-east-2 }
+  cidr = var.cidr
 }
 
-module "aws-region-replication" {
-  source                  = "./modules/aws"
-  profile                 = "default"
-  region                  = "us-west-2"
-  ec2_instance_type       = var.ec2_instance_type
-  vpc_prefix              = format("%s", var.vpc_prefix)
-  subnet_prefix           = format("%s.%s", var.vpc_prefix, "2")
-  ami_linux_distro        = var.ami_linux_distro
-  aws_access_key          = var.aws_access_key
-  aws_secret_key          = var.aws_secret_key
-  ssh_key_name            = var.ssh_key_name
-  security_group_name_api = var.security_group_name_api
-  security_group_name_db  = var.security_group_name_db
+# The vpc-peering module needs to do work in two regions (one region requests a
+# peering connection, the other region accepts the request), so the 'providers'
+# block includes two providers. I've elected to pass one provider as the default
+# provider for aws resources, and the other provider with the "aws.requesting"
+# alias. This approach lets me cut down on 'provider' declarations inside the
+# module a bit, but aliasing both is also a valid approach.
+#
+# Again, because of missing provider looping constructs, we're not DRY here.
+# Three connections means three calls to the vpc-peering module.
+module "peering_1" {
+  source = "./vpc-peering"
+  accepting_vpc_id = module.us_east_2.vpc_id
+  requesting_vpc_id = module.us_east_1.vpc_id
+  providers = {
+    aws = aws.us-east-2                   # Default aws provider for module
+    aws.requesting = aws.us-east-1        # Named/aliased provider for module
+  }
+}
+
+module "peering_2" {
+  source = "./vpc-peering"
+  accepting_vpc_id = module.us_east_1.vpc_id
+  requesting_vpc_id = module.us_east_2.vpc_id
+  providers = {
+    aws = aws.us-east-1
+    aws.requesting = aws.us-east-2
+  }
 }
