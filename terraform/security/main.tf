@@ -42,3 +42,7 @@ resource "aws_security_group" "security_ports" {
   tags = { Name = "Revolut security group" }
   
 }
+
+output "security_group_id" {
+  value = resource.aws_security_group.security_ports.id
+}

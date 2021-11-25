@@ -20,13 +20,15 @@ module "us_east_1" {
   source = "./per-region"
   providers = { aws = aws.us-east-1 }
   security_ports = var.security_ports
-  cidr = var.cidr
+  cidr_list = var.cidr_list
+  # ssh_key_name = var.ssh_key_name
 }
 
 module "us_east_2" {
   source = "./per-region"
   providers = { aws = aws.us-east-2 }
-  cidr = var.cidr
+  cidr_list = var.cidr_list
+  # ssh_key_name = var.ssh_key_name
 }
 
 # The vpc-peering module needs to do work in two regions (one region requests a
