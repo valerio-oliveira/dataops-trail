@@ -10,11 +10,6 @@ variable "security_ports" {
   default = [22]
 }
 
-# variable "ssh_key_name" {
-#   type = string
-# }
-
-variable "ssh_public_key" {
-  type    = string
-  default = "~/.ssh/aws.pub"
+variable "ansible_directory" {
+  type = string
 }

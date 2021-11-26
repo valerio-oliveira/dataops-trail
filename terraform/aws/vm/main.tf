@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 3.27.0"
     }
   }
@@ -29,10 +29,6 @@ variable "vm_name" {
   type = string
 }
 
-# variable "ssh_public_key" {
-#   type = string
-# }
-
 data "aws_ami" "ubuntu" {
   most_recent = true
   filter {
@@ -47,8 +43,8 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_key_pair" "ssh_key" {
-  key_name   = "ssh_key"
-#  public_key = file(var.ssh_public_key)
+  key_name = format("%s_%s", data.aws_region.current.name, "ssh_key")
+  #  public_key = file(var.ssh_public_key)
   public_key = file("~/.ssh/aws.pub")
 }
 
@@ -57,8 +53,28 @@ resource "aws_instance" "instance" {
   key_name        = aws_key_pair.ssh_key.key_name
   instance_type   = "t2.micro"
   security_groups = [var.sec_group_name]
-  subnet_id = var.current_subnet_id
+  subnet_id       = var.current_subnet_id
   tags = {
     Name = "${var.vm_name}"
   }
+}
+
+output "vm_id" {
+  value = aws_instance.instance.id
+}
+
+output "public_ip" {
+  value = aws_instance.instance.public_ip
+}
+
+output "public_dns" {
+  value = aws_instance.instance.public_dns
+}
+
+output "private_ip" {
+  value = aws_instance.instance.private_ip
+}
+
+output "private_dns" {
+  value = aws_instance.instance.private_dns
 }

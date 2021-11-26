@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
-      version = "~> 3.27.0"
+      source                = "hashicorp/aws"
+      version               = "~> 3.27.0"
       configuration_aliases = [aws.requesting]
     }
   }
@@ -33,33 +33,33 @@ data "aws_vpc" "accepting_vpc" {
   id = var.accepting_vpc_id
 }
 data "aws_vpc" "requesting_vpc" {
-  id = var.requesting_vpc_id
-  provider = aws.requesting                      # non-default provider
+  id       = var.requesting_vpc_id
+  provider = aws.requesting # non-default provider
 }
 
 # Use non-default provider when creating the peering connection.
-resource "aws_vpc_peering_connection" "x" {
-  provider = aws.requesting                      # non-default provider
+resource "aws_vpc_peering_connection" "peering_conn" {
+  provider    = aws.requesting # non-default provider
   peer_region = data.aws_region.accepting.name
   peer_vpc_id = data.aws_vpc.accepting_vpc.id
-  vpc_id = data.aws_vpc.requesting_vpc.id
+  vpc_id      = data.aws_vpc.requesting_vpc.id
 }
 
 # Use default provider when creating the peering accepter.
-resource "aws_vpc_peering_connection_accepter" "x" {
-  vpc_peering_connection_id = aws_vpc_peering_connection.x.id
-  auto_accept = true
+resource "aws_vpc_peering_connection_accepter" "peering_accepter" {
+  vpc_peering_connection_id = aws_vpc_peering_connection.peering_conn.id
+  auto_accept               = true
 }
 
 # Add a route to both sides.
 resource "aws_route" "requesting_side" {
-  provider = aws.requesting                     # non-default provider
-  route_table_id = data.aws_vpc.requesting_vpc.main_route_table_id
-  destination_cidr_block = data.aws_vpc.accepting_vpc.cidr_block
-  vpc_peering_connection_id = aws_vpc_peering_connection.x.id
+  provider                  = aws.requesting # non-default provider
+  route_table_id            = data.aws_vpc.requesting_vpc.main_route_table_id
+  destination_cidr_block    = data.aws_vpc.accepting_vpc.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection.peering_conn.id
 }
 resource "aws_route" "accepting_side" {
-  route_table_id = data.aws_vpc.accepting_vpc.main_route_table_id
-  destination_cidr_block = data.aws_vpc.requesting_vpc.cidr_block
-  vpc_peering_connection_id = aws_vpc_peering_connection.x.id
+  route_table_id            = data.aws_vpc.accepting_vpc.main_route_table_id
+  destination_cidr_block    = data.aws_vpc.requesting_vpc.cidr_block
+  vpc_peering_connection_id = aws_vpc_peering_connection.peering_conn.id
 }

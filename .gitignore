@@ -1,7 +1,4 @@
 # Tests and Examples
-aws_kamuridesu_terraform-study/
-aws-loadbalancer-ansible
-meus_tests/
 *.pem
 vars.yml
 ansible.cfg

@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 3.27.0"
     }
   }
@@ -17,21 +17,22 @@ terraform {
 # We call the "per-region" module 3 times, each time with a different provider
 # (different AWS region)
 module "us_east_1" {
-  source = "./per-region"
-  providers = { aws = aws.us-east-1 }
-  security_ports = var.security_ports
-  cidr_list = var.cidr_list
-  # ssh_key_name = var.ssh_key_name
+  source            = "./per-region"
+  providers         = { aws = aws.us-east-1 }
+  security_ports    = var.security_ports
+  cidr_list         = var.cidr_list
+  ansible_directory = var.ansible_directory
 }
 
 module "us_east_2" {
-  source = "./per-region"
-  providers = { aws = aws.us-east-2 }
-  cidr_list = var.cidr_list
-  # ssh_key_name = var.ssh_key_name
+  source            = "./per-region"
+  providers         = { aws = aws.us-east-2 }
+  security_ports    = var.security_ports
+  cidr_list         = var.cidr_list
+  ansible_directory = var.ansible_directory
 }
 
-# The vpc-peering module needs to do work in two regions (one region requests a
+# The net-vpc-peering module needs to do work in two regions (one region requests a
 # peering connection, the other region accepts the request), so the 'providers'
 # block includes two providers. I've elected to pass one provider as the default
 # provider for aws resources, and the other provider with the "aws.requesting"
@@ -39,19 +40,19 @@ module "us_east_2" {
 # module a bit, but aliasing both is also a valid approach.
 #
 # Again, because of missing provider looping constructs, we're not DRY here.
-# Three connections means three calls to the vpc-peering module.
+# Three connections means three calls to the net-vpc-peering module.
 module "peering_1" {
-  source = "./vpc-peering"
-  accepting_vpc_id = module.us_east_2.vpc_id
+  source            = "./net-vpc-peering"
+  accepting_vpc_id  = module.us_east_2.vpc_id
   requesting_vpc_id = module.us_east_1.vpc_id
   providers = {
-    aws = aws.us-east-2                   # Default aws provider for module
-    aws.requesting = aws.us-east-1        # Named/aliased provider for module
+    aws            = aws.us-east-2 # Default aws provider for module
+    aws.requesting = aws.us-east-1 # Named/aliased provider for module
   }
 }
 
 # module "peering_2" {
-#   source = "./vpc-peering"
+#   source = "./net-vpc-peering"
 #   accepting_vpc_id = module.us_east_1.vpc_id
 #   requesting_vpc_id = module.us_east_2.vpc_id
 #   providers = {
