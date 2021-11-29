@@ -19,17 +19,23 @@ terraform {
 module "us_east_1" {
   source            = "./per-region"
   providers         = { aws = aws.us-east-1 }
-  security_ports    = var.security_ports
+  application_ports = var.application_ports
+  database_ports    = var.database_ports
   cidr_list         = var.cidr_list
+  ami_list          = var.ami_list
   ansible_directory = var.ansible_directory
+  ssh_public_key    = var.ssh_public_key
 }
 
 module "us_east_2" {
   source            = "./per-region"
   providers         = { aws = aws.us-east-2 }
-  security_ports    = var.security_ports
+  application_ports = var.application_ports
+  database_ports    = var.database_ports
   cidr_list         = var.cidr_list
+  ami_list          = var.ami_list
   ansible_directory = var.ansible_directory
+  ssh_public_key    = var.ssh_public_key
 }
 
 # The net-vpc-peering module needs to do work in two regions (one region requests a

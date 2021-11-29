@@ -69,78 +69,77 @@ This is the tree of contents so far:
 ❯ tree -D -I __pycache__
 .
 ├── [Nov 22 17:55]  ansible
-│   ├── [Nov 21 22:32]  ansible.cfg
-│   ├── [Nov 21 22:57]  api.yml
-│   ├── [Nov 21 22:19]  inventories
-│   │   └── [Nov 22 22:04]  hosts
-│   ├── [Nov 22 22:09]  postgres.yml
-│   └── [Nov 21 23:43]  roles
-│       ├── [Nov 21 22:57]  api
-│       │   └── [Nov 21 22:58]  tasks
-│       │       └── [Nov 21 22:58]  main.yml
-│       └── [Nov 22 21:03]  postgres
-│           ├── [Nov 22 19:53]  defaults
-│           │   └── [Nov 22 19:53]  main.yml
-│           ├── [Nov 22 19:53]  files
-│           ├── [Nov 22 19:33]  handlers
-│           │   └── [Nov 23 00:35]  main.yml
-│           ├── [Nov 22 19:52]  meta
-│           │   └── [Nov 22 19:52]  main.yml
-│           ├── [Nov 22 17:49]  tasks
-│           │   └── [Nov 23 00:54]  main.yml
-│           ├── [Nov 22 18:24]  templates
-│           │   └── [Nov 22 20:36]  pg_hba.conf.j2
-│           └── [Nov 22 17:55]  vars
-│               └── [Nov 23 00:54]  main.yml
+│   ├── [Nov 21 22:32]  ansible.cfg
+│   ├── [Nov 21 22:57]  api.yml
+│   ├── [Nov 26 09:47]  inventories
+│   │   ├── [Nov 22 22:04]  hosts
+│   │   ├── [Nov 26 09:48]  tf_host_aws_us-east-1.yml
+│   │   └── [Nov 26 09:48]  tf_host_aws_us-east-2.yml
+│   ├── [Nov 22 22:09]  postgres.yml
+│   └── [Nov 21 23:43]  roles
+│       ├── [Nov 21 22:57]  api
+│       │   └── [Nov 21 22:58]  tasks
+│       │       └── [Nov 21 22:58]  main.yml
+│       └── [Nov 22 21:03]  postgres
+│           ├── [Nov 22 19:53]  defaults
+│           │   └── [Nov 22 19:53]  main.yml
+│           ├── [Nov 22 19:53]  files
+│           ├── [Nov 22 19:33]  handlers
+│           │   └── [Nov 23 00:35]  main.yml
+│           ├── [Nov 22 19:52]  meta
+│           │   └── [Nov 22 19:52]  main.yml
+│           ├── [Nov 22 17:49]  tasks
+│           │   └── [Nov 23 00:54]  main.yml
+│           ├── [Nov 22 18:24]  templates
+│           │   └── [Nov 22 20:36]  pg_hba.conf.j2
+│           └── [Nov 22 17:55]  vars
+│               └── [Nov 23 00:54]  main.yml
 ├── [Nov 21 22:09]  hometaskproject
-│   ├── [Nov 17 02:54]  db.sqlite3
-│   ├── [Nov 20 18:10]  Dockerfile
-│   ├── [Nov 19 11:49]  hometaskapp
-│   │   ├── [Nov 17 00:17]  admin.py
-│   │   ├── [Nov 17 00:17]  apps.py
-│   │   ├── [Nov 21 21:27]  dao
-│   │   │   ├── [Nov 21 21:27]  conpg.py
-│   │   │   └── [Nov 19 15:57]  username.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 02:54]  migrations
-│   │   │   └── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 00:17]  models.py
-│   │   ├── [Nov 17 00:17]  tests.py
-│   │   ├── [Nov 17 03:41]  urls.py
-│   │   └── [Nov 19 11:49]  views.py
-│   ├── [Nov 20 01:43]  hometaskproject
-│   │   ├── [Nov 17 00:17]  asgi.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 20 01:43]  settings.py
-│   │   ├── [Nov 17 01:10]  urls.py
-│   │   └── [Nov 17 00:17]  wsgi.py
-│   ├── [Nov 17 00:17]  manage.py
-│   └── [Nov 20 16:05]  requirements.txt
-├── [Nov 23 00:54]  README.md
+│   ├── [Nov 17 02:54]  db.sqlite3
+│   ├── [Nov 20 18:10]  Dockerfile
+│   ├── [Nov 19 11:49]  hometaskapp
+│   │   ├── [Nov 17 00:17]  admin.py
+│   │   ├── [Nov 17 00:17]  apps.py
+│   │   ├── [Nov 21 21:27]  dao
+│   │   │   ├── [Nov 21 21:27]  conpg.py
+│   │   │   └── [Nov 19 15:57]  username.py
+│   │   ├── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 17 02:54]  migrations
+│   │   │   └── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 17 00:17]  models.py
+│   │   ├── [Nov 17 00:17]  tests.py
+│   │   ├── [Nov 17 03:41]  urls.py
+│   │   └── [Nov 19 11:49]  views.py
+│   ├── [Nov 20 01:43]  hometaskproject
+│   │   ├── [Nov 17 00:17]  asgi.py
+│   │   ├── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 20 01:43]  settings.py
+│   │   ├── [Nov 17 01:10]  urls.py
+│   │   └── [Nov 17 00:17]  wsgi.py
+│   ├── [Nov 17 00:17]  manage.py
+│   └── [Nov 20 16:05]  requirements.txt
+├── [Nov 24 13:58]  README.md
 ├── [Nov 21 12:18]  r.gif
-├── [Nov 24 13:55]  terraform
-│   ├── [Nov 24 13:54]  main.tf
-│   ├── [Nov 24 01:10]  modules
-│   │   ├── [Nov 19 08:20]  apis
-│   │   │   ├── [Nov 24 03:14]  main.tf
-│   │   │   ├── [Nov 24 03:15]  outputs.tf
-│   │   │   └── [Nov 24 03:30]  variables.tf
-│   │   ├── [Nov 24 12:35]  aws
-│   │   │   ├── [Nov 24 13:47]  aws_main.tf
-│   │   │   ├── [Nov 24 03:18]  aws_outputs.tf
-│   │   │   └── [Nov 24 13:46]  aws_variables.tf
-│   │   ├── [Nov 24 01:06]  databases
-│   │   │   ├── [Nov 24 02:55]  main.tf
-│   │   │   ├── [Nov 24 03:15]  outputs.tf
-│   │   │   └── [Nov 24 03:30]  variables.tf
-│   │   └── [Nov 24 12:35]  security
-│   │       ├── [Nov 24 02:58]  sec_main.tf
-│   │       └── [Nov 24 01:37]  variables.tf
-│   ├── [Nov 23 23:03]  outputs.tf
-│   ├── [Nov 23 21:06]  revolut_plan
-│   ├── [Nov 24 12:35]  variables.auto.tfvars
-│   └── [Nov 24 12:35]  variables.tf
-└── [Nov 21 16:58]  vo-revolut-exam-01.pem
+└── [Nov 26 10:38]  terraform
+    └── [Nov 26 09:40]  aws
+        ├── [Nov 26 09:24]  main.tf
+        ├── [Nov 25 00:49]  net
+        │   └── [Nov 26 00:53]  main.tf
+        ├── [Nov 25 16:11]  net-vpc-peering
+        │   └── [Nov 26 01:05]  main.tf
+        ├── [Nov 26 09:14]  outputs.tf
+        ├── [Nov 26 01:32]  per-region
+        │   ├── [Nov 26 09:37]  main.tf
+        │   └── [Nov 26 09:48]  outputs.tf
+        ├── [Nov 25 15:32]  provider.tf
+        ├── [Nov 25 17:32]  security
+        │   └── [Nov 25 18:36]  main.tf
+        ├── [Nov 26 09:40]  terraform.tfstate
+        ├── [Nov 26 09:40]  terraform.tfstate.backup
+        ├── [Nov 26 09:41]  variables.auto.tfvars
+        ├── [Nov 26 09:24]  variable.tf
+        └── [Nov 25 18:31]  vm
+            └── [Nov 26 09:37]  main.tf
 ```
 
 ## Installing tools
@@ -285,25 +284,17 @@ Destroying the image
 
 ## Terraformation
 
+As I keep learning, I've changes the Terraform project a couple of times. The main setback here was learning the networking concepts. Now, Terraform project creates the environment in two different regions. The model wirks as
+
 Set the following variables which will be user by Terrafor.
 
 > variables.auto.tfvars
 >
 > ```terraform
-> vm_connetion_ports_api = [22, 80]
-> vm_connetion_ports_db  = [22, 5432]
+> application_ports    = [22, 80]
+> database_ports    = [22, 5432]
+> ansible_directory = "../../ansible/inventories"
 >
-> counter = 1
->
-> ssh_key_name   = ""     # Create and put here the name of the key used by Terraform
-> sec_group_name = ""     # Name your security group
->
-> username = ""           # Your user name
->
-> ssh_private_key = "~/.ssh/aws" # Generate a key pair and set here your private key's location
->
-> provider_access_key = "AKI..." # Replace with your AWS access key
-> provider_secret_key = "..."    # Replace with your AWS secret key
 > ```
 
 The steps bellow shall be taken in the "aws" directory.

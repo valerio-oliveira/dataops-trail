@@ -9,11 +9,7 @@ terraform {
 
 data "aws_region" "current" {}
 
-# variable "ssh_key_name" {
-#   type = string
-# }
-
-variable "sec_group_name" {
+variable "security_group" {
   type = string
 }
 
@@ -29,30 +25,36 @@ variable "vm_name" {
   type = string
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-  owners = ["099720109477"] # Canonical
+variable "ssh_public_key" {
+  type = string
 }
 
+variable "ami" {}
+
+# data "aws_ami" "ubuntu" {
+#   most_recent = true
+#   filter {
+#     name   = "name"
+#     values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+#   }
+#   filter {
+#     name   = "virtualization-type"
+#     values = ["hvm"]
+#   }
+#   owners = ["099720109477"] # Canonical
+# }
+#   ami             = data.aws_ami.ubuntu.id
+
 resource "aws_key_pair" "ssh_key" {
-  key_name = format("%s_%s", data.aws_region.current.name, "ssh_key")
-  #  public_key = file(var.ssh_public_key)
-  public_key = file("~/.ssh/aws.pub")
+  key_name   = "aws"
+  public_key = file(var.ssh_public_key)
 }
 
 resource "aws_instance" "instance" {
-  ami             = data.aws_ami.ubuntu.id
+  ami             = var.ami
   key_name        = aws_key_pair.ssh_key.key_name
   instance_type   = "t2.micro"
-  security_groups = [var.sec_group_name]
+  security_groups = [var.security_group]
   subnet_id       = var.current_subnet_id
   tags = {
     Name = "${var.vm_name}"

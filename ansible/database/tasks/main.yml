@@ -1,42 +1,3 @@
-- name: Install Admin Tools
-  apt: pkg={{ item }} update_cache=yes state=present
-  become: yes
-  with_items:
-    - htop
-  tags:
-    - dependencies
-
-    # - vim
-    # - build-essential
-    # - libssl-dev
-    # - libffi-dev
-    # - net-tools
-    # - python3-dev
-    # - python3-pip
-    # - python-setuptools
-
-- block:
-    - name: Install PostgreSQL
-      apt: pkg={{ item }} update_cache=yes state=present
-      with_items:
-        - postgresql-{{ postgresql_version }}
-        - postgresql-client-{{ postgresql_version }}
-        - postgresql-contrib-{{ postgresql_version }}
-        - libpq-dev
-
-    - name: Configure PostgreSQL. Set listen_addresses.
-      lineinfile:
-        dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
-        regexp="listen_addresses =" line="listen_addresses = '*'" state=present
-      notify: restart postgresql
-
-    - name: Install psycopg2 python package
-      pip:
-        name: psycopg2
-
-  become: yes
-  tags: postgres2
-
 - block:
     - name: Create PostgreSQL DB
       postgresql_db:
@@ -76,13 +37,17 @@
         objs: base
         role: "{{ postgresql_db_user }}"
 
-    - name: Grant table access no table "users"
+    - name: Grant table access on table "users"
       postgresql_privs:
         db: "{{ postgresql_db_name }}"
         privs: SELECT,INSERT,UPDATE
-        objs: base.users
+        objs: users
+        schema: base
         roles: "{{ postgresql_db_user }}"
         grant_option: yes
+
   become: yes
   become_user: postgres
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
   tags: postgres ddl

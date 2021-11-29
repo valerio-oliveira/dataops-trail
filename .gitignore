@@ -1,14 +1,22 @@
 # Tests and Examples
 *.pem
-vars.yml
-ansible.cfg
+variables.yml
+*ansible*.__cfg*
 
+variables/
+host*.*
+lsof -i:22
+tf_host_aws*
+inventories/
+temp
+temp/
 # Local .terraform directories
 **/.terraform/*
 
 # .tfstate files
 *.tfstate
 *.tfstate.*
+tf_hosts_*
 
 # Crash log files
 crash.log

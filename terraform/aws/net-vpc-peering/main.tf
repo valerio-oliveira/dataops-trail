@@ -63,3 +63,4 @@ resource "aws_route" "accepting_side" {
   destination_cidr_block    = data.aws_vpc.requesting_vpc.cidr_block
   vpc_peering_connection_id = aws_vpc_peering_connection.peering_conn.id
 }
+

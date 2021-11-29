@@ -1,0 +1,25 @@
+# - block:
+#     - name: Stop postgresql
+#       service:
+#         name: postgresql
+#         state: stopped
+#   become: yes
+
+- block:
+    - name: Run pg_basebackup in replication mode
+      ansible.builtin.shell: "pg_basebackup -h {{ groups[target_group][0] }} -U repuser --checkpoint=fast -D /var/lib/postgres/13/data -R --slot=repslot01 -C"
+      vars:
+        target_group: postgresql-main-private
+
+  become: yes
+  become_user: postgres
+  tags: replication
+  vars:
+    target_group: postgresql-main
+
+- block:
+    - name: Start postgresql
+      service:
+        name: postgresql
+        state: started
+  become: yes

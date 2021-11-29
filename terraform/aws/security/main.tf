@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 3.27.0"
     }
   }
@@ -9,7 +9,12 @@ terraform {
 
 data "aws_region" "current" {}
 
-variable "security_ports" {
+variable "application_ports" {
+  type    = list(number)
+  default = [22]
+}
+
+variable "database_ports" {
   type    = list(number)
   default = [22]
 }
@@ -18,12 +23,13 @@ variable "current_vpc_id" {
   type = string
 }
 
-resource "aws_security_group" "security_ports" {
-  name = "ec2_security"
-  vpc_id = var.current_vpc_id
+resource "aws_security_group" "application_group" {
+  name        = "application_group"
+  description = "Security group for application"
+  vpc_id      = var.current_vpc_id
 
   dynamic "ingress" {
-    for_each = var.security_ports
+    for_each = var.application_ports
     content {
       from_port   = ingress.value
       to_port     = ingress.value
@@ -39,10 +45,32 @@ resource "aws_security_group" "security_ports" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "Revolut security group" }
-  
+  tags = { Name = "Application group" }
+
 }
 
-output "security_group_id" {
-  value = resource.aws_security_group.security_ports.id
+resource "aws_security_group" "database_group" {
+  name        = "database_group"
+  description = "Security group for databases"
+  vpc_id      = var.current_vpc_id
+
+  dynamic "ingress" {
+    for_each = var.database_ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = { Name = "Databases group" }
+
 }

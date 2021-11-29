@@ -1,0 +1,7 @@
+---
+- hosts: postgresql-main
+  remote_user: admin
+  become: yes
+  roles:
+    - postgresql-install
+    - database

@@ -1,0 +1,86 @@
+- block:
+    - name: Install base packages
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      loop:
+        - htop
+        - tree
+        - lsof
+        - gnupg2
+        - mcedit
+        - net-tools
+        - dstat
+      tags:
+        - dependencies
+
+    - name: Add postgresql signing key
+      ansible.builtin.apt_key:
+        url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        state: present
+
+    - name: Add postgresql repository into sources list
+      ansible.builtin.apt_repository:
+        repo: deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main
+        state: present
+
+    - name: Update packages
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+
+    - name: Install postgresql packages
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      loop:
+        - postgresql-13
+        - python3-psycopg2
+
+  become: yes
+  tags: binaries
+
+- block:
+    - name: Configure PostgreSQL - set "listen_addresses"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "listen_addresses ="
+        line: "listen_addresses = '*'"
+        state: present
+      notify: restart postgresql
+
+    - name: Grant peer authentication to "{{ postgresql_db_user }}"
+      postgresql_pg_hba:
+        dest: /etc/postgresql/13/main/pg_hba.conf
+        contype: host
+        databases: "{{ postgresql_db_name }}"
+        users: "{{ postgresql_db_user }}"
+        source: 172.20.0.0/16
+        method: md5
+        create: true
+
+    - name: Create replication user
+      community.postgresql.postgresql_user:
+        name: "repuser"
+        password: "rep1234"
+        role_attr_flags: LOGIN,REPLICATION
+        #     password: md59543f1d82624df2b31672ec0f7050460
+
+    - name: Grant replication access
+      postgresql_pg_hba:
+        dest: /etc/postgresql/13/main/pg_hba.conf
+        contype: host
+        databases: "replication"
+        users: "repuser"
+        source: 172.20.0.0/16
+        method: trust
+        create: true
+
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tags: configure postgres
