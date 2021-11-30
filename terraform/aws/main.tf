@@ -7,62 +7,43 @@ terraform {
   }
 }
 
-# The "per-region" module creates resources in a single region. We call it for
-# each region (not particularly DRY) because terraform currently doesn't support
-# looping over providers (https://github.com/hashicorp/terraform/issues/19932)
-#
-# There's no default provider (all have alias keyword), so every module,
-# resource and data provider needs to have the provider explicitly set.
-#
-# We call the "per-region" module 3 times, each time with a different provider
-# (different AWS region)
+resource "aws_vpc_peering_connection" "peering_conn" {
+  provider    = aws.us-east-1
+  peer_region = module.us_east_2.current_region_name
+  peer_vpc_id = module.us_east_2.vpc_id
+  vpc_id      = module.us_east_1.vpc_id
+}
+
 module "us_east_1" {
   source            = "./per-region"
   providers         = { aws = aws.us-east-1 }
+  availability_zone = "us-east-1a"
+  is_main_region    = 1
   application_ports = var.application_ports
   database_ports    = var.database_ports
   cidr_list         = var.cidr_list
+  cidr_subnet_list  = var.cidr_subnet_list
   ami_list          = var.ami_list
   ansible_directory = var.ansible_directory
   ssh_public_key    = var.ssh_public_key
+  peering_conn_id   = aws_vpc_peering_connection.peering_conn.id
 }
 
 module "us_east_2" {
   source            = "./per-region"
   providers         = { aws = aws.us-east-2 }
+  availability_zone = "us-east-2a"
   application_ports = var.application_ports
   database_ports    = var.database_ports
   cidr_list         = var.cidr_list
+  cidr_subnet_list  = var.cidr_subnet_list
   ami_list          = var.ami_list
   ansible_directory = var.ansible_directory
   ssh_public_key    = var.ssh_public_key
+  peering_conn_id   = aws_vpc_peering_connection.peering_conn.id
 }
-
-# The net-vpc-peering module needs to do work in two regions (one region requests a
-# peering connection, the other region accepts the request), so the 'providers'
-# block includes two providers. I've elected to pass one provider as the default
-# provider for aws resources, and the other provider with the "aws.requesting"
-# alias. This approach lets me cut down on 'provider' declarations inside the
-# module a bit, but aliasing both is also a valid approach.
-#
-# Again, because of missing provider looping constructs, we're not DRY here.
-# Three connections means three calls to the net-vpc-peering module.
-module "peering_1" {
-  source            = "./net-vpc-peering"
-  accepting_vpc_id  = module.us_east_2.vpc_id
-  requesting_vpc_id = module.us_east_1.vpc_id
-  providers = {
-    aws            = aws.us-east-2 # Default aws provider for module
-    aws.requesting = aws.us-east-1 # Named/aliased provider for module
-  }
+resource "aws_vpc_peering_connection_accepter" "peering_conn_accepter" {
+  provider                  = aws.us-east-2
+  vpc_peering_connection_id = aws_vpc_peering_connection.peering_conn.id
+  auto_accept               = true
 }
-
-# module "peering_2" {
-#   source = "./net-vpc-peering"
-#   accepting_vpc_id = module.us_east_1.vpc_id
-#   requesting_vpc_id = module.us_east_2.vpc_id
-#   providers = {
-#     aws = aws.us-east-1
-#     aws.requesting = aws.us-east-2
-#   }
-# }

@@ -9,6 +9,12 @@ terraform {
 
 data "aws_region" "current" {}
 
+variable "ssh_public_key" {
+  type = string
+}
+
+variable "ami" {}
+
 variable "security_group" {
   type = string
 }
@@ -24,26 +30,6 @@ variable "current_subnet_id" {
 variable "vm_name" {
   type = string
 }
-
-variable "ssh_public_key" {
-  type = string
-}
-
-variable "ami" {}
-
-# data "aws_ami" "ubuntu" {
-#   most_recent = true
-#   filter {
-#     name   = "name"
-#     values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-#   }
-#   filter {
-#     name   = "virtualization-type"
-#     values = ["hvm"]
-#   }
-#   owners = ["099720109477"] # Canonical
-# }
-#   ami             = data.aws_ami.ubuntu.id
 
 resource "aws_key_pair" "ssh_key" {
   key_name   = "aws"

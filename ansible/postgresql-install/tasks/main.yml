@@ -44,12 +44,76 @@
   tags: binaries
 
 - block:
-    - name: Configure PostgreSQL - set "listen_addresses"
+    - name: Configure postgresql.conf - set "listen_addresses"
       lineinfile:
         dest: /etc/postgresql/13/main/postgresql.conf
         regexp: "listen_addresses ="
         line: "listen_addresses = '*'"
         state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_destination ="
+        line: "log_destination = 'stderr'"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "logging_collector ="
+        line: "logging_collector = on"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_filename ="
+        line: "log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_truncate_on_rotation ="
+        line: "log_truncate_on_rotation = on"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_rotation_age ="
+        line: "log_rotation_age = 1d"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_rotation_size ="
+        line: "log_rotation_size = 10MB"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_line_prefix ="
+        line: "log_line_prefix = '%t [%p]: db=%d,user=%u,app=%a,client=%h"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_lock_waits ="
+        line: "log_lock_waits = on"
+        state: present
+
+    - name: Configure postgresql.conf - set "log_destination"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "log_statement ="
+        line: "log_statement = 'all'"
+        state: present
+
       notify: restart postgresql
 
     - name: Grant peer authentication to "{{ postgresql_db_user }}"
@@ -58,7 +122,7 @@
         contype: host
         databases: "{{ postgresql_db_name }}"
         users: "{{ postgresql_db_user }}"
-        source: 172.20.0.0/16
+        source: 0.0.0.0/0
         method: md5
         create: true
 
@@ -75,7 +139,7 @@
         contype: host
         databases: "replication"
         users: "repuser"
-        source: 172.20.0.0/16
+        source: 0.0.0.0/0
         method: trust
         create: true
 
