@@ -3,10 +3,11 @@
   remote_user: admin
   become: yes
   roles:
-    - dbserver-reset-replication
+    - database-create
+    - dbserver-reset-replication # just in case
 
 - hosts: database-replica
   remote_user: admin
   become: yes
   roles:
-    - dbserver-replication
+    - dbserver-run-replication

@@ -12,6 +12,7 @@
         - mcedit
         - dstat
         - mtr
+        - python3
       tags:
         - dependencies
 

@@ -1,5 +1,5 @@
 ---
-- hosts: database-replica
+- hosts: database-all
   remote_user: admin
   become: yes
   roles:

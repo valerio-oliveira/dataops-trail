@@ -1,0 +1,6 @@
+---
+- hosts: application-all
+  remote_user: admin
+  become: yes
+  roles:
+    - appserver

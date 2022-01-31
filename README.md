@@ -32,6 +32,9 @@ This table of contents is under construction. Unchecked items are not documented
 - [ ] [Ansible in action](#ansible-in-action)
   - [Ansible environment setup](#ansible-environment-setup)
   - [Running playbook 01 - database main](#running-playbook-01-database-main)
+  - [Running playbook 02 - database replica](#running-playbook-02-database-replica)
+  - [Running playbook 03 - replicate](#running-playbook-03-replicate)
+  - [Running playbook 04 - application](#running-playbook-04-application)
   - Application server
 - [ ] [Failover solution](#failover-solution)
 - [ ] [Automation with Jenkins](#automation-with-jenkins)
@@ -73,36 +76,44 @@ This is the tree of contents so far:
 ```shell
 ❯ tree -D -I __pycache__
 .
-├── [Nov 22 17:55]  ansible
-│   ├── [Nov 21 22:32]  ansible.cfg
-│   ├── [Nov 21 22:57]  api.yml
-│   ├── [Nov 26 09:47]  inventories
-│   │   ├── [Nov 22 22:04]  hosts
-│   │   ├── [Nov 26 09:48]  tf_host_aws_us-east-1.yml
-│   │   └── [Nov 26 09:48]  tf_host_aws_us-east-2.yml
-│   ├── [Nov 22 22:09]  postgres.yml
-│   └── [Nov 21 23:43]  roles
-│       ├── [Nov 21 22:57]  api
-│       │   └── [Nov 21 22:58]  tasks
-│       │       └── [Nov 21 22:58]  main.yml
-│       └── [Nov 22 21:03]  postgres
-│           ├── [Nov 22 19:53]  defaults
-│           │   └── [Nov 22 19:53]  main.yml
-│           ├── [Nov 22 19:53]  files
-│           ├── [Nov 22 19:33]  handlers
-│           │   └── [Nov 23 00:35]  main.yml
-│           ├── [Nov 22 19:52]  meta
-│           │   └── [Nov 22 19:52]  main.yml
-│           ├── [Nov 22 17:49]  tasks
-│           │   └── [Nov 23 00:54]  main.yml
-│           ├── [Nov 22 18:24]  templates
-│           │   └── [Nov 22 20:36]  pg_hba.conf.j2
-│           └── [Nov 22 17:55]  vars
-│               └── [Nov 23 00:54]  main.yml
-├── [Nov 21 22:09]  hometaskproject
+├── [Jan 31 11:19]  ansible
+│   ├── [Jan 31 08:33]  01-postgres.yml
+│   ├── [Jan 31 09:52]  02-database.yml
+│   ├── [Jan 31 11:19]  03-application.yml
+│   ├── [Jan 31 11:33]  ansible.cfg
+│   ├── [Jan 31 08:15]  appserver
+│   │   ├── [Jan 31 08:15]  handlers
+│   │   └── [Jan 31 08:13]  tasks
+│   │       └── [Jan 31 11:39]  main.yml
+│   ├── [Nov 29 01:16]  database-create
+│   │   ├── [Nov 29 01:16]  handlers
+│   │   └── [Nov 29 01:17]  tasks
+│   │       └── [Nov 29 01:51]  main.yml
+│   ├── [Nov 29 01:16]  dbserver-install
+│   │   ├── [Nov 22 19:33]  handlers
+│   │   │   └── [Jan 30 00:18]  main.yml
+│   │   └── [Nov 29 00:44]  tasks
+│   │       └── [Jan 30 17:29]  main.yml
+│   ├── [Dec  1 01:50]  dbserver-reset-replication
+│   │   ├── [Dec  1 01:50]  handlers
+│   │   └── [Dec  1 01:50]  tasks
+│   │       └── [Jan 31 10:09]  main.yml
+│   ├── [Nov 29 04:18]  dbserver-run-replication
+│   │   ├── [Jan 30 17:28]  handlers
+│   │   └── [Nov 29 04:18]  tasks
+│   │       └── [Jan 31 01:23]  main.yml
+│   ├── [Jan 31 09:16]  inventories
+│   │   ├── [Jan 31 05:11]  hosts
+│   │   ├── [Jan 31 09:16]  hosts_addresses
+│   │   └── [Jan 31 09:16]  hosts_ident
+│   └── [Jan 31 00:01]  monitoring
+│       └── [Jan 31 00:01]  tasks
+│           └── [Jan 31 00:01]  main.yml
+├── [Nov 28 16:12]  __ansible.__cfg__
+├── [Nov 30 22:44]  application
 │   ├── [Nov 17 02:54]  db.sqlite3
-│   ├── [Nov 20 18:10]  Dockerfile
-│   ├── [Nov 19 11:49]  hometaskapp
+│   ├── [Jan 31 09:15]  Dockerfile
+│   ├── [Jan 31 02:03]  hometaskapp
 │   │   ├── [Nov 17 00:17]  admin.py
 │   │   ├── [Nov 17 00:17]  apps.py
 │   │   ├── [Nov 21 21:27]  dao
@@ -114,7 +125,7 @@ This is the tree of contents so far:
 │   │   ├── [Nov 17 00:17]  models.py
 │   │   ├── [Nov 17 00:17]  tests.py
 │   │   ├── [Nov 17 03:41]  urls.py
-│   │   └── [Nov 19 11:49]  views.py
+│   │   └── [Jan 31 02:03]  views.py
 │   ├── [Nov 20 01:43]  hometaskproject
 │   │   ├── [Nov 17 00:17]  asgi.py
 │   │   ├── [Nov 17 00:17]  __init__.py
@@ -122,34 +133,36 @@ This is the tree of contents so far:
 │   │   ├── [Nov 17 01:10]  urls.py
 │   │   └── [Nov 17 00:17]  wsgi.py
 │   ├── [Nov 17 00:17]  manage.py
-│   └── [Nov 20 16:05]  requirements.txt
-├── [Nov 24 13:58]  README.md
+│   └── [Nov 30 22:21]  requirements.txt
+├── [Jan 31 11:22]  README.md
 ├── [Nov 21 12:18]  r.gif
 └── [Nov 26 10:38]  terraform
-    └── [Nov 26 09:40]  aws
-        ├── [Nov 26 09:24]  main.tf
-        ├── [Nov 25 00:49]  net
-        │   └── [Nov 26 00:53]  main.tf
-        ├── [Nov 25 16:11]  net-vpc-peering
-        │   └── [Nov 26 01:05]  main.tf
-        ├── [Nov 26 09:14]  outputs.tf
-        ├── [Nov 26 01:32]  per-region
-        │   ├── [Nov 26 09:37]  main.tf
-        │   └── [Nov 26 09:48]  outputs.tf
+    └── [Jan 31 09:16]  aws
+        ├── [Jan 30 02:51]  main.tf
+        ├── [Jan 31 05:20]  outputs.tf
+        ├── [Dec  2 14:38]  per-region
+        │   ├── [Jan 28 17:23]  main.tf
+        │   ├── [Dec  2 21:44]  outputs.tf
+        │   └── [Dec  2 21:44]  variables.tf
         ├── [Nov 25 15:32]  provider.tf
-        ├── [Nov 25 17:32]  security
-        │   └── [Nov 25 18:36]  main.tf
-        ├── [Nov 26 09:40]  terraform.tfstate
-        ├── [Nov 26 09:40]  terraform.tfstate.backup
-        ├── [Nov 26 09:41]  variables.auto.tfvars
-        ├── [Nov 26 09:24]  variable.tf
-        └── [Nov 25 18:31]  vm
-            └── [Nov 26 09:37]  main.tf
+        ├── [Dec  3 00:17]  security
+        │   ├── [Dec  3 00:48]  main.tf
+        │   ├── [Nov 27 11:09]  outputs.tf
+        │   └── [Dec  3 00:17]  variables.tf
+        ├── [Jan 31 00:47]  templates
+        ├── [Jan 31 09:16]  terraform.tfstate
+        ├── [Jan 31 09:14]  terraform.tfstate.backup
+        ├── [Jan 31 09:19]  variables.auto.tfvars
+        ├── [Jan 31 05:13]  variables.tf
+        └── [Dec  1 09:22]  vm
+            ├── [Dec  2 21:37]  main.tf
+            ├── [Dec  2 20:54]  outputs.tf
+            └── [Dec  2 15:00]  variables.tf
 ```
 
 ## Installing tools
 
-All instalations described here are applicable to Debian based distributions, Linux Mint in my case. If you need to install these tools on a diffent O.S., please, reffer to the correspinding documentations.
+All instalations described here are applicable to Debian based distributions, Linux Mint in my case. If you need to install these tools on a diffent O.S., please, refer to the correspinding documentations.
 
 Installing Python
 
@@ -289,7 +302,7 @@ Destroying the image
 
 ## Terraformation
 
-As I keep learning, I've made changes to the Terraform project a dozen of times. The main setback here was learning the networking concepts. Now, Terraform project creates the environment in two different regions. The model works as follows:
+As I keep learning, I've made changes to the Terraform project a dozen times. The main setback here was learning the networking concepts. Now, Terraform project creates the environment in two different regions. The model works as follows:
 
 Set the following variables which will be user by Terrafor.
 
@@ -381,115 +394,30 @@ Variables
 > become_ask_pass = false
 > ```
 
-### Running playbook 01 database main
+### Running playbook 01 postgres
 
-Bellow we have the playbook execution steps skiping warning messages in order to keep it shorter.
-
-```bash
-❯ ansible-playbook -i inventories 01-database-main.yml
-
-PLAY [database-main] ****************************************************************************************************************
-
-TASK [Gathering Facts] **************************************************************************************************************
-ok: [3.82.150.254]
-
-TASK [postgresql-install : Install base packages] ***********************************************************************************
-ok: [3.82.150.254] => (item=htop)
-changed: [3.82.150.254] => (item=tree)
-changed: [3.82.150.254] => (item=lsof)
-changed: [3.82.150.254] => (item=gnupg2)
-changed: [3.82.150.254] => (item=mcedit)
-changed: [3.82.150.254] => (item=dstat)
-
-TASK [postgresql-install : Add postgresql signing key] ******************************************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Add postgresql repository into sources list] *************************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Update packages] *****************************************************************************************
-ok: [3.82.150.254]
-
-TASK [postgresql-install : Install postgresql packages] *****************************************************************************
-changed: [3.82.150.254] => (item=postgresql-13)
-changed: [3.82.150.254] => (item=python3-psycopg2)
-
-TASK [postgresql-install : Configure postgresql.conf - set "listen_addresses"] ******************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Configure postgresql.conf - set "log_destination"] *******************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Configure postgresql.conf - set "logging_collector"] *****************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Configure postgresql.conf - set "log_statement"] *********************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Grant peer authentication to "dbuser"] *******************************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Create replication user] *********************************************************************************
-changed: [3.82.150.254]
-
-TASK [postgresql-install : Grant replication access] ********************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Create PostgreSQL DB] **********************************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Create PostgreSQL user and grant access] ***************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Create schema "base"] **********************************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Create table "users"] **********************************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Create user "dbuser"] **********************************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Grant usage on "base"] *********************************************************************************************
-changed: [3.82.150.254]
-
-TASK [database : Grant table access on table "users"] *******************************************************************************
-changed: [3.82.150.254]
-
-RUNNING HANDLER [postgresql-install : restart postgresql] ***************************************************************************
-changed: [3.82.150.254]
-
-PLAY RECAP **************************************************************************************************************************
-3.82.150.254               : ok=21   changed=19   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-
-```
+````
 
 Validating the PostgreSQL instalation and the database creation:
 
 ```bash
 ❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@3.82.150.254
-Linux ip-172-20-1-19 4.19.0-14-cloud-amd64 #1 SMP Debian 4.19.171-2 (2021-01-30) x86_64
 
-The programs included with the Debian GNU/Linux system are free software;
-the exact distribution terms for each program are described in the
-individual files in /usr/share/doc/*/copyright.
-
-Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
-permitted by applicable law.
-Last login: Fri Jan 28 19:07:51 2022 from 177.51.22.51
 admin@ip-172-20-1-19:~$ sudo su - postgres
+
 postgres@ip-172-20-1-19:~$ psql -d revolutdb -c "select * from base.users;"
+
  username | birthday
 ----------+----------
 (0 rows)
 
-postgres@ip-172-20-1-19:~$
+````
 
-```
+### Running playbook 02 database
 
 ---
 
-## Failover solution
+### Running playbook 03 application
 
 ---
 
@@ -524,3 +452,5 @@ These are some of the many links I made used of.
 [Ansible playbook for PostgreSQL](https://gist.github.com/valerio-oliveira/c5f97b92e348a6b6fdda6731c5283e0c)
 
 [Docker container pull creation](https://github.com/do-community/ansible-playbooks/tree/master/docker_ubuntu1804)
+
+[Install docker on debian with Ansible](https://yasha.solutions/install-docker-on-debian-with-ansible/)

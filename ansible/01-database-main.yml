@@ -1,7 +1,0 @@
----
-- hosts: database-main
-  remote_user: admin
-  become: yes
-  roles:
-    - dbserver-install
-    - database-create

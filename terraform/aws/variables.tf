@@ -36,3 +36,31 @@ variable "ansible_inventories" {
 variable "ssh_public_key" {
   type = string
 }
+
+variable "django_env" {
+  type = string
+}
+
+variable "django_secret_key" {
+  type = string
+}
+
+variable "dbport" {
+  type = number
+}
+
+variable "dbname" {
+  type = string
+}
+
+variable "dbuser" {
+  type = string
+}
+
+variable "dbpass" {
+  type = string
+}
+
+variable "dbappname" {
+  type = string
+}

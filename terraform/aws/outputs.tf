@@ -45,9 +45,47 @@ ${module.replica.database_data["public_ip"]}
 [application-replica]
 ${module.replica.application_data["public_ip"]}
 
+[database-all]
+${module.main.database_data["public_ip"]}
+${module.replica.database_data["public_ip"]}
+
 [application-all]
 ${module.main.application_data["public_ip"]}
 ${module.replica.application_data["public_ip"]}
+
+[database-all:vars]
+
+[all:vars]
+postgresql_host= ${module.main.database_data["private_ip"]}
+postgresql_port= ${var.dbport}
+postgresql_db_name= "${var.dbname}"
+postgresql_db_user= "${var.dbuser}"
+postgresql_db_user_password= "${var.dbpass}"
+api_application_name= "${var.dbappname}"
+api_source_directory= "../hometaskproject/"
+api_destination_directory= "/usr/src/hometaskproject/"
+api_owner= "admin"
+
 EOF
   filename = format("%s/%s", var.ansible_inventories, "hosts_ident")
+}
+
+resource "local_file" "django_env" {
+  content  = <<EOF
+# ------------
+# django
+# ------------
+SECRET_KEY="${var.django_secret_key}"
+
+# ------------
+# database
+# ------------
+dbhost=${module.main.database_data["private_ip"]}
+dbport=${var.dbport}
+dbname=${var.dbname}
+dbuser=${var.dbuser}
+dbpass=${var.dbpass}
+dbappname=${var.dbappname}
+EOF
+  filename = format("%s/%s", var.django_env, ".env")
 }
