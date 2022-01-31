@@ -29,7 +29,7 @@ variable "database_ports" {
   default = [22]
 }
 
-variable "ansible_directory" {
+variable "ansible_inventories" {
   type = string
 }
 

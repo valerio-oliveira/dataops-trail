@@ -13,13 +13,15 @@
 
 ## Presentation
 
-This project is a landmark on my career as a DataOps Engineer, a role that I didn't even know that exists one week ago and pushed me to decide to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues of a DevOps squad close to me.
+It is been a while since my last update to this project. After a lot of working and studies obligations, and other compromises, I'm rolling up my sleeves again after a hiatus of two months.
+
+This project is a landmark on my career as a DataOps Engineer, a role that I didn't even know that exists one week before I started it, and pushed me to decide to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues of a DevOps squad close to me.
 
 Just to mention my previous experience before taking this chalenge, appart from being a database administrator I am a software developer, and I've recently achieved the Azure AZ-900 and DP-900 certifications, both giving me a general understanding of cloud computing.
 
 ## Table of contents
 
-This table of contents is under construction. Unchecked items aren't documented yet, as well as checked items may probably be weakly documented.
+This table of contents is under construction. Unchecked items are not documented yet, besides checked items may probably be weakly documented.
 
 - [x] [Project description](#project-description)
 - [x] [Project tree](#project-tree)
@@ -28,7 +30,8 @@ This table of contents is under construction. Unchecked items aren't documented 
 - [x] [Dockerizing](#dockerizing)
 - [x] [Terraformation](#terraformation)
 - [ ] [Ansible in action](#ansible-in-action)
-  - 🚩 Database server
+  - [Ansible environment setup](#ansible-environment-setup)
+  - [Running playbook 01 - database main](#running-playbook-01-database-main)
   - Application server
 - [ ] [Failover solution](#failover-solution)
 - [ ] [Automation with Jenkins](#automation-with-jenkins)
@@ -45,9 +48,11 @@ I started my learning path by writing a simple Python + Django API, and I've mou
 
 My most recent step was learning to use Terraform, and both the application host and the database host are now provisioned on the AWS cloud, in different EC2 instances but at the same availability zone. I chose to use a modular aproach for the Terraform project, once this is considered the best practice for companies with multiple teams using the IaaS tool.
 
-So far, it took me most of the week strugling to provision my VMs. I figured out later that among my many mistakes, also a default subnet has to be created for my brand new AWS account's vpc.
+So far, it took me most of the forst week strugling to provision my VMs. I figured out later that among my many mistakes, also a default subnet has to be created for my brand new AWS account's VPC.
 
-Now, it is time to use Ansible for provisioning, configuring and deploying my API and PostgreSQL. The learning courve for Ansible is surprisingly low. Learning and applying the PostgreSQL instalation, the database creation, and set up is taking few hours.
+Now, it is time to use Ansible for provisioning, configuring, and deploying my API and the PostgreSQL database. The learning courve for Ansible is surprisingly low. Learning and applying the PostgreSQL instalation, the database creation, and set up took few hours.
+
+I was supposed to
 
 ### Next steps
 
@@ -284,7 +289,7 @@ Destroying the image
 
 ## Terraformation
 
-As I keep learning, I've changes the Terraform project a couple of times. The main setback here was learning the networking concepts. Now, Terraform project creates the environment in two different regions. The model wirks as
+As I keep learning, I've made changes to the Terraform project a dozen of times. The main setback here was learning the networking concepts. Now, Terraform project creates the environment in two different regions. The model works as follows:
 
 Set the following variables which will be user by Terrafor.
 
@@ -331,7 +336,9 @@ Destroying
 
 Despite provisioning both VM and applications can be done using only either Terraform or Ansible, it is a good practice to create VMs using Terraform, and using Ansible for installing and configuring the cloud applications.
 
-Setting up .pem file to access to the remote hosts
+### Ansible environment setup
+
+Setting up PEM file on Ansible
 
 > /etc/ansible/ansible.cfg
 >
@@ -343,7 +350,7 @@ Setting up .pem file to access to the remote hosts
 > allow_world_readable_tmpfiles=true
 > ```
 
-Environment variables
+Variables
 
 > vars.yml
 >
@@ -366,13 +373,119 @@ Environment variables
 > remote_user = admin
 > ask_pass = false
 > private_key_file = /.../my_pem_file.pem # path of your pem file
-> roles_path = /.../ansible/roles/ #Your roles folder path
+> roles_path = /.../ansible/roles/ # your roles folder path
 > [privilege_escalation]
 > become = true
 > become_method = sudo
 > become_user = admin # Your remote user
 > become_ask_pass = false
 > ```
+
+### Running playbook 01 database main
+
+Bellow we have the playbook execution steps skiping warning messages in order to keep it shorter.
+
+```bash
+❯ ansible-playbook -i inventories 01-database-main.yml
+
+PLAY [database-main] ****************************************************************************************************************
+
+TASK [Gathering Facts] **************************************************************************************************************
+ok: [3.82.150.254]
+
+TASK [postgresql-install : Install base packages] ***********************************************************************************
+ok: [3.82.150.254] => (item=htop)
+changed: [3.82.150.254] => (item=tree)
+changed: [3.82.150.254] => (item=lsof)
+changed: [3.82.150.254] => (item=gnupg2)
+changed: [3.82.150.254] => (item=mcedit)
+changed: [3.82.150.254] => (item=dstat)
+
+TASK [postgresql-install : Add postgresql signing key] ******************************************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Add postgresql repository into sources list] *************************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Update packages] *****************************************************************************************
+ok: [3.82.150.254]
+
+TASK [postgresql-install : Install postgresql packages] *****************************************************************************
+changed: [3.82.150.254] => (item=postgresql-13)
+changed: [3.82.150.254] => (item=python3-psycopg2)
+
+TASK [postgresql-install : Configure postgresql.conf - set "listen_addresses"] ******************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Configure postgresql.conf - set "log_destination"] *******************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Configure postgresql.conf - set "logging_collector"] *****************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Configure postgresql.conf - set "log_statement"] *********************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Grant peer authentication to "dbuser"] *******************************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Create replication user] *********************************************************************************
+changed: [3.82.150.254]
+
+TASK [postgresql-install : Grant replication access] ********************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Create PostgreSQL DB] **********************************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Create PostgreSQL user and grant access] ***************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Create schema "base"] **********************************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Create table "users"] **********************************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Create user "dbuser"] **********************************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Grant usage on "base"] *********************************************************************************************
+changed: [3.82.150.254]
+
+TASK [database : Grant table access on table "users"] *******************************************************************************
+changed: [3.82.150.254]
+
+RUNNING HANDLER [postgresql-install : restart postgresql] ***************************************************************************
+changed: [3.82.150.254]
+
+PLAY RECAP **************************************************************************************************************************
+3.82.150.254               : ok=21   changed=19   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
+
+```
+
+Validating the PostgreSQL instalation and the database creation:
+
+```bash
+❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@3.82.150.254
+Linux ip-172-20-1-19 4.19.0-14-cloud-amd64 #1 SMP Debian 4.19.171-2 (2021-01-30) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Fri Jan 28 19:07:51 2022 from 177.51.22.51
+admin@ip-172-20-1-19:~$ sudo su - postgres
+postgres@ip-172-20-1-19:~$ psql -d revolutdb -c "select * from base.users;"
+ username | birthday
+----------+----------
+(0 rows)
+
+postgres@ip-172-20-1-19:~$
+
+```
 
 ---
 
@@ -409,3 +522,5 @@ These are some of the many links I made used of.
 [Ansible official docs for PostgreSQL](https://docs.ansible.com/ansible/2.9/modules/list_of_database_modules.html#postgresql)
 
 [Ansible playbook for PostgreSQL](https://gist.github.com/valerio-oliveira/c5f97b92e348a6b6fdda6731c5283e0c)
+
+[Docker container pull creation](https://github.com/do-community/ansible-playbooks/tree/master/docker_ubuntu1804)

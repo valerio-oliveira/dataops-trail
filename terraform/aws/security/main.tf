@@ -9,20 +9,6 @@ terraform {
 
 data "aws_region" "current" {}
 
-variable "application_ports" {
-  type    = list(number)
-  default = [22]
-}
-
-variable "database_ports" {
-  type    = list(number)
-  default = [22]
-}
-
-variable "current_vpc_id" {
-  type = string
-}
-
 resource "aws_security_group" "application_group" {
   name        = "application_group"
   description = "Security group for application"

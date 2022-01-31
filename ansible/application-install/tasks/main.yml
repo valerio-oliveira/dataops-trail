@@ -1,0 +1,63 @@
+- block:
+    - name: Install base packages
+      apt:
+        name: "{{ item }}"
+        update_cache: yes
+        state: present
+      loop:
+        - htop
+        - tree
+        - lsof
+        - gnupg2
+        - mcedit
+        - dstat
+        - mtr
+        - python-pip
+        - python3
+        - python3-pip
+      tags:
+        - dependencies
+
+    - name: Install Django and requirements
+      pip:
+        name:
+          - Django
+          - psycopg2-binary
+          - python-dateutil
+          - python-decouple
+        executable: pip-3.7
+
+  become: yes
+  tags: binaries
+
+- block:
+    - name: Copy aplication
+      copy:
+        src: "{{ api_source_directory }}"
+        dest: "{{ api_destination_directory }}"
+        owner: "{{ api_owner }}"
+        group: "{{ api_owner }}"
+        mode: 0644
+
+    # - name: Collect files to remove
+    #   find:
+    #     paths: "{{ api_destination_directory }}"
+    #     patterns: "__pycache__"
+    #     file_type: any
+    #     hidden: true
+    #     recurse: yes
+    #   register: items
+
+    # - name: Remove file glob
+    #   file:
+    #     path: "{{ api_destination_directory }}"
+    #     state: absent
+    #     file_type: any
+    #     hidden: true
+    #     recurse: yes
+    #   with_items: "{{ items.files }}"
+
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tags: install application

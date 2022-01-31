@@ -9,40 +9,11 @@ terraform {
 
 data "aws_region" "current" {}
 
-variable "application_ports" {
-  type    = list(number)
-  default = [22]
+resource "aws_key_pair" "ssh_key" {
+  #  provider   =                    aws_region.current
+  key_name   = "aws"
+  public_key = file(var.ssh_public_key)
 }
-
-variable "database_ports" {
-  type    = list(number)
-  default = [22]
-}
-
-variable "cidr_list" {}
-
-variable "cidr_subnet_list" {}
-
-variable "ami_list" {}
-
-variable "availability_zone" {
-  type = string
-}
-
-variable "ansible_directory" {
-  type = string
-}
-
-variable "is_main_region" {
-  type    = number
-  default = 0
-}
-
-variable "ssh_public_key" {
-  type = string
-}
-
-variable "peering_conn_id" {}
 
 resource "aws_vpc" "prod_vpc" {
   cidr_block           = var.cidr_list[data.aws_region.current.name]
@@ -108,14 +79,15 @@ resource "aws_route_table_association" "requesting_route_table_subnet" {
   route_table_id = aws_route_table.prod_route_table.id
 }
 
-
-# module "vm_application" {
-#   source            = "../vm"
-#   security_group    = module.security.application_group_id
-#   vm_name           = "vm_application"
-#   current_vpc_id    = aws_vpc.prod_vpc.id
-#   current_subnet_id = module.net.subnet_id
-# }
+module "vm_application" {
+  source            = "../vm"
+  ami               = var.ami_list[data.aws_region.current.name]
+  security_group    = module.security.application_group_id
+  vm_name           = "vm_application"
+  current_vpc_id    = aws_vpc.prod_vpc.id
+  current_subnet_id = aws_subnet.prod_subnet.id
+  key_name          = aws_key_pair.ssh_key.key_name
+}
 
 module "vm_database" {
   source            = "../vm"
@@ -124,5 +96,5 @@ module "vm_database" {
   vm_name           = "vm_database"
   current_vpc_id    = aws_vpc.prod_vpc.id
   current_subnet_id = aws_subnet.prod_subnet.id
-  ssh_public_key    = var.ssh_public_key
+  key_name          = aws_key_pair.ssh_key.key_name
 }

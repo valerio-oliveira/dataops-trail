@@ -1,0 +1,6 @@
+---
+- hosts: application-main
+  remote_user: admin
+  become: yes
+  roles:
+    - application-install

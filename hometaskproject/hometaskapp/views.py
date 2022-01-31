@@ -43,15 +43,15 @@ def hello(request, username):
         result = set_birthday(username=username, birthday=birthday)
         print("result", result, type(result))
         if result != "OK":
-            response = {
-                'error': f'Something went wrong! Please, contact the candidate. \n {result}'}
+            response = [
+                {'error': f'Something went wrong! Please, contact the candidate. \n {result}'}]
             return HttpResponse(response, content_type="application/json")
 
         return HttpResponse(status=204)
     elif request.method == "GET":
         birthday = get_birthday(username=username)
         if birthday is None:
-            response = [{'message': "Sorry! User unknown."}]
+            result = "Sorry! User unknown."
         else:
             print("birthday", birthday, type(birthday))
             birth_day = birthday.day
@@ -64,7 +64,7 @@ def hello(request, username):
                 days = delta.days
                 result = f"Hello, {username}! Your birthday is in {days} day(s)"
 
-            response = [{'message': result}]
+        response = [{"message": result}]
 
         return HttpResponse(response, content_type="application/json")
 

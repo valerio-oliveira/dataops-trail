@@ -1,0 +1,11 @@
+- block:
+    - name: Reset replication slot if exists
+      postgresql_query:
+        db: "{{ postgresql_db_name }}"
+        query: select case when (select count(*) as c from pg_replication_slots where slot_name='repslot01')=1 then pg_drop_replication_slot('repslot01') end;
+
+  become: yes
+  become_user: postgres
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tags: postgres ddl

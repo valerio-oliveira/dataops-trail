@@ -1,7 +1,6 @@
 ---
-- hosts: postgresql-replica
+- hosts: database-replica
   remote_user: admin
   become: yes
   roles:
-    - postgresql-install
-    - replicate
+    - dbserver-install

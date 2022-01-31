@@ -10,8 +10,8 @@
         - lsof
         - gnupg2
         - mcedit
-        - net-tools
         - dstat
+        - mtr
       tags:
         - dependencies
 
@@ -48,66 +48,38 @@
       lineinfile:
         dest: /etc/postgresql/13/main/postgresql.conf
         regexp: "listen_addresses ="
-        line: "listen_addresses = '*'"
+        line: "listen_addresses = '*'   # what IP address(es) to listen on;"
+        state: present
+
+    - name: Configure postgresql.conf - set "max_wal_senders"
+      lineinfile:
+        dest: /etc/postgresql/13/main/postgresql.conf
+        regexp: "max_wal_senders ="
+        line: "max_wal_senders = 10   # max number of walsender processes"
         state: present
 
     - name: Configure postgresql.conf - set "log_destination"
       lineinfile:
         dest: /etc/postgresql/13/main/postgresql.conf
         regexp: "log_destination ="
-        line: "log_destination = 'stderr'"
+        line: "log_destination = 'stderr'   # Valid value4s are combinations of"
         state: present
 
-    - name: Configure postgresql.conf - set "log_destination"
+    - name: Configure postgresql.conf - set "logging_collector"
       lineinfile:
         dest: /etc/postgresql/13/main/postgresql.conf
         regexp: "logging_collector ="
-        line: "logging_collector = on"
+        line: "logging_collector = on   # Enable capturing of stderr and csvlog"
         state: present
 
-    - name: Configure postgresql.conf - set "log_destination"
-      lineinfile:
-        dest: /etc/postgresql/13/main/postgresql.conf
-        regexp: "log_filename ="
-        line: "log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'"
-        state: present
-
-    - name: Configure postgresql.conf - set "log_destination"
-      lineinfile:
-        dest: /etc/postgresql/13/main/postgresql.conf
-        regexp: "log_truncate_on_rotation ="
-        line: "log_truncate_on_rotation = on"
-        state: present
-
-    - name: Configure postgresql.conf - set "log_destination"
-      lineinfile:
-        dest: /etc/postgresql/13/main/postgresql.conf
-        regexp: "log_rotation_age ="
-        line: "log_rotation_age = 1d"
-        state: present
-
-    - name: Configure postgresql.conf - set "log_destination"
-      lineinfile:
-        dest: /etc/postgresql/13/main/postgresql.conf
-        regexp: "log_rotation_size ="
-        line: "log_rotation_size = 10MB"
-        state: present
-
-    - name: Configure postgresql.conf - set "log_destination"
+    - name: Configure postgresql.conf - set "log_line_prefix"
       lineinfile:
         dest: /etc/postgresql/13/main/postgresql.conf
         regexp: "log_line_prefix ="
-        line: "log_line_prefix = '%t [%p]: db=%d,user=%u,app=%a,client=%h"
+        line: "log_line_prefix = '%t [%p]: db=%d,user=%u,app=%a,client=%h'"
         state: present
 
-    - name: Configure postgresql.conf - set "log_destination"
-      lineinfile:
-        dest: /etc/postgresql/13/main/postgresql.conf
-        regexp: "log_lock_waits ="
-        line: "log_lock_waits = on"
-        state: present
-
-    - name: Configure postgresql.conf - set "log_destination"
+    - name: Configure postgresql.conf - set "log_statement"
       lineinfile:
         dest: /etc/postgresql/13/main/postgresql.conf
         regexp: "log_statement ="
@@ -115,6 +87,41 @@
         state: present
 
       notify: restart postgresql
+
+      # - name: Configure postgresql.conf - set "log_filename"
+      #   lineinfile:
+      #     dest: /etc/postgresql/13/main/postgresql.conf
+      #     regexp: "log_filename ="
+      #     line: "log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'    # log file name pattern,"
+      #     state: present
+
+      # - name: Configure postgresql.conf - set "log_truncate_on_rotation"
+      #   lineinfile:
+      #     dest: /etc/postgresql/13/main/postgresql.conf
+      #     regexp: "log_truncate_on_rotation ="
+      #     line: "log_truncate_on_rotation = on    # If on, an existing log file with the"
+      #     state: present
+
+      # - name: Configure postgresql.conf - set "log_rotation_age"
+      #   lineinfile:
+      #     dest: /etc/postgresql/13/main/postgresql.conf
+      #     regexp: "log_rotation_age ="
+      #     line: "log_rotation_age = 1d"
+      #     state: present
+
+      # - name: Configure postgresql.conf - set "log_rotation_size"
+      #   lineinfile:
+      #     dest: /etc/postgresql/13/main/postgresql.conf
+      #     regexp: "log_rotation_size ="
+      #     line: "log_rotation_size = 10MB"
+      #     state: present
+
+      # - name: Configure postgresql.conf - set "log_lock_waits"
+      #   lineinfile:
+      #     dest: /etc/postgresql/13/main/postgresql.conf
+      #     regexp: "log_lock_waits ="
+      #     line: "log_lock_waits = on"
+      #     state: present
 
     - name: Grant peer authentication to "{{ postgresql_db_user }}"
       postgresql_pg_hba:
@@ -129,9 +136,7 @@
     - name: Create replication user
       community.postgresql.postgresql_user:
         name: "repuser"
-        password: "rep1234"
-        role_attr_flags: LOGIN,REPLICATION
-        #     password: md59543f1d82624df2b31672ec0f7050460
+        role_attr_flags: REPLICATION
 
     - name: Grant replication access
       postgresql_pg_hba:
@@ -139,7 +144,7 @@
         contype: host
         databases: "replication"
         users: "repuser"
-        source: 0.0.0.0/0
+        source: "{{ replica_db_private_ip.split('.pub')[0] }}/32"
         method: trust
         create: true
 

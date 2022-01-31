@@ -1,0 +1,12 @@
+---
+- hosts: database-main
+  remote_user: admin
+  become: yes
+  roles:
+    - dbserver-reset-replication
+
+- hosts: database-replica
+  remote_user: admin
+  become: yes
+  roles:
+    - dbserver-replication

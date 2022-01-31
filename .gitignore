@@ -2,6 +2,8 @@
 *.pem
 variables.yml
 *ansible*.__cfg*
+simple-python-django-api/
+.gitignore
 
 variables/
 host*.*
