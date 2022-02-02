@@ -1,8 +1,20 @@
 ---
+# - name: mount volume
+#   become: yes
+#   docker_volume:
+#     name: env_data
+
+- name: Copy .env file to host
+  become: yes
+  ansible.builtin.copy:
+    src: .env
+    dest: /tmp/.
+    mode: "0600"
+
 - name: deploy application
   become: yes
   docker_container:
-    image: valerionet/hometask
+    image: valerionet/hometask:latest
     name: hometask
     restart_policy: always
     state: started
@@ -10,3 +22,17 @@
     recreate: yes
     ports:
       - "8000:8000"
+    # volumes:
+    #   - env_data:/var/lib/app
+
+- name: copy .env
+  become: yes
+  ansible.builtin.shell: docker cp /tmp/.env hometask:/usr/src/app/.
+
+- name: restart hometask
+  become: yes
+  community.docker.docker_container:
+    name: hometask
+    # image: someuser/appimage
+    state: started
+    restart: yes
