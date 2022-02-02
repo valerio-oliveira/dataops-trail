@@ -1,0 +1,60 @@
+- name: Create PostgreSQL DB
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name: "{{ postgresql_db_name }}"
+
+- name: Create PostgreSQL user and grant access
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    db: "{{ postgresql_db_name }}"
+    user: "{{ postgresql_db_user }}"
+    password: "{{ postgresql_db_user_password }}"
+
+- name: Create schema "base"
+  become: yes
+  become_user: postgres
+  postgresql_schema:
+    db: "{{ postgresql_db_name }}"
+    name: base
+
+- name: Create table "users"
+  become: yes
+  become_user: postgres
+  postgresql_table:
+    db: "{{ postgresql_db_name }}"
+    name: base.users
+    columns:
+      - username    varchar(20) not null primary key
+      - birthday    date        not null
+
+- name: Create user "{{ postgresql_db_user }}"
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    db: "{{ postgresql_db_name }}"
+    name: "{{ postgresql_db_user }}"
+    password: "{{ postgresql_db_user_password }}"
+    priv: "CONNECT"
+
+- name: Grant usage on "base"
+  become: yes
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ postgresql_db_name }}"
+    privs: USAGE
+    type: schema
+    objs: base
+    role: "{{ postgresql_db_user }}"
+
+- name: Grant table access on table "users"
+  become: yes
+  become_user: postgres
+  postgresql_privs:
+    db: "{{ postgresql_db_name }}"
+    privs: SELECT,INSERT,UPDATE
+    objs: users
+    schema: base
+    roles: "{{ postgresql_db_user }}"
+    grant_option: yes

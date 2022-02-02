@@ -1,0 +1,42 @@
+---
+- name: Grant peer authentication to "{{ postgresql_db_user }}"
+  become: yes
+  become_user: postgres
+  postgresql_pg_hba:
+    dest: /etc/postgresql/13/main/pg_hba.conf
+    contype: host
+    databases: "{{ postgresql_db_name }}"
+    users: "{{ postgresql_db_user }}"
+    source: 0.0.0.0/0
+    method: md5
+    create: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Create replication user
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_user:
+    name: "repuser"
+    role_attr_flags: REPLICATION
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Grant replication access
+  become: yes
+  become_user: postgres
+  postgresql_pg_hba:
+    dest: /etc/postgresql/13/main/pg_hba.conf
+    contype: host
+    databases: "replication"
+    users: "repuser"
+    source: "{{ replica_db_private_ip.split('.pub')[0] }}/32"
+    method: trust
+    create: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: postgres reload config
+  postgresql_query:
+    db: "{{ postgresql_db_name }}"
+    query: select pg_reload_conf();

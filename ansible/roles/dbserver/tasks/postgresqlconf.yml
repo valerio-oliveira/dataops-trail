@@ -1,0 +1,83 @@
+---
+- name: Configure postgresql.conf - set "listen_addresses"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "listen_addresses ="
+    line: "listen_addresses = '*'   # what IP address(es) to listen on;"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure postgresql.conf - set "max_wal_senders"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "max_wal_senders ="
+    line: "max_wal_senders = 10   # max number of walsender processes"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure postgresql.conf - set "log_destination"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "log_destination ="
+    line: "log_destination = 'stderr'   # Valid values are combinations of"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure postgresql.conf - set "logging_collector"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "logging_collector ="
+    line: "logging_collector = on   # Enable capturing of stderr and csvlog"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure postgresql.conf - set "log_directory"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "log_directory ="
+    line: "log_directory = 'log'   # dictory where log files are written,"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure postgresql.conf - set "log_line_prefix"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "log_line_prefix ="
+    line: "log_line_prefix = '%t [%p]: db=%d,user=%u,app=%a,client=%h'"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: Configure postgresql.conf - set "log_statement"
+  become: yes
+  become_user: postgres
+  lineinfile:
+    dest: /etc/postgresql/13/main/postgresql.conf
+    regexp: "log_statement ="
+    line: "log_statement = 'all'    # none, ddl, mod, all"
+    state: present
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+- name: restart postgresql
+  become: yes
+  service:
+    name: postgresql
+    state: restarted

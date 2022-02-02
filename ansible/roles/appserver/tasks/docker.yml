@@ -1,0 +1,71 @@
+---
+- name: remove docker legacy versions
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - docker
+    - docker-engine
+    - docker.io
+
+- name: add gpg key for apt
+  become: yes
+  apt_key:
+    url: "https://download.docker.com/linux/debian/gpg"
+    state: present
+
+- name: add docker apt repo
+  become: yes
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+    state: present
+    update_cache: true
+
+- name: install containerd 1.2.13-2
+  become: yes
+  apt:
+    name: containerd.io=1.2.13-2
+    state: present
+    update_cache: yes
+    force: true
+
+- name: install docker-ce 5:19.03.11
+  become: yes
+  apt:
+    name:
+      - "docker-ce=5:19.03.11~3-0~{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}"
+      - "docker-ce-cli=5:19.03.11~3-0~{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}"
+    state: present
+    force: True
+
+- name: configure packages hold
+  become: yes
+  dpkg_selections:
+    name: "{{ item }}"
+    selection: hold
+  loop:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+
+- name: install pip
+  become: yes
+  package:
+    name: "python3-pip"
+    state: present
+    update_cache: yes
+
+- name: instalall python-docker
+  become: yes
+  pip:
+    name: docker
+    state: present
+
+- name: restar docker service
+  become: yes
+  service:
+    name: docker
+    enabled: yes
+    state: restarted
+    daemon_reload: yes

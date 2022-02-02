@@ -1,0 +1,12 @@
+---
+- name: deploy application
+  become: yes
+  docker_container:
+    image: valerionet/hometask
+    name: hometask
+    restart_policy: always
+    state: started
+    restart: yes
+    recreate: yes
+    ports:
+      - "8000:8000"

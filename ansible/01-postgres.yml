@@ -1,6 +1,0 @@
----
-- hosts: database-all
-  remote_user: admin
-  become: yes
-  roles:
-    - dbserver-install

@@ -62,8 +62,8 @@ postgresql_db_name= "${var.dbname}"
 postgresql_db_user= "${var.dbuser}"
 postgresql_db_user_password= "${var.dbpass}"
 api_application_name= "${var.dbappname}"
-api_source_directory= "../hometaskproject/"
-api_destination_directory= "/usr/src/hometaskproject/"
+api_source_directory= "../application/"
+api_destination_directory= "/usr/src/application/"
 api_owner= "admin"
 
 EOF

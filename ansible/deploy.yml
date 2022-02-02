@@ -1,0 +1,24 @@
+---
+# - hosts: database-all
+#   gather_facts: no
+#   remote_user: admin
+#   roles:
+#     - dbserver
+
+# - hosts: database-main
+#   gather_fayescts: no
+#   remote_user: admin
+#   roles:
+#     - database
+
+# - hosts: database-replica
+#   gather_facts: no
+#   remote_user: admin
+#   roles:
+#     - replication
+
+- hosts: application-all
+  gather_facts: no
+  remote_user: admin
+  roles:
+    - appserver

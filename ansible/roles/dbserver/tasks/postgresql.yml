@@ -1,0 +1,23 @@
+---
+- name: Add postgresql signing key
+  become: yes
+  ansible.builtin.apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Add postgresql repository into sources list
+  become: yes
+  ansible.builtin.apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main
+    state: present
+  notify: update packages
+
+- name: Install postgresql packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    update_cache: yes
+    state: present
+  loop:
+    - postgresql-13
+    - python3-psycopg2
