@@ -76,7 +76,7 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
 
-- name: restart postgresql
+- name: Restart postgresql
   become: yes
   service:
     name: postgresql

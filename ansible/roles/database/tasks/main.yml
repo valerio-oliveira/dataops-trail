@@ -1,10 +1,10 @@
-- name: Create PostgreSQL DB
+- name: Create database
   become: yes
   become_user: postgres
   postgresql_db:
     name: "{{ postgresql_db_name }}"
 
-- name: Create PostgreSQL user and grant access
+- name: Create user
   become: yes
   become_user: postgres
   postgresql_user:

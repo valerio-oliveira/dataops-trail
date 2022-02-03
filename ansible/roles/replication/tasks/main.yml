@@ -1,15 +1,15 @@
-- name: stop postgresql service on replica node
+- name: Stop PostgreSQL service on replica node
   become: yes
   ansible.builtin.systemd:
     name: postgresql.service
     state: stopped
 
-- name: backing up original main
+- name: Backing up original main
   become: yes
   become_user: postgres
   ansible.builtin.shell: "mv /var/lib/postgresql/13/main /var/lib/postgresql/13/main_old_remove"
 
-- name: prepare target directory w/ permission 0700
+- name: Prepare target directory w/ permission 0700
   become: yes
   become_user: postgres
   ansible.builtin.file:
@@ -17,17 +17,17 @@
     state: directory
     mode: "0700"
 
-- name: run pg_basebackup in replication mode
+- name: Run pg_basebackup in replication mode
   become: yes
   become_user: postgres
   ansible.builtin.shell: "pg_basebackup -h {{ main_db_private_ip }} -U repuser --checkpoint=fast -D /var/lib/postgresql/13/main -P -R --slot=repslot01 -C"
 
-- name: make sure standby.signal file exists
+- name: Make sure standby.signal file exists
   become: yes
   become_user: postgres
   ansible.builtin.shell: "touch /var/lib/postgresql/13/main/standby.signal"
 
-- name: start PostgreSQL service on replica node
+- name: Start PostgreSQL service on replica node
   become: yes
   ansible.builtin.systemd:
     name: postgresql.service

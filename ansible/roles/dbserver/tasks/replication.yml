@@ -36,7 +36,9 @@
   vars:
     ansible_python_interpreter: /usr/bin/python3
 
-- name: postgres reload config
+- name: Reload database configurations
+  become: yes
+  become_user: postgres
   postgresql_query:
-    db: "{{ postgresql_db_name }}"
+    db: postgres
     query: select pg_reload_conf();
