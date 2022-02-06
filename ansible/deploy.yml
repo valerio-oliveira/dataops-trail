@@ -1,20 +1,53 @@
 ---
-- hosts: database-all
+- hosts: site1-db
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_db_hostname }}"
+
+- hosts: site1-app
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_app_hostname }}"
+
+- hosts: site2-db
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site2_db_hostname }}"
+
+- hosts: site2-app
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site2_app_hostname }}"
+
+- hosts: allsites-db
   remote_user: admin
   roles:
     - dbserver
 
-- hosts: database-main
+- hosts: site1-db
   remote_user: admin
   roles:
     - database
 
-- hosts: database-replica
+- hosts: site2-db
   remote_user: admin
   roles:
     - replication
 
-- hosts: application-all
+- hosts: allsites-app
   remote_user: admin
   roles:
     - appserver
+
+- hosts: allsites-monitor
+  remote_user: admin
+  roles:
+    - zabbix-agent

@@ -17,11 +17,11 @@ resource "aws_key_pair" "ssh_key" {
 
 resource "aws_vpc" "prod_vpc" {
   cidr_block           = var.cidr_list[data.aws_region.current.name]
-  enable_dns_support   = "true" # internal domain name
+  enable_dns_support   = "true" # internal dosite1 name
   enable_dns_hostnames = "true" # internal host name
 
   tags = {
-    Name = "Production vpc"
+    Name = "production_vpc"
   }
 }
 
@@ -36,7 +36,7 @@ resource "aws_internet_gateway" "prod_gateway" {
   vpc_id = aws_vpc.prod_vpc.id
 
   tags = {
-    Name = "Production gateway"
+    Name = "production_gateway"
   }
 }
 
@@ -47,7 +47,7 @@ resource "aws_subnet" "prod_subnet" {
   availability_zone       = var.availability_zone
 
   tags = {
-    Name = "Production subnet"
+    Name = "production_subnet"
   }
 }
 
@@ -71,7 +71,7 @@ resource "aws_route_table" "prod_route_table" {
   }
 
   tags = {
-    Name = "Production route table"
+    Name = "production_route_table"
   }
 }
 resource "aws_route_table_association" "requesting_route_table_subnet" {

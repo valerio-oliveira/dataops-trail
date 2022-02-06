@@ -11,67 +11,58 @@
   </p>
 </div>
 
-## Presentation
-
-It is been a while since my last update to this project. After a lot of working and studies obligations, and other compromises, I'm rolling up my sleeves again after a hiatus of two months.
-
-This project is a landmark on my career as a DataOps Engineer, a role that I didn't even know that exists one week before I started it, and pushed me to decide to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues of a DevOps squad close to me.
-
-Just to mention my previous experience before taking this chalenge, appart from being a database administrator I am a software developer, and I've recently achieved the Azure AZ-900 and DP-900 certifications, both giving me a general understanding of cloud computing.
-
 ## Table of contents
 
-This table of contents is under construction. Unchecked items are not documented yet, besides checked items may probably be weakly documented.
+This table of contents is under construction.
 
-- [x] [Project description](#project-description)
+- [x] [Presentation](#presention)
 - [x] [Project tree](#project-tree)
 - [x] [Installing tools](#installing-tools)
 - [x] [Application environment](#application-environment)
 - [x] [Dockerizing](#dockerizing)
 - [x] [Terraformation](#terraformation)
-- [ ] [Ansible in action](#ansible-in-action)
-  - [Ansible environment setup](#ansible-environment-setup)
-  - [Running playbook 01 - database main](#running-playbook-01-database-main)
-  - [Running playbook 02 - database replica](#running-playbook-02-database-replica)
-  - [Running playbook 03 - replicate](#running-playbook-03-replicate)
-  - [Running playbook 04 - application](#running-playbook-04-application)
-  - Application server
-- [ ] [Failover solution](#failover-solution)
-- [ ] [Automation with Jenkins](#automation-with-jenkins)
-- [ ] [Redis in memory database](#redis-in-memory-database)
+- [x] [Ansible in action](#ansible-in-action)
+  - [x] [Database server](#database-server)
+  - [x] [Replication](#replication-solution)
+  - [x] [Application server](#application-server)
+  - [ ] [Load balancing with Haproxy](#load-balancing-with-haproxy)
+  - [ ] [CI/CD with Jenkins](#automation-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
-- [ ] [Queue controlling](#queue-controlling)
 - [ ] [References](#references)
 
 ---
 
-## Project description
+## Presentation
 
-I started my learning path by writing a simple Python + Django API, and I've mounted a Docker image with it. The application is able to access a PostgreSQL database on a different Host.
+This project consists of HA solution cluster running on two AWS Regions.
 
-My most recent step was learning to use Terraform, and both the application host and the database host are now provisioned on the AWS cloud, in different EC2 instances but at the same availability zone. I chose to use a modular aproach for the Terraform project, once this is considered the best practice for companies with multiple teams using the IaaS tool.
+### Region 1 contains:
 
-So far, it took me most of the forst week strugling to provision my VMs. I figured out later that among my many mistakes, also a default subnet has to be created for my brand new AWS account's VPC.
+- Load balancer HAProxy
+- 1 node Web server Django/Python v. 3.2.5
+- Main PostgreSQL v. 13.5 database
 
-Now, it is time to use Ansible for provisioning, configuring, and deploying my API and the PostgreSQL database. The learning courve for Ansible is surprisingly low. Learning and applying the PostgreSQL instalation, the database creation, and set up took few hours.
+### Region 2 contains:
 
-I was supposed to
+- Load balancer HAProxy
+- 1 node Web server Django/Python v. 3.2.5
+- Standby PostgreSQL v. 13.5 database
 
-### Next steps
-
-My first step as soon as the application gets operational, will be setting up a high availability sollution, replicating the environment to a different Region. so, I'll setup a pipeline using either Github Actions or Jenkins. This seems to be a core feature of the whole process.
-
-Then, as a way to achieve low latency on database requests, I will refactor the persistence level of the API, and make use of Redis in-memory database.
-
-After that, it will be time to move the API to a Kubernetes cluster, getting able to scale my API. As my final step, I will set up queue controlling using either RabitMQ, Celery, or Apache Kafka.
-
-Wish me luck!
+The infrastructure was created with Terraform 1.1.5, whereas deployment was performed on AWS EC2 Debian 10 virtual machines using Docker v. 20.10.12 and Ansible v. 2.12.1 locally installed.
 
 ---
 
 ## Project tree
 
-This is the tree of contents so far:
+This project is divided into tree projects:
+
+- Application project: includes the REST application code and Dockerfile
+
+- Terraform project: utilized to create the infrastructure layer
+
+- Ansible project: handles the deployment of applications and their dependencies
+
+This is the project tree so far:
 
 ```shell
 ❯ tree -D -I __pycache__
@@ -160,70 +151,11 @@ This is the tree of contents so far:
             └── [Dec  2 15:00]  variables.tf
 ```
 
-## Installing tools
+## Preparation
 
-All instalations described here are applicable to Debian based distributions, Linux Mint in my case. If you need to install these tools on a diffent O.S., please, refer to the correspinding documentations.
+1: Make sure the SSH keys were created for current user (root) with proper permissions.
 
-Installing Python
-
-```shell
-❯ sudo apt update
-❯ sudo apt install software-properties-common
-❯ sudo add-apt-repository ppa:deadsnakes/ppa
-❯ sudo apt install python
-```
-
-Django
-
-```shell
-❯ sudo apt-get install pip3
-❯ sudo apt-get install pip
-❯ pip install django
-```
-
-Other Python dependencies
-
-```shell
-❯ pip3 install psycopg2
-❯ pip3 install psycopg2-binary
-❯ pip install python-decouple
-```
-
-Installing Docker
-
-```shell
-❯ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-❯ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(. /etc/os-release; echo "$UBUNTU_CODENAME") stable"
-❯ sudo apt update
-❯ sudo apt install docker
-❯ sudo usermod -aG docker $USER
-```
-
-Installing PostgreSQL (just for refference)
-
-```shell
-❯ sudo apt install postgresql-14 postgresql-contrib-14
-```
-
-Installing Terraform
-
-```shell
-❯ sudo apt update
-❯ curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-❯ sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-❯ sudo apt install terraform
-```
-
-Installing Ansible
-
-```shell
-❯ python -m pip install --user ansible
-❯ python -m pip install --user paramiko
-❯ sudo apt install software-properties-common
-❯ sudo apt install ansible
-```
-
----
+## 2:
 
 ## Application environment
 

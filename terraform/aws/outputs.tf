@@ -2,61 +2,76 @@
 #   default = "./templates/hosts_ident1.txt" # format("%s/%s", var.ansible_inventories, "hosts_ident")
 # }
 
+
+
 resource "local_file" "hosts_addresses" {
   content  = <<EOF
 [all:vars]
-main_db_private_dns     = ${module.main.database_data["private_dns"]}
-main_db_private_ip      = ${module.main.database_data["private_ip"]}
-main_db_public_dns      = ${module.main.database_data["public_dns"]}
-main_db_public_ip       = ${module.main.database_data["public_ip"]}
-main_app_private_dns    = ${module.main.application_data["private_dns"]}
-main_app_private_ip     = ${module.main.application_data["private_ip"]}
-main_app_public_dns     = ${module.main.application_data["public_dns"]}
-main_app_public_ip      = ${module.main.application_data["public_ip"]}
-replica_db_private_dns  = ${module.replica.database_data["private_dns"]}
-replica_db_private_ip   = ${module.replica.database_data["private_ip"]}
-replica_db_public_dns   = ${module.replica.database_data["public_dns"]}
-replica_db_public_ip    = ${module.replica.database_data["public_ip"]}
-replica_app_private_dns = ${module.replica.application_data["private_dns"]}
-replica_app_private_ip  = ${module.replica.application_data["private_ip"]}
-replica_app_public_dns  = ${module.replica.application_data["public_dns"]}
-replica_app_public_ip   = ${module.replica.application_data["public_ip"]}
+site1_db_hostname     = site1-db-${replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site1_db_private_dns  = ${module.site1.database_data["private_dns"]}
+site1_db_private_ip   = ${module.site1.database_data["private_ip"]}
+site1_db_public_dns   = ${module.site1.database_data["public_dns"]}
+site1_db_public_ip    = ${module.site1.database_data["public_ip"]}
+
+site1_app_hostname    = site1-app-${replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site1_app_private_dns = ${module.site1.application_data["private_dns"]}
+site1_app_private_ip  = ${module.site1.application_data["private_ip"]}
+site1_app_public_dns  = ${module.site1.application_data["public_dns"]}
+site1_app_public_ip   = ${module.site1.application_data["public_ip"]}
+
+site2_db_hostname     = site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site2_db_private_dns  = ${module.site2.database_data["private_dns"]}
+site2_db_private_ip   = ${module.site2.database_data["private_ip"]}
+site2_db_public_dns   = ${module.site2.database_data["public_dns"]}
+site2_db_public_ip    = ${module.site2.database_data["public_ip"]}
+
+site2_app_hostname    = site2-app-${replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site2_app_private_dns = ${module.site2.application_data["private_dns"]}
+site2_app_private_ip  = ${module.site2.application_data["private_ip"]}
+site2_app_public_dns  = ${module.site2.application_data["public_dns"]}
+site2_app_public_ip   = ${module.site2.application_data["public_ip"]}
 
 [being practical here]
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.main.database_data["public_ip"]}
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.main.application_data["public_ip"]}
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.replica.database_data["public_ip"]}
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.replica.application_data["public_ip"]}
+ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
+ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
+ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
+ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
 EOF
   filename = format("%s/%s", var.ansible_inventories, "hosts_addresses")
 }
 
 resource "local_file" "hosts_ident" {
   content  = <<EOF
-[database-main]
-${module.main.database_data["public_ip"]}
+[site1-db]
+${module.site1.database_data["public_ip"]}
 
-[application-main]
-${module.main.application_data["public_ip"]}
+[site1-app]
+${module.site1.application_data["public_ip"]}
 
-[database-replica]
-${module.replica.database_data["public_ip"]}
+[site2-db]
+${module.site2.database_data["public_ip"]}
 
-[application-replica]
-${module.replica.application_data["public_ip"]}
+[site2-app]
+${module.site2.application_data["public_ip"]}
 
-[database-all]
-${module.main.database_data["public_ip"]}
-${module.replica.database_data["public_ip"]}
+[allsites-db]
+${module.site1.database_data["public_ip"]}
+${module.site2.database_data["public_ip"]}
 
-[application-all]
-${module.main.application_data["public_ip"]}
-${module.replica.application_data["public_ip"]}
+[allsites-app]
+${module.site1.application_data["public_ip"]}
+${module.site2.application_data["public_ip"]}
 
-[database-all:vars]
+[allsites-monitor]
+${module.site1.database_data["public_ip"]}
+${module.site1.application_data["public_ip"]}
+${module.site2.database_data["public_ip"]}
+${module.site2.application_data["public_ip"]}
+
+[allsites-db:vars]
 
 [all:vars]
-postgresql_host= ${module.main.database_data["private_ip"]}
+postgresql_host= ${module.site1.database_data["private_ip"]}
 postgresql_port= ${var.dbport}
 postgresql_db_name= "${var.dbname}"
 postgresql_db_user= "${var.dbuser}"
@@ -80,7 +95,7 @@ SECRET_KEY="${var.django_secret_key}"
 # ------------
 # database
 # ------------
-dbhost=${module.main.database_data["private_ip"]}
+dbhost=${module.site1.database_data["private_ip"]}
 dbport=${var.dbport}
 dbname=${var.dbname}
 dbuser=${var.dbuser}

@@ -24,6 +24,10 @@ output "subnet_id" {
   value = aws_subnet.prod_subnet.id
 }
 
+output "application_security_group_id" {
+  value = module.security.application_group_id
+}
+
 # ------------------------
 
 output "database_data" {

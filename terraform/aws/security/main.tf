@@ -31,7 +31,7 @@ resource "aws_security_group" "application_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "Application group" }
+  tags = { Name = "application_group" }
 
 }
 
@@ -57,6 +57,6 @@ resource "aws_security_group" "database_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "Databases group" }
+  tags = { Name = "database_group" }
 
 }

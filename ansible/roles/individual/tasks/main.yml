@@ -1,0 +1,5 @@
+---
+- name: Set hostname {{ hostname }}
+  become: yes
+  ansible.builtin.shell:
+    cmd: sudo hostnamectl set-hostname "{{ hostname }}"
