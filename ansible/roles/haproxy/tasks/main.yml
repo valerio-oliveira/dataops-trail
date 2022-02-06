@@ -1,2 +1,29 @@
 ---
-# tasks file for haproxy
+# - name: Install dependency packages
+#   become: yes
+#   apt:
+#     name: "{{ item }}"
+#     force_apt_get: yes
+#     state: latest
+#     update_cache: yes
+#   loop:
+#     - htop
+#     - lsof
+#     - mcedit
+#     - dstat
+#     - mtr
+#     - haproxy
+#   tags:
+#     - dependencies
+
+# - name: Install HAProxy
+#   become: yes
+#   apt:
+#     name: haproxy
+#     state: latest
+#   tags:
+#     - HAProxy
+
+- include_tasks: frontend.yml
+
+- include_tasks: backend.yml

@@ -30,7 +30,7 @@
     contype: host
     databases: "replication"
     users: "repuser"
-    source: "{{ replica_db_private_ip.split('.pub')[0] }}/32"
+    source: "{{ site2_db_private_ip.split('.pub')[0] }}/32"
     method: trust
     create: true
   vars:

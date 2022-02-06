@@ -1,0 +1,46 @@
+---
+- name: Add backend block for hometask
+  become: yes
+  blockinfile:
+    path: /etc/haproxy/haproxy.cfg
+    block: |
+
+      backend hometask
+          balance roundrobin
+
+- name: Add mappings to hometask
+  become: yes
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.name }} {{ item.ip }}
+  loop:
+    - { name: host1, ip: "{{ site1_app_private_ip }}" }
+    - { name: host2, ip: "{{ site2_app_private_ip }}" }
+
+# - name: Add
+#   become: yes
+#   ansible.builtin.lineinfile:
+#     path: /etc/services
+#     regexp: '^# port for http'
+#     insertbefore: '^www.*80/tcp'
+#     line: '# port for http by default'
+
+- name: Add backend block for database
+  become: yes
+  blockinfile:
+    path: /etc/haproxy/haproxy.cfg
+    block: |
+
+      backend database
+          balance source
+
+- name: Add mappings to databases
+  become: yes
+  blockinfile:
+    path: /etc/hosts
+    block: |
+      {{ item.name }} {{ item.ip }}
+  loop:
+    - { name: host1, ip: "{{ site1_db_private_ip }}" }
+    - { name: host2, ip: "{{ site2_db_private_ip }}" }

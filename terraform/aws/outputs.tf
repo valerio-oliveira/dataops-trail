@@ -4,57 +4,57 @@
 
 
 
-resource "local_file" "hosts_addresses" {
-  content  = <<EOF
-[all:vars]
-site1_db_hostname     = site1-db-${replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-site1_db_private_dns  = ${module.site1.database_data["private_dns"]}
-site1_db_private_ip   = ${module.site1.database_data["private_ip"]}
-site1_db_public_dns   = ${module.site1.database_data["public_dns"]}
-site1_db_public_ip    = ${module.site1.database_data["public_ip"]}
+# resource "local_file" "hosts_addresses" {
+#   content  = <<EOF
+# [all:vars]
+# site1_db_hostname     = site1-db-${replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+# site1_db_private_dns  = ${module.site1.database_data["private_dns"]}
+# site1_db_private_ip   = ${module.site1.database_data["private_ip"]}
+# site1_db_public_dns   = ${module.site1.database_data["public_dns"]}
+# site1_db_public_ip    = ${module.site1.database_data["public_ip"]}
 
-site1_app_hostname    = site1-app-${replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-site1_app_private_dns = ${module.site1.application_data["private_dns"]}
-site1_app_private_ip  = ${module.site1.application_data["private_ip"]}
-site1_app_public_dns  = ${module.site1.application_data["public_dns"]}
-site1_app_public_ip   = ${module.site1.application_data["public_ip"]}
+# site1_app_hostname    = site1-app-${replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+# site1_app_private_dns = ${module.site1.application_data["private_dns"]}
+# site1_app_private_ip  = ${module.site1.application_data["private_ip"]}
+# site1_app_public_dns  = ${module.site1.application_data["public_dns"]}
+# site1_app_public_ip   = ${module.site1.application_data["public_ip"]}
 
-site1_svc_hostname    = site1-svc-${replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-site1_svc_private_dns = ${module.site1.service_data["private_dns"]}
-site1_svc_private_ip  = ${module.site1.service_data["private_ip"]}
-site1_svc_public_dns  = ${module.site1.service_data["public_dns"]}
-site1_svc_public_ip   = ${module.site1.service_data["public_ip"]}
+# site1_svc_hostname    = site1-svc-${replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+# site1_svc_private_dns = ${module.site1.service_data["private_dns"]}
+# site1_svc_private_ip  = ${module.site1.service_data["private_ip"]}
+# site1_svc_public_dns  = ${module.site1.service_data["public_dns"]}
+# site1_svc_public_ip   = ${module.site1.service_data["public_ip"]}
 
-site2_db_hostname     = site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-site2_db_private_dns  = ${module.site2.database_data["private_dns"]}
-site2_db_private_ip   = ${module.site2.database_data["private_ip"]}
-site2_db_public_dns   = ${module.site2.database_data["public_dns"]}
-site2_db_public_ip    = ${module.site2.database_data["public_ip"]}
+# site2_db_hostname     = site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+# site2_db_private_dns  = ${module.site2.database_data["private_dns"]}
+# site2_db_private_ip   = ${module.site2.database_data["private_ip"]}
+# site2_db_public_dns   = ${module.site2.database_data["public_dns"]}
+# site2_db_public_ip    = ${module.site2.database_data["public_ip"]}
 
-site2_app_hostname    = site2-app-${replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-site2_app_private_dns = ${module.site2.application_data["private_dns"]}
-site2_app_private_ip  = ${module.site2.application_data["private_ip"]}
-site2_app_public_dns  = ${module.site2.application_data["public_dns"]}
-site2_app_public_ip   = ${module.site2.application_data["public_ip"]}
+# site2_app_hostname    = site2-app-${replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+# site2_app_private_dns = ${module.site2.application_data["private_dns"]}
+# site2_app_private_ip  = ${module.site2.application_data["private_ip"]}
+# site2_app_public_dns  = ${module.site2.application_data["public_dns"]}
+# site2_app_public_ip   = ${module.site2.application_data["public_ip"]}
 
-site2_svc_hostname    = site2-svc-${replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-site2_svc_private_dns = ${module.site1.service_data["private_dns"]}
-site2_svc_private_ip  = ${module.site1.service_data["private_ip"]}
-site2_svc_public_dns  = ${module.site1.service_data["public_dns"]}
-site2_svc_public_ip   = ${module.site1.service_data["public_ip"]}
+# site2_svc_hostname    = site2-svc-${replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+# site2_svc_private_dns = ${module.site2.service_data["private_dns"]}
+# site2_svc_private_ip  = ${module.site2.service_data["private_ip"]}
+# site2_svc_public_dns  = ${module.site2.service_data["public_dns"]}
+# site2_svc_public_ip   = ${module.site2.service_data["public_ip"]}
 
-# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
-# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
-# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.service_data["public_ip"]}
+# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
+# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
+# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.service_data["public_ip"]}
 
-# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
-# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
-# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.service_data["public_ip"]}
-EOF
-  filename = format("%s/%s", var.ansible_inventories, "hosts_addresses")
-}
+# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
+# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
+# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.service_data["public_ip"]}
+# EOF
+#   filename = format("%s/%s", var.ansible_inventories, "hosts_addresses")
+# }
 
-resource "local_file" "hosts_ident" {
+resource "local_file" "hosts" {
   content  = <<EOF
 [site1-db]
 ${module.site1.database_data["public_ip"]}
@@ -92,10 +92,55 @@ postgresql_port= ${var.dbport}
 postgresql_db_name= "${var.dbname}"
 postgresql_db_user= "${var.dbuser}"
 postgresql_db_user_password= "${var.dbpass}"
+
 api_application_name= "${var.dbappname}"
 api_source_directory= "../application/"
 api_destination_directory= "/usr/src/application/"
 api_owner= "admin"
+
+site1_db_hostname     = site1-db-${replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site1_db_private_dns  = ${module.site1.database_data["private_dns"]}
+site1_db_private_ip   = ${module.site1.database_data["private_ip"]}
+site1_db_public_dns   = ${module.site1.database_data["public_dns"]}
+site1_db_public_ip    = ${module.site1.database_data["public_ip"]}
+
+site1_app_hostname    = site1-app-${replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site1_app_private_dns = ${module.site1.application_data["private_dns"]}
+site1_app_private_ip  = ${module.site1.application_data["private_ip"]}
+site1_app_public_dns  = ${module.site1.application_data["public_dns"]}
+site1_app_public_ip   = ${module.site1.application_data["public_ip"]}
+
+site1_svc_hostname    = site1-svc-${replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site1_svc_private_dns = ${module.site1.service_data["private_dns"]}
+site1_svc_private_ip  = ${module.site1.service_data["private_ip"]}
+site1_svc_public_dns  = ${module.site1.service_data["public_dns"]}
+site1_svc_public_ip   = ${module.site1.service_data["public_ip"]}
+
+site2_db_hostname     = site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site2_db_private_dns  = ${module.site2.database_data["private_dns"]}
+site2_db_private_ip   = ${module.site2.database_data["private_ip"]}
+site2_db_public_dns   = ${module.site2.database_data["public_dns"]}
+site2_db_public_ip    = ${module.site2.database_data["public_ip"]}
+
+site2_app_hostname    = site2-app-${replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site2_app_private_dns = ${module.site2.application_data["private_dns"]}
+site2_app_private_ip  = ${module.site2.application_data["private_ip"]}
+site2_app_public_dns  = ${module.site2.application_data["public_dns"]}
+site2_app_public_ip   = ${module.site2.application_data["public_ip"]}
+
+site2_svc_hostname    = site2-svc-${replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site2_svc_private_dns = ${module.site2.service_data["private_dns"]}
+site2_svc_private_ip  = ${module.site2.service_data["private_ip"]}
+site2_svc_public_dns  = ${module.site2.service_data["public_dns"]}
+site2_svc_public_ip   = ${module.site2.service_data["public_ip"]}
+
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.service_data["public_ip"]}
+
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.service_data["public_ip"]}
 
 EOF
   filename = format("%s/%s", var.ansible_inventories, "hosts_ident")

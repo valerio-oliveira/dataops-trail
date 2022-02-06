@@ -20,7 +20,7 @@
 - name: Run pg_basebackup in replication mode
   become: yes
   become_user: postgres
-  ansible.builtin.shell: "pg_basebackup -h {{ main_db_private_ip }} -U repuser --checkpoint=fast -D /var/lib/postgresql/13/main -P -R --slot=repslot01 -C"
+  ansible.builtin.shell: "pg_basebackup -h {{ site1_db_private_ip }} -U repuser --checkpoint=fast -D /var/lib/postgresql/13/main -P -R --slot=repslot01 -C"
 
 - name: Make sure standby.signal file exists
   become: yes

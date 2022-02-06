@@ -1,0 +1,12 @@
+- name: Add frontend block
+  become: yes
+  blockinfile:
+    path: /etc/haproxy/haproxy.cfg
+    block: |
+
+      frontend http_haproxy
+          bind *:80
+          mode http
+          default_backend hometask
+          acl d1 dst_port 5432
+          use_backend database if d1

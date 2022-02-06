@@ -8,13 +8,11 @@
     update_cache: yes
   loop:
     - htop
-    - tree
     - lsof
     - mcedit
     - dstat
     - mtr
     - gnupg2
-    # - python3
     - python3-pip
   tags:
     - base packages
@@ -24,4 +22,4 @@
 
 - include_tasks: setup.yml
 
-- include_tasks: replication.yml
+- include_tasks: access.yml
