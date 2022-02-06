@@ -8,6 +8,11 @@ variable "database_ports" {
   default = [22]
 }
 
+variable "service_ports" {
+  type    = list(number)
+  default = [22]
+}
+
 variable "cidr_list" {}
 
 variable "cidr_subnet_list" {}

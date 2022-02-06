@@ -13,6 +13,13 @@
   vars:
     hostname: "{{ site1_app_hostname }}"
 
+- hosts: site1-svc
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_svc_hostname }}"
+
 - hosts: site2-db
   remote_user: admin
   roles:
@@ -26,6 +33,15 @@
     - individual
   vars:
     hostname: "{{ site2_app_hostname }}"
+
+- hosts: site2-svc
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_svc_hostname }}"
+
+#------
 
 - hosts: allsites-db
   remote_user: admin
@@ -51,3 +67,8 @@
   remote_user: admin
   roles:
     - zabbix-agent
+
+- hosts: allsites-ha
+  remote_user: admin
+  roles:
+    - haproxy

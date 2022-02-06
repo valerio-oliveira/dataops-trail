@@ -47,3 +47,12 @@ output "application_data" {
     "public_ip" : module.vm_application.public_ip,
   }
 }
+
+output "service_data" {
+  value = {
+    "private_dns" : module.vm_service.private_dns
+    "private_ip" : module.vm_service.private_ip,
+    "public_dns" : module.vm_service.public_dns,
+    "public_ip" : module.vm_service.public_ip,
+  }
+}

@@ -14,8 +14,8 @@ variable "cidr_subnet_list" {
 
 variable "ami_list" {
   default = {
-    us-east-1 = "ami-07d02ee1eeb0c996c" # Debian ami
-    us-east-2 = "ami-089fe97bc00bff7cc" # Debian ami
+    us-east-1 = "ami-07d02ee1eeb0c996c" # Debian 10 ami
+    us-east-2 = "ami-089fe97bc00bff7cc" # Debian 10 ami
   }
 }
 
@@ -25,6 +25,11 @@ variable "application_ports" {
 }
 
 variable "database_ports" {
+  type    = list(number)
+  default = [22]
+}
+
+variable "service_ports" {
   type    = list(number)
   default = [22]
 }

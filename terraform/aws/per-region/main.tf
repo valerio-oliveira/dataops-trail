@@ -29,6 +29,7 @@ module "security" {
   source            = "../security"
   application_ports = var.application_ports
   database_ports    = var.database_ports
+  service_ports     = var.service_ports
   current_vpc_id    = aws_vpc.prod_vpc.id
 }
 
@@ -94,6 +95,16 @@ module "vm_database" {
   ami               = var.ami_list[data.aws_region.current.name]
   security_group    = module.security.database_group_id
   vm_name           = "vm_database"
+  current_vpc_id    = aws_vpc.prod_vpc.id
+  current_subnet_id = aws_subnet.prod_subnet.id
+  key_name          = aws_key_pair.ssh_key.key_name
+}
+
+module "vm_service" {
+  source            = "../vm"
+  ami               = var.ami_list[data.aws_region.current.name]
+  security_group    = module.security.application_group_id
+  vm_name           = "vm_service"
   current_vpc_id    = aws_vpc.prod_vpc.id
   current_subnet_id = aws_subnet.prod_subnet.id
   key_name          = aws_key_pair.ssh_key.key_name

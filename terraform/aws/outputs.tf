@@ -19,6 +19,12 @@ site1_app_private_ip  = ${module.site1.application_data["private_ip"]}
 site1_app_public_dns  = ${module.site1.application_data["public_dns"]}
 site1_app_public_ip   = ${module.site1.application_data["public_ip"]}
 
+site1_svc_hostname    = site1-svc-${replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site1_svc_private_dns = ${module.site1.service_data["private_dns"]}
+site1_svc_private_ip  = ${module.site1.service_data["private_ip"]}
+site1_svc_public_dns  = ${module.site1.service_data["public_dns"]}
+site1_svc_public_ip   = ${module.site1.service_data["public_ip"]}
+
 site2_db_hostname     = site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
 site2_db_private_dns  = ${module.site2.database_data["private_dns"]}
 site2_db_private_ip   = ${module.site2.database_data["private_ip"]}
@@ -31,11 +37,19 @@ site2_app_private_ip  = ${module.site2.application_data["private_ip"]}
 site2_app_public_dns  = ${module.site2.application_data["public_dns"]}
 site2_app_public_ip   = ${module.site2.application_data["public_ip"]}
 
-[being practical here]
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
-ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
+site2_svc_hostname    = site2-svc-${replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
+site2_svc_private_dns = ${module.site1.service_data["private_dns"]}
+site2_svc_private_ip  = ${module.site1.service_data["private_ip"]}
+site2_svc_public_dns  = ${module.site1.service_data["public_dns"]}
+site2_svc_public_ip   = ${module.site1.service_data["public_ip"]}
+
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.service_data["public_ip"]}
+
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
+# ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.service_data["public_ip"]}
 EOF
   filename = format("%s/%s", var.ansible_inventories, "hosts_addresses")
 }
@@ -48,11 +62,17 @@ ${module.site1.database_data["public_ip"]}
 [site1-app]
 ${module.site1.application_data["public_ip"]}
 
+[site1-svc]
+${module.site1.service_data["public_ip"]}
+
 [site2-db]
 ${module.site2.database_data["public_ip"]}
 
 [site2-app]
 ${module.site2.application_data["public_ip"]}
+
+[site2-svc]
+${module.site2.service_data["public_ip"]}
 
 [allsites-db]
 ${module.site1.database_data["public_ip"]}
@@ -62,13 +82,9 @@ ${module.site2.database_data["public_ip"]}
 ${module.site1.application_data["public_ip"]}
 ${module.site2.application_data["public_ip"]}
 
-[allsites-monitor]
-${module.site1.database_data["public_ip"]}
-${module.site1.application_data["public_ip"]}
-${module.site2.database_data["public_ip"]}
-${module.site2.application_data["public_ip"]}
-
-[allsites-db:vars]
+[allsites-svc]
+${module.site1.service_data["public_ip"]}
+${module.site2.service_data["public_ip"]}
 
 [all:vars]
 postgresql_host= ${module.site1.database_data["private_ip"]}

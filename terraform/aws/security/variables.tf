@@ -8,6 +8,11 @@ variable "database_ports" {
   default = [22]
 }
 
+variable "service_ports" {
+  type    = list(number)
+  default = [22]
+}
+
 variable "current_vpc_id" {
   type = string
 }
