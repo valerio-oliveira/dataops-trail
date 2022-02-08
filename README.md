@@ -1,8 +1,6 @@
 <div>
   <h2 align="center">Home Task</h2>
-
   <h3 align="center">Author: Valério Oliveira</h2>
-
   <div align="center">  
     <a href="https://www.linkedin.com/in/valerio-oliveira/?locale=en_US">Visit my LinkedIn</a> · <a href="mailto:valerio.net@gmail.com">E-mail me</a>
   </div>
@@ -17,7 +15,7 @@ This table of contents is under construction.
 
 - [x] [Presentation](#presention)
 - [x] [Project tree](#project-tree)
-- [x] [Installing tools](#installing-tools)
+- [x] [Project topology](#project-topology)
 - [x] [Application environment](#application-environment)
 - [x] [Dockerizing](#dockerizing)
 - [x] [Terraformation](#terraformation)
@@ -25,8 +23,8 @@ This table of contents is under construction.
   - [x] [Database server](#database-server)
   - [x] [Replication](#replication-solution)
   - [x] [Application server](#application-server)
-  - [ ] [Load balancing with Haproxy](#load-balancing-with-haproxy)
-  - [ ] [CI/CD with Jenkins](#automation-with-jenkins)
+  - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
+  - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [ ] [References](#references)
 
@@ -34,32 +32,32 @@ This table of contents is under construction.
 
 ## Presentation
 
-This project consists of HA solution cluster running on two AWS Regions.
+This project consists of a high availability cluster running on two AWS Regions.
+
+The infrastructure was created with Terraform 1.1.5, whereas the deployment was performed on AWS EC2 Debian v. 10 virtual machines using Ansible v. 2.12.1.
+
+The Web application was containerized using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
 
 ### Region 1 contains:
 
-- Load balancer HAProxy
-- 1 node Web server Django/Python v. 3.2.5
+- A service host with HAProxy load balancer
+- An instance of the application host running the Web application (Django/Python v. 3.2.5)
 - Main PostgreSQL v. 13.5 database
 
 ### Region 2 contains:
 
-- Load balancer HAProxy
-- 1 node Web server Django/Python v. 3.2.5
+- A seccond service host with HAProxy load balancer
+- An application host running the Web application (Django/Python v. 3.2.5)
 - Standby PostgreSQL v. 13.5 database
-
-The infrastructure was created with Terraform 1.1.5, whereas deployment was performed on AWS EC2 Debian 10 virtual machines using Docker v. 20.10.12 and Ansible v. 2.12.1 locally installed.
 
 ---
 
 ## Project tree
 
-This project is divided into tree projects:
+This project is subdivided into tree projects:
 
 - Application project: includes the REST application code and Dockerfile
-
 - Terraform project: utilized to create the infrastructure layer
-
 - Ansible project: handles the deployment of applications and their dependencies
 
 This is the project tree so far:
@@ -67,43 +65,68 @@ This is the project tree so far:
 ```shell
 ❯ tree -D -I __pycache__
 .
-├── [Jan 31 11:19]  ansible
-│   ├── [Jan 31 08:33]  01-postgres.yml
-│   ├── [Jan 31 09:52]  02-database.yml
-│   ├── [Jan 31 11:19]  03-application.yml
-│   ├── [Jan 31 11:33]  ansible.cfg
-│   ├── [Jan 31 08:15]  appserver
-│   │   ├── [Jan 31 08:15]  handlers
-│   │   └── [Jan 31 08:13]  tasks
-│   │       └── [Jan 31 11:39]  main.yml
-│   ├── [Nov 29 01:16]  database-create
-│   │   ├── [Nov 29 01:16]  handlers
-│   │   └── [Nov 29 01:17]  tasks
-│   │       └── [Nov 29 01:51]  main.yml
-│   ├── [Nov 29 01:16]  dbserver-install
-│   │   ├── [Nov 22 19:33]  handlers
-│   │   │   └── [Jan 30 00:18]  main.yml
-│   │   └── [Nov 29 00:44]  tasks
-│   │       └── [Jan 30 17:29]  main.yml
-│   ├── [Dec  1 01:50]  dbserver-reset-replication
-│   │   ├── [Dec  1 01:50]  handlers
-│   │   └── [Dec  1 01:50]  tasks
-│   │       └── [Jan 31 10:09]  main.yml
-│   ├── [Nov 29 04:18]  dbserver-run-replication
-│   │   ├── [Jan 30 17:28]  handlers
-│   │   └── [Nov 29 04:18]  tasks
-│   │       └── [Jan 31 01:23]  main.yml
-│   ├── [Jan 31 09:16]  inventories
-│   │   ├── [Jan 31 05:11]  hosts
-│   │   ├── [Jan 31 09:16]  hosts_addresses
-│   │   └── [Jan 31 09:16]  hosts_ident
-│   └── [Jan 31 00:01]  monitoring
-│       └── [Jan 31 00:01]  tasks
-│           └── [Jan 31 00:01]  main.yml
+├── [Feb  7 23:31]  ansible
+│   ├── [Feb  8 11:35]  ansible.cfg
+│   ├── [Feb  8 14:50]  deploy.yml
+│   ├── [Feb  8 09:30]  inventories
+│   │   └── [Feb  8 11:55]  hosts
+│   ├── [Feb  8 14:45]  roles
+│   │   ├── [Feb  7 23:26]  appserver
+│   │   │   ├── [Feb  8 00:17]  files
+│   │   │   │   ├── [Feb  8 10:19]  site1.env
+│   │   │   │   └── [Feb  8 10:21]  site2.env
+│   │   │   ├── [Jan 31 08:15]  handlers
+│   │   │   ├── [Feb  6 14:56]  tasks
+│   │   │   │   ├── [Feb  8 07:54]  app.yml
+│   │   │   │   └── [Feb  6 18:53]  main.yml
+│   │   │   └── [Feb  7 23:28]  templates
+│   │   ├── [Nov 29 01:16]  database
+│   │   │   ├── [Nov 29 01:16]  handlers
+│   │   │   └── [Nov 29 01:17]  tasks
+│   │   │       └── [Feb  6 18:28]  main.yml
+│   │   ├── [Nov 29 01:16]  dbserver
+│   │   │   ├── [Nov 22 19:33]  handlers
+│   │   │   │   └── [Feb  1 16:35]  main.yml
+│   │   │   └── [Feb  6 11:22]  tasks
+│   │   │       ├── [Feb  6 11:22]  access.yml
+│   │   │       ├── [Feb  6 00:47]  install.yml
+│   │   │       ├── [Feb  6 11:57]  main.yml
+│   │   │       └── [Feb  6 00:48]  setup.yml
+│   │   ├── [Feb  6 14:55]  docker
+│   │   │   ├── [Feb  6 14:55]  handlers
+│   │   │   └── [Feb  6 18:49]  tasks
+│   │   │       ├── [Feb  6 19:34]  install.yml
+│   │   │       └── [Feb  6 18:53]  main.yml
+│   │   ├── [Feb  6 14:57]  each-host
+│   │   │   ├── [Feb  5 23:48]  handlers
+│   │   │   │   └── [Feb  5 23:48]  main.yml
+│   │   │   └── [Feb  5 23:48]  tasks
+│   │   │       └── [Feb  5 23:55]  main.yml
+│   │   ├── [Feb  6 15:05]  haproxy
+│   │   │   ├── [Feb  8 14:50]  files
+│   │   │   ├── [Feb  6 02:21]  handlers
+│   │   │   └── [Feb  7 21:10]  tasks
+│   │   │       ├── [Feb  7 11:35]  install.yml
+│   │   │       └── [Feb  7 11:38]  main.yml
+│   │   ├── [Nov 29 04:18]  replication
+│   │   │   ├── [Feb  1 16:33]  handlers
+│   │   │   │   └── [Feb  1 16:36]  mail.yml
+│   │   │   └── [Nov 29 04:18]  tasks
+│   │   │       └── [Feb  6 10:40]  main.yml
+│   │   └── [Feb  8 11:26]  zabbix-agent
+│   │       ├── [Feb  1 09:46]  handlers
+│   │       ├── [Feb  2 22:24]  tasks
+│   │       │   └── [Feb  8 11:52]  main.yml
+│   │       ├── [Feb  8 11:29]  templates
+│   │       │   └── [Feb  8 11:44]  zabbix_agentd.conf.j2
+│   │       └── [Feb  8 11:31]  vars
+│   │           └── [Feb  8 11:31]  debian.yml
+│   └── [Feb  7 23:31]  templates
+│       └── [Feb  8 00:21]  hosts
 ├── [Nov 28 16:12]  __ansible.__cfg__
-├── [Nov 30 22:44]  application
+├── [Feb  2 17:20]  application
 │   ├── [Nov 17 02:54]  db.sqlite3
-│   ├── [Jan 31 09:15]  Dockerfile
+│   ├── [Feb  2 17:39]  Dockerfile
 │   ├── [Jan 31 02:03]  hometaskapp
 │   │   ├── [Nov 17 00:17]  admin.py
 │   │   ├── [Nov 17 00:17]  apps.py
@@ -124,83 +147,64 @@ This is the project tree so far:
 │   │   ├── [Nov 17 01:10]  urls.py
 │   │   └── [Nov 17 00:17]  wsgi.py
 │   ├── [Nov 17 00:17]  manage.py
-│   └── [Nov 30 22:21]  requirements.txt
-├── [Jan 31 11:22]  README.md
+│   └── [Feb  5 00:26]  requirements.txt
+├── [Feb  5 11:40]  README.md
 ├── [Nov 21 12:18]  r.gif
 └── [Nov 26 10:38]  terraform
-    └── [Jan 31 09:16]  aws
-        ├── [Jan 30 02:51]  main.tf
-        ├── [Jan 31 05:20]  outputs.tf
+    └── [Feb  8 14:50]  aws
+        ├── [Feb  7 11:48]  main.tf
+        ├── [Feb  8 10:05]  outputs.tf
         ├── [Dec  2 14:38]  per-region
-        │   ├── [Jan 28 17:23]  main.tf
-        │   ├── [Dec  2 21:44]  outputs.tf
-        │   └── [Dec  2 21:44]  variables.tf
-        ├── [Nov 25 15:32]  provider.tf
+        │   ├── [Feb  7 17:51]  main.tf
+        │   ├── [Feb  6 01:16]  outputs.tf
+        │   └── [Feb  6 23:16]  variables.tf
+        ├── [Feb  7 18:11]  provider.tf
         ├── [Dec  3 00:17]  security
-        │   ├── [Dec  3 00:48]  main.tf
-        │   ├── [Nov 27 11:09]  outputs.tf
-        │   └── [Dec  3 00:17]  variables.tf
-        ├── [Jan 31 00:47]  templates
-        ├── [Jan 31 09:16]  terraform.tfstate
-        ├── [Jan 31 09:14]  terraform.tfstate.backup
-        ├── [Jan 31 09:19]  variables.auto.tfvars
-        ├── [Jan 31 05:13]  variables.tf
+        │   ├── [Feb  6 01:14]  main.tf
+        │   ├── [Feb  6 22:50]  outputs.tf
+        │   └── [Feb  6 01:13]  variables.tf
+        ├── [Feb  8 14:50]  terraform.tfstate
+        ├── [Feb  8 14:50]  terraform.tfstate.backup
+        ├── [Feb  7 23:27]  variables.auto.tfvars
+        ├── [Feb  7 23:27]  variables.tf
         └── [Dec  1 09:22]  vm
-            ├── [Dec  2 21:37]  main.tf
-            ├── [Dec  2 20:54]  outputs.tf
-            └── [Dec  2 15:00]  variables.tf
+            ├── [Feb  5 22:13]  main.tf
+            ├── [Feb  5 22:45]  outputs.tf
+            └── [Feb  5 22:42]  variables.tf
+
+43 directories, 63 files
 ```
 
-## Preparation
+## Project topology
 
-1: Make sure the SSH keys were created for current user (root) with proper permissions.
+The infrastructure and application was developed following topology.
 
-## 2:
+<div>
+  <p align="left">
+    <img src="hometask.png" alt="Logo">
+  </p>
+</div>
 
 ## Application environment
 
-On the root folder of the hometastproject project, just create an ".env" file and paste the content above in it. Then, follow the hints in order to fill the variables values.
+The .env file currently present in the application folder exists just to build the application's Docker image.
 
-IMPORTANT! Be careful on not adding any space between the equal sign and the value of each variable.
-
-> .env
->
-> ```py
-> # ------------
-> # django
-> # ------------
-> # Replace the content of the string with the secret key of your own Django "settings.py" file.
-> SECRET_KEY='django-insecure-wak-...'
->
-> # ------------
-> # database
-> # ------------
-> # Set the credentials for the PostgreSQL database
-> host=             # IP or DNS of the database Host
-> port=             # (default 5432)
-> database=         # Database name
-> user=             # Role name
-> password=         # Database role password
-> application_name=Birthday Application
-> ```
+After provisioning the infrastructure on the Cloud, among other files Terraform will create two .env files (site1.env amd site2.env), which will later be copied to the service
 
 ## Dockerizing
 
 The steps bellow shall be tak0en in the API project's directory.
 
-> Dockerfile
->
-> ```docker
-> FROM python:3
->
-> WORKDIR /usr/src/app
-> COPY requirements.txt ./
-> RUN pip install --no-cache-dir -r requirements.txt
->
-> COPY . .
->
-> CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
-> ```
+Dockerfile
+
+```docker
+FROM python:3
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
+```
 
 Building an image named "api"
 

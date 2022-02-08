@@ -1,5 +1,0 @@
----
-- name: Removins Zabbix-Agent
-  apt:
-    name: zabbix-agent
-    state: removed

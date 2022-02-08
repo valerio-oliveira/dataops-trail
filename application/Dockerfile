@@ -1,14 +1,9 @@
-
-# # ------------
-# # Python API
-# # ------------
 FROM python:3
 
 LABEL maintainer="Valerio Oliveira <https://github.com/valerio-oliveira>"
 LABEL build_date="2022-01-29"
 
 EXPOSE 8000
-#VOLUME [ "env_data" "/var/lib/app"]
 WORKDIR /usr/src/app
 
 COPY . .
