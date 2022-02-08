@@ -11,7 +11,7 @@
 
 ## Table of contents
 
-This table of contents is under construction.
+This table of contents is under construction. It will get updated as it reflects the project's progress.
 
 - [x] [Presentation](#presention)
 - [x] [Project tree](#project-tree)
@@ -21,10 +21,11 @@ This table of contents is under construction.
 - [x] [Terraformation](#terraformation)
 - [x] [Ansible in action](#ansible-in-action)
   - [x] [Database server](#database-server)
-  - [x] [Replication](#replication-solution)
+  - [x] [Database replication](#database-replication)
   - [x] [Application server](#application-server)
   - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
-  - [ ] [CI/CD with Jenkins](#ci/cd-with-jenkins)
+  - 🔸 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
+  - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [ ] [References](#references)
 
@@ -317,13 +318,17 @@ postgres@site1-db-19:~$ psql -d revolutdb -c "select * from base.users;"
 
 ```
 
-### Replication
+### Database replication
 
 Validating replication
 
 ---
 
 ### Application server
+
+---
+
+### Monitoring with Zabbix and Grafana
 
 ---
 
