@@ -24,7 +24,7 @@ This table of contents is under construction. It will get updated as it reflects
   - [x] [Database replication](#database-replication)
   - [x] [Application server](#application-server)
   - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
-  - 🔸 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
+  - 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
   - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [ ] [References](#references)
