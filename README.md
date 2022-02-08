@@ -24,7 +24,7 @@ This table of contents is under construction.
   - [x] [Replication](#replication-solution)
   - [x] [Application server](#application-server)
   - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
-  - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
+  - [ ] [CI/CD with Jenkins](#ci/cd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [ ] [References](#references)
 
@@ -323,23 +323,19 @@ Validating replication
 
 ---
 
-### Running playbook 03 application
+### Application server
 
 ---
 
-## Automation with Jenkins
+### Load balancing with Haproxy
 
 ---
 
-## Redis in memory database
+### CI/CD with Jenkins
 
 ---
 
 ## Orchestration with Kubernetes
-
----
-
-## Queue controlling
 
 ---
 
