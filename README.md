@@ -36,19 +36,19 @@ This project consists of a high availability cluster running on two AWS Regions.
 
 The infrastructure was created with Terraform 1.1.5, whereas the deployment was performed on AWS EC2 Debian v. 10 virtual machines using Ansible v. 2.12.1.
 
-The Web application was containerized using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
+The Web application was built to a container using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
 
 ### Region 1 contains:
 
 - A service host with HAProxy load balancer
-- An instance of the application host running the Web application (Django/Python v. 3.2.5)
-- Main PostgreSQL v. 13.5 database
+- An application host running the Web application (Django/Python v. 3.2.5)
+- The database host running the Main PostgreSQL v. 13.5 database
 
 ### Region 2 contains:
 
 - A seccond service host with HAProxy load balancer
-- An application host running the Web application (Django/Python v. 3.2.5)
-- Standby PostgreSQL v. 13.5 database
+- Another application host running the Web application (Django/Python v. 3.2.5)
+- The database host running the Replica PostgreSQL v. 13.5 database
 
 ---
 
