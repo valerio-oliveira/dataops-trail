@@ -195,64 +195,51 @@ Docker image in Dockerhub
 docker push valerionet/haproxyht:tagname
 ```
 
-After provisioning the infrastructure on the Cloud, among other files Terraform will create two .env files (site1.env and site2.env), which will later be copied to the service host.
+After provisioning the infrastructure, among other files Terraform will create two .env files (site1.env and site2.env), which will later be copied to the service host.
 
-Ansible will then replace the .env file into the application container by the site1.env file content. The site2.env file content will be kept in case of Site1 gets unavailable, and the database failover have to be performed.
+Ansible will then replace the .env file into the application container by the site1.env file content. The site2.env file will be kept in case of Site1 gets unavailable, and the database failover have to be performed.
 
 ## Dockerizing
 
-The application was build using the following command:
+The application image was built and deployed into my Docker hub repository as follow:
 
-Building the application docker image
-
-```
-
-```
-
-Dockerfile
+The application's Dockerfile
 
 ```docker
 FROM python:3
+
+LABEL maintainer="Valerio Oliveira <https://github.com/valerio-oliveira>"
+LABEL build_date="2022-01-29"
+
+EXPOSE 8000
 WORKDIR /usr/src/app
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+
 COPY . .
-CMD ["python", "manage.py", "runserver", "0.0.0.0:80"]
+
+RUN pip3 install --no-cache-dir -r requirements.txt
+RUN python3 manage.py makemigrations
+RUN python3 manage.py migrate
+
+CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
 ```
 
-Building an image named "api"
+Building the application docker image locally
 
 ```shell
-❯ docker build -t api .
+docker build -t valerionet/haproxyht:latest .
 ```
 
-If all the application's dependencies were declared on the "requirements.txt" file, the new image will be creasted.
-
-In order to test the application, the next step will be running a container.
-
-Running a container named "capi"
+Deploying to the Docker hub
 
 ```shell
-❯ docker run --name capi -d -p 80:80 --net host api
-```
-
-Eliminating the container
-
-```shell
-❯ docker rm -f capi
-```
-
-Destroying the image
-
-```shell
-❯ docker rmi api
+docker push valerionet/haproxyht:latest
 ```
 
 ---
 
 ## Terraformation
 
-Set the variables used by Terrafor.
+In order to be able to provision the infrastructure with Terraform, create the variables.auto.tfvars file into ./terraform/aws directory.
 
 variables.auto.tfvars
 
@@ -305,52 +292,13 @@ Destroying
 
 ## Ansible in action
 
-Despite provisioning both VM and applications can be done using only either Terraform or Ansible, it is a good practice to create VMs using Terraform, and using Ansible for installing and configuring the cloud applications.
+As the most of the key happens into the Ansible playbook, execution details for each role will get updated little by little.
 
-### Ansible environment setup
+Run the following command into the ./ansible directory:
 
-Setting up PEM file on Ansible
-
-> /etc/ansible/ansible.cfg
->
-> ```shell
-> # Add the path of your .PEM file.
-> private_key_file = /path/my_pem_file.pem
->
-> # Enable this param in order to avoid issues
-> allow_world_readable_tmpfiles=true
-> ```
-
-Variables
-
-> vars.yml
->
-> ```yml
-> postgresql_version: 14 # PostgreSQL version
-> postgresql_host_ip: # The internal IP
-> postgresql_port: 5432 # PostgreSQL port
-> postgresql_db_name: # The database name
-> postgresql_db_user: # The database user's name
-> postgresql_db_user_password: # The database user's password
->
-> application_name: Birthday API
-> ```
-
-> ansible.cfg
->
-> ```yml
-> [defaults]
-> host_key_checking = false
-> remote_user = admin
-> ask_pass = false
-> private_key_file = /.../my_pem_file.pem # path of your pem file
-> roles_path = /.../ansible/roles/ # your roles folder path
-> [privilege_escalation]
-> become = true
-> become_method = sudo
-> become_user = admin # Your remote user
-> become_ask_pass = false
-> ```
+```shell
+ansible-playbook -i inventories --forks 1 deploy.yml
+```
 
 ### Running playbook 01 postgres
 
