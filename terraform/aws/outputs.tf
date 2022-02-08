@@ -63,7 +63,7 @@ data "template_file" "site1_appserver_env" {
   template = file("../../ansible/roles/appserver/templates/.env")
   vars = {
     secret    = "${var.appserver_secret_key}"
-    dbhost    = "${module.site1.service_data["private_ip"]}"
+    dbhost    = "${module.site1.database_data["private_ip"]}"
     dbport    = var.dbport
     dbname    = "${var.dbname}"
     dbuser    = "${var.dbuser}"
@@ -85,7 +85,7 @@ data "template_file" "site2_appserver_env" {
   template = file("../../ansible/roles/appserver/templates/.env")
   vars = {
     secret    = "${var.appserver_secret_key}"
-    dbhost    = "${module.site2.service_data["private_ip"]}"
+    dbhost    = "${module.site2.database_data["private_ip"]}"
     dbport    = var.dbport
     dbname    = "${var.dbname}"
     dbuser    = "${var.dbuser}"
@@ -154,11 +154,6 @@ backend hometask
     balance roundrobin
     server hometask1 ${module.site1.application_data["private_ip"]}:8000
     server hometask2 ${module.site2.application_data["private_ip"]}:8000
-
-backend database
-    balance source
-    server database1 ${module.site1.database_data["private_ip"]}:5432
-    server database2 ${module.site2.database_data["private_ip"]}:5432
 
 EOF
   filename = format("%s/%s", var.haproxy_conf, "haproxy.cfg")

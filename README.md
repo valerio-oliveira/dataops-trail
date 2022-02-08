@@ -189,13 +189,25 @@ The infrastructure was provisioned as well as the software layer was deployed fo
 
 The .env file currently present in the application folder exists just to build the application's Docker image.
 
+Docker image in Dockerhub
+
+```Docker
+docker push valerionet/haproxyht:tagname
+```
+
 After provisioning the infrastructure on the Cloud, among other files Terraform will create two .env files (site1.env and site2.env), which will later be copied to the service host.
 
-Ansible will then replace the .env file into the application container by the site1.env file content.
+Ansible will then replace the .env file into the application container by the site1.env file content. The site2.env file content will be kept in case of Site1 gets unavailable, and the database failover have to be performed.
 
 ## Dockerizing
 
-The steps bellow shall be tak0en in the API project's directory.
+The application was build using the following command:
+
+Building the application docker image
+
+```
+
+```
 
 Dockerfile
 
@@ -240,18 +252,26 @@ Destroying the image
 
 ## Terraformation
 
-As I keep learning, I've made changes to the Terraform project a dozen times. The main setback here was learning the networking concepts. Now, Terraform project creates the environment in two different regions. The model works as follows:
+Set the variables used by Terrafor.
 
-Set the following variables which will be user by Terrafor.
+variables.auto.tfvars
 
-> variables.auto.tfvars
->
-> ```terraform
-> application_ports    = [22, 80]
-> database_ports    = [22, 5432]
-> ansible_directory = "../../ansible/inventories"
->
-> ```
+```terraform
+terraform_access_key = "..."        # insert here your access key for terraform
+terraform_secret_key = "..."        # insert here your secret key for terraform
+application_ports    = [22, 80, 8000]
+database_ports       = [22, 80, 5432]
+service_ports        = [22, 80, 8000, 5432]
+ansible_inventories  = "../../ansible/inventories"
+ssh_public_key       = "..."        # insert here the ssh public key for remote hosts' admin user
+appserver_secret_key = "django-..." # insert here the django server secret key
+dbport               = 5432
+dbname               = "revolutdb"  # set a name for the application database as you wish
+dbuser               = "dbuser"     # set a name for the application's user
+dbpass               = "..."        # set a pasword for the application's user
+dbappname            = "Birthday Application"
+haproxy_conf         = "../../ansible/roles/haproxy/files"
+```
 
 The steps bellow shall be taken in the "aws" directory.
 
