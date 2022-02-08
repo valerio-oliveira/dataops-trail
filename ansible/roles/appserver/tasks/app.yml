@@ -4,10 +4,17 @@
 #   docker_volume:
 #     name: env_data
 
-- name: Copy .env file to host
+- name: Copy site1.env file to host
   become: yes
   ansible.builtin.copy:
-    src: .env
+    src: site1.env
+    dest: /tmp/.
+    mode: "0600"
+
+- name: Copy site2.env file to host
+  become: yes
+  ansible.builtin.copy:
+    src: site2.env
     dest: /tmp/.
     mode: "0600"
 
@@ -27,7 +34,7 @@
 
 - name: Copy .env file to container
   become: yes
-  ansible.builtin.shell: docker cp /tmp/.env hometask:/usr/src/app/.
+  ansible.builtin.shell: docker cp /tmp/site1.env hometask:/usr/src/app/.env
 
 - name: Restart hometask app
   become: yes

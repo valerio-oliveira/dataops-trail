@@ -1,5 +1,47 @@
 ---
-- name: Removins Zabbix-Agent
+- name: gather os specific variables
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "vars/{{ ansible_distribution | lower  }}.yml"
+
+- name: Download zabbix repo package
+  get_url:
+    url: "{{ zabbix_repo_url }}"
+    dest: /tmp/zabbix.deb
+
+- name: Install zabbix repo
+  become: yes
+  apt:
+    deb: /tmp/zabbix.deb
+    state: present
+
+- name: Install zabbix agent
+  become: yes
   apt:
     name: zabbix-agent
-    state: removed
+    state: present
+    update_cache: yes
+
+- name: Stop service zabbix-agent
+  become: yes
+  service:
+    name: zabbix-agent
+    state: stopped
+
+- name: Remove zabbix config file
+  become: yes
+  file:
+    path: /etc/zabbix/zabbix_agentd.conf
+    state: absent
+
+- name: Create new zabbix config file from template
+  become: yes
+  template:
+    src: "templates/zabbix_agentd.conf.j2"
+    dest: "/etc/zabbix/zabbix_agentd.conf"
+
+- name: Start service zabbix-agent
+  become: yes
+  service:
+    name: zabbix-agent
+    state: started

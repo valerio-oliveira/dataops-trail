@@ -1,0 +1,85 @@
+[site1-db]
+${site1_db_public_ip}
+
+[site1-app]
+${site1_app_public_ip}
+
+[site1-svc]
+${site1_svc_public_ip}
+
+[site2-db]
+${site2_db_public_ip}
+
+[site2-app]
+${site2_app_public_ip}
+
+[site2-svc]
+${site2_svc_public_ip}
+
+[allsites-db]
+${site1_db_public_ip}
+${site2_db_public_ip}
+
+[allsites-app]
+${site1_app_public_ip}
+${site2_app_public_ip}
+
+[allsites-svc]
+${site1_svc_public_ip}
+${site2_svc_public_ip}
+
+[all:vars]
+postgresql_host= ${postgresql_host}
+postgresql_port= ${postgresql_port}
+postgresql_db_name= \"${postgresql_db_name}\"
+postgresql_db_user= \"${postgresql_db_user}\"
+postgresql_db_user_password= \"${postgresql_db_user_password}\"
+
+api_application_name= \"${api_application_name}\"
+api_source_directory= \"${api_source_directory}\"
+api_destination_directory= \"${api_destination_directory}\"
+api_owner= \"admin\"
+
+site1_db_hostname     = ${site1_db_hostname}
+site1_db_private_dns  = ${site1_db_private_dns}
+site1_db_private_ip   = ${site1_db_private_ip}
+site1_db_public_dns   = ${site1_db_public_dns}
+site1_db_public_ip    = ${site1_db_public_ip}
+
+site1_app_hostname    = ${site1_app_hostname}
+site1_app_private_dns = ${site1_app_private_dns}
+site1_app_private_ip  = ${site1_app_private_ip}
+site1_app_public_dns  = ${site1_app_public_dns}
+site1_app_public_ip   = ${site1_app_public_ip}
+
+site1_svc_hostname    = ${site1_svc_hostname}
+site1_svc_private_dns = ${site1_svc_private_dns}
+site1_svc_private_ip  = ${site1_svc_private_ip}
+site1_svc_public_dns  = ${site1_svc_public_dns}
+site1_svc_public_ip   = ${site1_svc_public_ip}
+
+site2_db_hostname     = ${site2_db_hostname}
+site2_db_private_dns  = ${site2_db_private_dns}
+site2_db_private_ip   = ${site2_db_private_ip}
+site2_db_public_dns   = ${site2_db_public_dns}
+site2_db_public_ip    = ${site2_db_public_ip}
+
+site2_app_hostname    = ${site2_app_hostname}
+site2_app_private_dns = ${site2_app_private_dns}
+site2_app_private_ip  = ${site2_app_private_ip}
+site2_app_public_dns  = ${site2_app_public_dns}
+site2_app_public_ip   = ${site2_app_public_ip}
+
+site2_svc_hostname    = ${site2_svc_hostname}
+site2_svc_private_dns = ${site2_svc_private_dns}
+site2_svc_private_ip  = ${site2_svc_private_ip}
+site2_svc_public_dns  = ${site2_svc_public_dns}
+site2_svc_public_ip   = ${site2_svc_public_ip}
+
+# ssh -i ${ssh_public_key} admin@${site1_db_public_ip}
+# ssh -i ${ssh_public_key} admin@${site1_app_public_ip}
+# ssh -i ${ssh_public_key} admin@${site1_svc_public_ip}
+
+# ssh -i ${ssh_public_key} admin@${site2_db_public_ip}
+# ssh -i ${ssh_public_key} admin@${site2_app_public_ip}
+# ssh -i ${ssh_public_key} admin@${site2_svc_public_ip}

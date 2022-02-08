@@ -1,59 +1,3 @@
-# variable "filename" {
-#   default = "./templates/hosts_ident1.txt" # format("%s/%s", var.ansible_inventories, "hosts_ident")
-# }
-
-
-
-# resource "local_file" "hosts_addresses" {
-#   content  = <<EOF
-# [all:vars]
-# site1_db_hostname     = site1-db-${replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-# site1_db_private_dns  = ${module.site1.database_data["private_dns"]}
-# site1_db_private_ip   = ${module.site1.database_data["private_ip"]}
-# site1_db_public_dns   = ${module.site1.database_data["public_dns"]}
-# site1_db_public_ip    = ${module.site1.database_data["public_ip"]}
-
-# site1_app_hostname    = site1-app-${replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-# site1_app_private_dns = ${module.site1.application_data["private_dns"]}
-# site1_app_private_ip  = ${module.site1.application_data["private_ip"]}
-# site1_app_public_dns  = ${module.site1.application_data["public_dns"]}
-# site1_app_public_ip   = ${module.site1.application_data["public_ip"]}
-
-# site1_svc_hostname    = site1-svc-${replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-# site1_svc_private_dns = ${module.site1.service_data["private_dns"]}
-# site1_svc_private_ip  = ${module.site1.service_data["private_ip"]}
-# site1_svc_public_dns  = ${module.site1.service_data["public_dns"]}
-# site1_svc_public_ip   = ${module.site1.service_data["public_ip"]}
-
-# site2_db_hostname     = site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-# site2_db_private_dns  = ${module.site2.database_data["private_dns"]}
-# site2_db_private_ip   = ${module.site2.database_data["private_ip"]}
-# site2_db_public_dns   = ${module.site2.database_data["public_dns"]}
-# site2_db_public_ip    = ${module.site2.database_data["public_ip"]}
-
-# site2_app_hostname    = site2-app-${replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-# site2_app_private_dns = ${module.site2.application_data["private_dns"]}
-# site2_app_private_ip  = ${module.site2.application_data["private_ip"]}
-# site2_app_public_dns  = ${module.site2.application_data["public_dns"]}
-# site2_app_public_ip   = ${module.site2.application_data["public_ip"]}
-
-# site2_svc_hostname    = site2-svc-${replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}
-# site2_svc_private_dns = ${module.site2.service_data["private_dns"]}
-# site2_svc_private_ip  = ${module.site2.service_data["private_ip"]}
-# site2_svc_public_dns  = ${module.site2.service_data["public_dns"]}
-# site2_svc_public_ip   = ${module.site2.service_data["public_ip"]}
-
-# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.database_data["public_ip"]}
-# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.application_data["public_ip"]}
-# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site1.service_data["public_ip"]}
-
-# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.database_data["public_ip"]}
-# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.application_data["public_ip"]}
-# # ssh -i ${replace(var.ssh_public_key, ".pub", "")} admin@${module.site2.service_data["public_ip"]}
-# EOF
-#   filename = format("%s/%s", var.ansible_inventories, "hosts_addresses")
-# }
-
 data "template_file" "ansible_hosts" {
   template = file("../../ansible/templates/hosts")
   vars = {
@@ -68,37 +12,37 @@ data "template_file" "ansible_hosts" {
     api_destination_directory = "/usr/src/application/"
     api_owner                 = "admin"
 
-    site1_db_hostname    = "site1-db-${replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}"
+    site1_db_hostname    = "site1-db-${split("172-20-1-", replace(replace(split(".", module.site1.database_data["private_dns"])[0], "ip-", ""), "ec2-", ""))[1]}"
     site1_db_private_dns = module.site1.database_data["private_dns"]
     site1_db_private_ip  = module.site1.database_data["private_ip"]
     site1_db_public_dns  = module.site1.database_data["public_dns"]
     site1_db_public_ip   = module.site1.database_data["public_ip"]
 
-    site1_app_hostname    = "site1-app-${replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}"
+    site1_app_hostname    = "site1-app-${split("172-20-1-", replace(replace(split(".", module.site1.application_data["private_dns"])[0], "ip-", ""), "ec2-", ""))[1]}"
     site1_app_private_dns = module.site1.application_data["private_dns"]
     site1_app_private_ip  = module.site1.application_data["private_ip"]
     site1_app_public_dns  = module.site1.application_data["public_dns"]
     site1_app_public_ip   = module.site1.application_data["public_ip"]
 
-    site1_svc_hostname    = "site1-svc-${replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}"
+    site1_svc_hostname    = "site1-svc-${split("172-20-1-", replace(replace(split(".", module.site1.service_data["private_dns"])[0], "ip-", ""), "ec2-", ""))[1]}"
     site1_svc_private_dns = module.site1.service_data["private_dns"]
     site1_svc_private_ip  = module.site1.service_data["private_ip"]
     site1_svc_public_dns  = module.site1.service_data["public_dns"]
     site1_svc_public_ip   = module.site1.service_data["public_ip"]
 
-    site2_db_hostname    = "site2-db-${replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", "")}"
+    site2_db_hostname    = "site2-db-${split("172-21-1-", replace(replace(split(".", module.site2.database_data["private_dns"])[0], "ip-", ""), "ec2-", ""))[1]}"
     site2_db_private_dns = module.site2.database_data["private_dns"]
     site2_db_private_ip  = module.site2.database_data["private_ip"]
     site2_db_public_dns  = module.site2.database_data["public_dns"]
     site2_db_public_ip   = module.site2.database_data["public_ip"]
 
-    site2_app_hostname    = "site2-app-${replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", "")}"
+    site2_app_hostname    = "site2-app-${split("172-21-1-", replace(replace(split(".", module.site2.application_data["private_dns"])[0], "ip-", ""), "ec2-", ""))[1]}"
     site2_app_private_dns = module.site2.application_data["private_dns"]
     site2_app_private_ip  = module.site2.application_data["private_ip"]
     site2_app_public_dns  = module.site2.application_data["public_dns"]
     site2_app_public_ip   = module.site2.application_data["public_ip"]
 
-    site2_svc_hostname    = "site2-svc-${replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", "")}"
+    site2_svc_hostname    = "site2-svc-${split("172-21-1-", replace(replace(split(".", module.site2.service_data["private_dns"])[0], "ip-", ""), "ec2-", ""))[1]}"
     site2_svc_private_dns = module.site2.service_data["private_dns"]
     site2_svc_private_ip  = module.site2.service_data["private_ip"]
     site2_svc_public_dns  = module.site2.service_data["public_dns"]
@@ -157,6 +101,7 @@ resource "null_resource" "site2_appserver_env_output" {
     command = "echo \"${data.template_file.site2_appserver_env.rendered}\" > ${join("/", ["../../ansible/roles/appserver/files", "site2.env"])}"
   }
 }
+
 resource "local_file" "haproxy_cfg" {
   content  = <<EOF
 global
