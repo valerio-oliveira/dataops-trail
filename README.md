@@ -189,7 +189,9 @@ The infrastructure was provisioned as well as the software layer was deployed fo
 
 The .env file currently present in the application folder exists just to build the application's Docker image.
 
-After provisioning the infrastructure on the Cloud, among other files Terraform will create two .env files (site1.env amd site2.env), which will later be copied to the service
+After provisioning the infrastructure on the Cloud, among other files Terraform will create two .env files (site1.env and site2.env), which will later be copied to the service host.
+
+Ansible will then replace the .env file into the application container by the site1.env file content.
 
 ## Dockerizing
 
