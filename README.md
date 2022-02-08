@@ -300,26 +300,26 @@ Run the following command into the ./ansible directory:
 ansible-playbook -i inventories --forks 1 deploy.yml
 ```
 
-### Running playbook 01 postgres
-
-````
+### Database server
 
 Validating the PostgreSQL instalation and the database creation:
 
 ```bash
 ❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@3.82.150.254
 
-admin@ip-172-20-1-19:~$ sudo su - postgres
+admin@site1-db-19:~$ sudo su - postgres
 
-postgres@ip-172-20-1-19:~$ psql -d revolutdb -c "select * from base.users;"
+postgres@site1-db-19:~$ psql -d revolutdb -c "select * from base.users;"
 
  username | birthday
 ----------+----------
 (0 rows)
 
-````
+```
 
-### Running playbook 02 database
+### Replication
+
+Validating replication
 
 ---
 

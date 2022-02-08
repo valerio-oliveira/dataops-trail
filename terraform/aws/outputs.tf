@@ -80,12 +80,11 @@ resource "null_resource" "site1_appserver_env_output" {
   }
 }
 
-
 data "template_file" "site2_appserver_env" {
   template = file("../../ansible/roles/appserver/templates/.env")
   vars = {
     secret    = "${var.appserver_secret_key}"
-    dbhost    = "${module.site2.database_data["private_ip"]}"
+    dbhost    = "${module.site1.database_data["private_ip"]}"
     dbport    = var.dbport
     dbname    = "${var.dbname}"
     dbuser    = "${var.dbuser}"
@@ -147,13 +146,15 @@ frontend main
     bind *:8000
     bind *:5432
     default_backend hometask
-    acl d1 dst_port 5432
-    use_backend database if d1
 
 backend hometask
     balance roundrobin
-    server hometask1 ${module.site1.application_data["private_ip"]}:8000
-    server hometask2 ${module.site2.application_data["private_ip"]}:8000
+    server hometask1_1 ${module.site1.application_data["private_ip"]}:8001
+    server hometask1_2 ${module.site1.application_data["private_ip"]}:8002
+    server hometask1_3 ${module.site1.application_data["private_ip"]}:8003
+    server hometask2_1 ${module.site2.application_data["private_ip"]}:8001
+    server hometask2_2 ${module.site2.application_data["private_ip"]}:8002
+    server hometask2_3 ${module.site2.application_data["private_ip"]}:8003
 
 EOF
   filename = format("%s/%s", var.haproxy_conf, "haproxy.cfg")
