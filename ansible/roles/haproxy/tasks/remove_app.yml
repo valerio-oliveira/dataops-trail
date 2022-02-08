@@ -1,0 +1,31 @@
+---
+# - name: Copy haproxy.cfg file to host
+#   become: yes
+#   ansible.builtin.copy:
+#     src: haproxy.cfg
+#     dest: /tmp/.
+
+- name: Deploy HAProxy
+  become: yes
+  docker_container:
+    image: valerionet/haproxyht:latest
+    name: haproxyht
+    # restart_policy: always
+    state: started
+    sysctls: net.ipv4.ip_unprivileged_port_start=0
+    # restart: yes
+    # recreate: yes
+    ports:
+      - "80:80"
+      - "8000:8000"
+      - "5432:5432"
+# - name: Copy haproxy.cfg to container
+#   become: yes
+#   ansible.builtin.shell: docker cp /tmp/haproxy.cfg haproxyht:/usr/local/etc/haproxy/haproxy.cfg/.
+
+# - name: Restart HAProxy service
+#   become: yes
+#   community.docker.docker_container:
+#     name: haproxyht
+#     state: started
+#     restart: yes

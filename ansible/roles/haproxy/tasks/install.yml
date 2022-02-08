@@ -1,0 +1,19 @@
+---
+- name: Install HAProxy service
+  become: yes
+  apt:
+    name: "haproxy"
+    force_apt_get: yes
+    update_cache: yes
+
+- name: Copy haproxy.cfg file
+  become: yes
+  ansible.builtin.copy:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+
+- name: Restart HAProxy service
+  become: yes
+  service:
+    name: haproxy
+    state: restarted

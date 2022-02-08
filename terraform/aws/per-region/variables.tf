@@ -23,11 +23,6 @@ variable "availability_zone" {
   type = string
 }
 
-variable "is_main_region" {
-  type    = number
-  default = 0
-}
-
 variable "ssh_public_key" {
   type = string
 }

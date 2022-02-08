@@ -7,11 +7,12 @@
     state: latest
     update_cache: yes
   loop:
-    - htop
-    - lsof
-    - mcedit
-    - dstat
-    - mtr
+    - gnupg2
+    - git
+    - apt-transport-https
+    - ca-certificates
+    - software-properties-common
+    - curl
   tags:
     - dependencies
 

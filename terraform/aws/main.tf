@@ -8,21 +8,21 @@ terraform {
 }
 
 resource "aws_vpc_peering_connection" "peering_conn" {
-  provider    = aws.us-east-1
+  provider    = aws.site1
   peer_region = module.site2.current_region_name
   peer_vpc_id = module.site2.vpc_id
   vpc_id      = module.site1.vpc_id
 }
 
 resource "aws_vpc_peering_connection_accepter" "peering_conn_accepter" {
-  provider                  = aws.us-east-2
+  provider                  = aws.site2
   vpc_peering_connection_id = aws_vpc_peering_connection.peering_conn.id
   auto_accept               = true
 }
 
 module "site1" {
   source            = "./per-region"
-  providers         = { aws = aws.us-east-1 }
+  providers         = { aws = aws.site1 }
   availability_zone = "us-east-1a"
   application_ports = var.application_ports
   database_ports    = var.database_ports
@@ -36,7 +36,7 @@ module "site1" {
 
 module "site2" {
   source            = "./per-region"
-  providers         = { aws = aws.us-east-2 }
+  providers         = { aws = aws.site2 }
   availability_zone = "us-east-2a"
   application_ports = var.application_ports
   database_ports    = var.database_ports

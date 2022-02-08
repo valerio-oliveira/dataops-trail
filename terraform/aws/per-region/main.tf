@@ -80,16 +80,6 @@ resource "aws_route_table_association" "requesting_route_table_subnet" {
   route_table_id = aws_route_table.prod_route_table.id
 }
 
-module "vm_application" {
-  source            = "../vm"
-  ami               = var.ami_list[data.aws_region.current.name]
-  security_group    = module.security.application_group_id
-  vm_name           = "vm_application"
-  current_vpc_id    = aws_vpc.prod_vpc.id
-  current_subnet_id = aws_subnet.prod_subnet.id
-  key_name          = aws_key_pair.ssh_key.key_name
-}
-
 module "vm_database" {
   source            = "../vm"
   ami               = var.ami_list[data.aws_region.current.name]
@@ -100,10 +90,20 @@ module "vm_database" {
   key_name          = aws_key_pair.ssh_key.key_name
 }
 
-module "vm_service" {
+module "vm_application" {
   source            = "../vm"
   ami               = var.ami_list[data.aws_region.current.name]
   security_group    = module.security.application_group_id
+  vm_name           = "vm_application"
+  current_vpc_id    = aws_vpc.prod_vpc.id
+  current_subnet_id = aws_subnet.prod_subnet.id
+  key_name          = aws_key_pair.ssh_key.key_name
+}
+
+module "vm_service" {
+  source            = "../vm"
+  ami               = var.ami_list[data.aws_region.current.name]
+  security_group    = module.security.service_group_id
   vm_name           = "vm_service"
   current_vpc_id    = aws_vpc.prod_vpc.id
   current_subnet_id = aws_subnet.prod_subnet.id

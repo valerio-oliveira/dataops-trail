@@ -1,73 +1,71 @@
 ---
-# - hosts: site1-db
-#   remote_user: admin
-#   roles:
-#     - individual
-#   vars:
-#     hostname: "{{ site1_db_hostname }}"
+- hosts: site1-db
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_db_hostname }}"
 
-# - hosts: site1-app
-#   remote_user: admin
-#   roles:
-#     - individual
-#   vars:
-#     hostname: "{{ site1_app_hostname }}"
+- hosts: site1-app
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_app_hostname }}"
 
-# - hosts: site1-svc
-#   remote_user: admin
-#   roles:
-#     - individual
-#   vars:
-#     hostname: "{{ site1_svc_hostname }}"
+- hosts: site1-svc
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site1_svc_hostname }}"
 
-# - hosts: site2-db
-#   remote_user: admin
-#   roles:
-#     - individual
-#   vars:
-#     hostname: "{{ site2_db_hostname }}"
+- hosts: site2-db
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site2_db_hostname }}"
 
-# - hosts: site2-app
-#   remote_user: admin
-#   roles:
-#     - individual
-#   vars:
-#     hostname: "{{ site2_app_hostname }}"
+- hosts: site2-app
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site2_app_hostname }}"
 
-# - hosts: site2-svc
-#   remote_user: admin
-#   roles:
-#     - individual
-#   vars:
-#     hostname: "{{ site1_svc_hostname }}"
+- hosts: site2-svc
+  remote_user: admin
+  roles:
+    - individual
+  vars:
+    hostname: "{{ site2_svc_hostname }}"
 
-# ##------
+##------
 
-# - hosts: allsites-db
-#   remote_user: admin
-#   roles:
-#     - dbserver
+- hosts: allsites-db
+  remote_user: admin
+  roles:
+    - dbserver
 
-# - hosts: site1-db
-#   remote_user: admin
-#   roles:
-#     - database
+- hosts: site1-db
+  remote_user: admin
+  roles:
+    - database
 
-# - hosts: site2-db
-#   remote_user: admin
-#   roles:
-#     - replication
+- hosts: site2-db
+  remote_user: admin
+  roles:
+    - replication
 
-# - hosts: allsites-app
-#   remote_user: admin
-#   roles:
-#     - appserver
+- hosts: allsites-app
+  remote_user: admin
+  roles:
+    - docker
+    - appserver
 
 - hosts: allsites-svc
   remote_user: admin
   roles:
+    - docker
     - haproxy
-# - hosts: allsites-monitor
-#   remote_user: admin
-#   roles:
-#     - zabbix-agent

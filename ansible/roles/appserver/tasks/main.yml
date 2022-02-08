@@ -1,5 +1,5 @@
 ---
-- name: Install dependency packages
+- name: Install service packages
   become: yes
   apt:
     name: "{{ item }}"
@@ -9,19 +9,11 @@
   loop:
     - htop
     - lsof
-    - gnupg2
     - mcedit
     - dstat
     - mtr
     - python3-pip
-    - git
-    - apt-transport-https
-    - ca-certificates
-    - software-properties-common
-    - curl
   tags:
     - dependencies
-
-- include_tasks: docker.yml
 
 - include_tasks: app.yml

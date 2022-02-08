@@ -1,3 +1,4 @@
+---
 - name: Create database
   become: yes
   become_user: postgres

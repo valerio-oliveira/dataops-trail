@@ -42,11 +42,7 @@ variable "ssh_public_key" {
   type = string
 }
 
-variable "django_env" {
-  type = string
-}
-
-variable "django_secret_key" {
+variable "appserver_secret_key" {
   type = string
 }
 
@@ -67,5 +63,17 @@ variable "dbpass" {
 }
 
 variable "dbappname" {
+  type = string
+}
+
+variable "haproxy_conf" {
+  type = string
+}
+
+variable "terraform_access_key" {
+  type = string
+}
+
+variable "terraform_secret_key" {
   type = string
 }

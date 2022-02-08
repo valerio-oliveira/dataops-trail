@@ -11,7 +11,7 @@
     dest: /tmp/.
     mode: "0600"
 
-- name: deploy application
+- name: Deploy application
   become: yes
   docker_container:
     image: valerionet/hometask:latest
@@ -25,11 +25,11 @@
     # volumes:
     #   - env_data:/var/lib/app
 
-- name: copy .env
+- name: Copy .env file to container
   become: yes
   ansible.builtin.shell: docker cp /tmp/.env hometask:/usr/src/app/.
 
-- name: restart hometask
+- name: Restart hometask app
   become: yes
   community.docker.docker_container:
     name: hometask
