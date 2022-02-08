@@ -57,7 +57,7 @@ The Web application was built to a container using Docker v. 20.10.12 and is ava
 This project is subdivided into tree projects:
 
 - Application project: includes the REST application code and Dockerfile
-- Terraform project: utilized to create the infrastructure layer
+- Terraform project: creates the infrastructure layer
 - Ansible project: handles the deployment of applications and their dependencies
 
 This is the project tree so far:
@@ -177,7 +177,7 @@ This is the project tree so far:
 
 ## Project topology
 
-The infrastructure and application was developed following topology.
+The infrastructure was provisioned as well as the software layer was deployed following this topology:
 
 <div>
   <p align="left">
