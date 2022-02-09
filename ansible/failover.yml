@@ -1,14 +1,10 @@
 ---
 - hosts: site2-db
   remote_user: admin
-  args:
-    warn: false
   roles:
     - failover-db
 
 - hosts: allsites-app
   remote_user: admin
-  args:
-    warn: false
   roles:
     - failover-app

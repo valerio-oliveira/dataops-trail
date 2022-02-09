@@ -1,0 +1,7 @@
+---
+- name: Stop and disable PostgreSQL service on main node
+  become: yes
+  ansible.builtin.systemd:
+    name: postgresql.service
+    state: stopped
+    enabled: no

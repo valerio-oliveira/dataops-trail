@@ -1,13 +1,15 @@
 import os
 import time
 import run_deploy
+import run_stop_main_db
 import run_failover
 import destroy_all
 
 run_deploy
 time.sleep(3)
-os.system('cd ./ansible ; echo "------- FORCE FAILOVER --------" ; ansible-playbook -i inventories --forks 1 stop_main_db.yml; echo "-------------------------------"')
+run_stop_main_db
 time.sleep(3)
 run_failover
-time.sleep(420)  # wait 7 min
+time.sleep(10)
+# time.sleep(420)  # wait 7 min before destroy
 destroy_all

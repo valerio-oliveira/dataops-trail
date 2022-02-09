@@ -142,9 +142,7 @@ defaults
     errorfile 504 /etc/haproxy/errors/504.http
 
 frontend main
-    bind *:80
     bind *:8000
-    bind *:5432
     default_backend hometask
 
 backend hometask
