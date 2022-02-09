@@ -57,7 +57,7 @@ Moreover, this project is subdivided into tree projects:
 - Another application host running 3 more instances of the Web application (Django/Python v. 3.2.5)
 - The database host running the Replica PostgreSQL v. 13.5 database
 
-The strategy chosen for running the application cluster
+The strategy behind the choice for running the application cluster
 
 ---
 
@@ -68,114 +68,130 @@ This is the project tree so far:
 ```shell
 ❯ tree -D -I __pycache__
 .
-├── [Feb  7 23:31]  ansible
-│   ├── [Feb  8 11:35]  ansible.cfg
-│   ├── [Feb  8 14:50]  deploy.yml
-│   ├── [Feb  8 09:30]  inventories
-│   │   └── [Feb  8 11:55]  hosts
-│   ├── [Feb  8 14:45]  roles
-│   │   ├── [Feb  7 23:26]  appserver
-│   │   │   ├── [Feb  8 00:17]  files
-│   │   │   │   ├── [Feb  8 10:19]  site1.env
-│   │   │   │   └── [Feb  8 10:21]  site2.env
-│   │   │   ├── [Jan 31 08:15]  handlers
-│   │   │   ├── [Feb  6 14:56]  tasks
-│   │   │   │   ├── [Feb  8 07:54]  app.yml
-│   │   │   │   └── [Feb  6 18:53]  main.yml
-│   │   │   └── [Feb  7 23:28]  templates
-│   │   ├── [Nov 29 01:16]  database
-│   │   │   ├── [Nov 29 01:16]  handlers
-│   │   │   └── [Nov 29 01:17]  tasks
-│   │   │       └── [Feb  6 18:28]  main.yml
-│   │   ├── [Nov 29 01:16]  dbserver
-│   │   │   ├── [Nov 22 19:33]  handlers
-│   │   │   │   └── [Feb  1 16:35]  main.yml
-│   │   │   └── [Feb  6 11:22]  tasks
-│   │   │       ├── [Feb  6 11:22]  access.yml
-│   │   │       ├── [Feb  6 00:47]  install.yml
-│   │   │       ├── [Feb  6 11:57]  main.yml
-│   │   │       └── [Feb  6 00:48]  setup.yml
-│   │   ├── [Feb  6 14:55]  docker
-│   │   │   ├── [Feb  6 14:55]  handlers
-│   │   │   └── [Feb  6 18:49]  tasks
-│   │   │       ├── [Feb  6 19:34]  install.yml
-│   │   │       └── [Feb  6 18:53]  main.yml
-│   │   ├── [Feb  6 14:57]  each-host
-│   │   │   ├── [Feb  5 23:48]  handlers
-│   │   │   │   └── [Feb  5 23:48]  main.yml
-│   │   │   └── [Feb  5 23:48]  tasks
-│   │   │       └── [Feb  5 23:55]  main.yml
-│   │   ├── [Feb  6 15:05]  haproxy
-│   │   │   ├── [Feb  8 14:50]  files
-│   │   │   ├── [Feb  6 02:21]  handlers
-│   │   │   └── [Feb  7 21:10]  tasks
-│   │   │       ├── [Feb  7 11:35]  install.yml
-│   │   │       └── [Feb  7 11:38]  main.yml
-│   │   ├── [Nov 29 04:18]  replication
-│   │   │   ├── [Feb  1 16:33]  handlers
-│   │   │   │   └── [Feb  1 16:36]  mail.yml
-│   │   │   └── [Nov 29 04:18]  tasks
-│   │   │       └── [Feb  6 10:40]  main.yml
-│   │   └── [Feb  8 11:26]  zabbix-agent
-│   │       ├── [Feb  1 09:46]  handlers
-│   │       ├── [Feb  2 22:24]  tasks
-│   │       │   └── [Feb  8 11:52]  main.yml
-│   │       ├── [Feb  8 11:29]  templates
-│   │       │   └── [Feb  8 11:44]  zabbix_agentd.conf.j2
-│   │       └── [Feb  8 11:31]  vars
-│   │           └── [Feb  8 11:31]  debian.yml
-│   └── [Feb  7 23:31]  templates
-│       └── [Feb  8 00:21]  hosts
+├── [Feb  9 00:42]  ansible
+│   ├── [Feb  8 11:35]  ansible.cfg
+│   ├── [Feb  9 00:02]  deploy.yml
+│   ├── [Feb  9 00:27]  failover.yml
+│   ├── [Feb  8 09:30]  inventories
+│   │   └── [Feb  8 23:12]  hosts
+│   ├── [Feb  9 00:19]  roles
+│   │   ├── [Feb  7 23:26]  appserver
+│   │   │   ├── [Feb  9 00:15]  files
+│   │   │   │   ├── [Feb  8 23:12]  site1.env
+│   │   │   │   └── [Feb  9 00:15]  site2.env
+│   │   │   ├── [Jan 31 08:15]  handlers
+│   │   │   ├── [Feb  6 14:56]  tasks
+│   │   │   │   ├── [Feb  8 22:40]  app.yml
+│   │   │   │   └── [Feb  8 21:48]  main.yml
+│   │   │   └── [Feb  7 23:28]  templates
+│   │   ├── [Nov 29 01:16]  database
+│   │   │   ├── [Nov 29 01:16]  handlers
+│   │   │   └── [Nov 29 01:17]  tasks
+│   │   │       └── [Feb  6 18:28]  main.yml
+│   │   ├── [Nov 29 01:16]  dbserver
+│   │   │   ├── [Nov 22 19:33]  handlers
+│   │   │   │   └── [Feb  1 16:35]  main.yml
+│   │   │   └── [Feb  6 11:22]  tasks
+│   │   │       ├── [Feb  6 11:22]  access.yml
+│   │   │       ├── [Feb  6 00:47]  install.yml
+│   │   │       ├── [Feb  6 11:57]  main.yml
+│   │   │       └── [Feb  6 00:48]  setup.yml
+│   │   ├── [Feb  6 14:55]  docker
+│   │   │   ├── [Feb  6 14:55]  handlers
+│   │   │   └── [Feb  6 18:49]  tasks
+│   │   │       ├── [Feb  6 19:34]  install.yml
+│   │   │       └── [Feb  6 18:53]  main.yml
+│   │   ├── [Feb  6 14:57]  each-host
+│   │   │   ├── [Feb  5 23:48]  handlers
+│   │   │   │   └── [Feb  5 23:48]  main.yml
+│   │   │   └── [Feb  5 23:48]  tasks
+│   │   │       └── [Feb  5 23:55]  main.yml
+│   │   ├── [Feb  9 00:19]  failover-app
+│   │   │   ├── [Feb  9 00:19]  handlers
+│   │   │   └── [Feb  9 00:20]  tasks
+│   │   │       └── [Feb  9 00:34]  main.yml
+│   │   ├── [Feb  9 00:32]  failover-db
+│   │   │   ├── [Feb  8 23:33]  handlers
+│   │   │   └── [Feb  9 00:21]  tasks
+│   │   │       └── [Feb  9 00:33]  main.yml
+│   │   ├── [Feb  6 15:05]  haproxy
+│   │   │   ├── [Feb  9 00:00]  files
+│   │   │   ├── [Feb  6 02:21]  handlers
+│   │   │   └── [Feb  7 21:10]  tasks
+│   │   │       ├── [Feb  7 11:35]  install.yml
+│   │   │       └── [Feb  7 11:38]  main.yml
+│   │   ├── [Nov 29 04:18]  replication
+│   │   │   ├── [Feb  1 16:33]  handlers
+│   │   │   │   └── [Feb  1 16:36]  mail.yml
+│   │   │   └── [Nov 29 04:18]  tasks
+│   │   │       └── [Feb  6 10:40]  main.yml
+│   │   └── [Feb  8 11:26]  zabbix-agent
+│   │       ├── [Feb  1 09:46]  handlers
+│   │       ├── [Feb  2 22:24]  tasks
+│   │       │   └── [Feb  8 11:52]  main.yml
+│   │       ├── [Feb  8 11:29]  templates
+│   │       │   └── [Feb  8 11:44]  zabbix_agentd.conf.j2
+│   │       └── [Feb  8 11:31]  vars
+│   │           └── [Feb  8 11:31]  debian.yml
+│   ├── [Feb  9 00:43]  stop_main_db.yml
+│   ├── [Feb  7 23:31]  templates
+│   │   └── [Feb  8 00:21]  hosts
+│   └── [Feb  9 00:00]  terraform.tfstate
 ├── [Nov 28 16:12]  __ansible.__cfg__
 ├── [Feb  2 17:20]  application
-│   ├── [Nov 17 02:54]  db.sqlite3
-│   ├── [Feb  2 17:39]  Dockerfile
-│   ├── [Jan 31 02:03]  hometaskapp
-│   │   ├── [Nov 17 00:17]  admin.py
-│   │   ├── [Nov 17 00:17]  apps.py
-│   │   ├── [Nov 21 21:27]  dao
-│   │   │   ├── [Nov 21 21:27]  conpg.py
-│   │   │   └── [Nov 19 15:57]  username.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 02:54]  migrations
-│   │   │   └── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 00:17]  models.py
-│   │   ├── [Nov 17 00:17]  tests.py
-│   │   ├── [Nov 17 03:41]  urls.py
-│   │   └── [Jan 31 02:03]  views.py
-│   ├── [Nov 20 01:43]  hometaskproject
-│   │   ├── [Nov 17 00:17]  asgi.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 20 01:43]  settings.py
-│   │   ├── [Nov 17 01:10]  urls.py
-│   │   └── [Nov 17 00:17]  wsgi.py
-│   ├── [Nov 17 00:17]  manage.py
-│   └── [Feb  5 00:26]  requirements.txt
-├── [Feb  5 11:40]  README.md
+│   ├── [Nov 17 02:54]  db.sqlite3
+│   ├── [Feb  8 15:38]  Dockerfile
+│   ├── [Jan 31 02:03]  hometaskapp
+│   │   ├── [Nov 17 00:17]  admin.py
+│   │   ├── [Nov 17 00:17]  apps.py
+│   │   ├── [Nov 21 21:27]  dao
+│   │   │   ├── [Nov 21 21:27]  conpg.py
+│   │   │   └── [Nov 19 15:57]  username.py
+│   │   ├── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 17 02:54]  migrations
+│   │   │   └── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 17 00:17]  models.py
+│   │   ├── [Nov 17 00:17]  tests.py
+│   │   ├── [Nov 17 03:41]  urls.py
+│   │   └── [Jan 31 02:03]  views.py
+│   ├── [Nov 20 01:43]  hometaskproject
+│   │   ├── [Nov 17 00:17]  asgi.py
+│   │   ├── [Nov 17 00:17]  __init__.py
+│   │   ├── [Nov 20 01:43]  settings.py
+│   │   ├── [Nov 17 01:10]  urls.py
+│   │   └── [Nov 17 00:17]  wsgi.py
+│   ├── [Nov 17 00:17]  manage.py
+│   └── [Feb  5 00:26]  requirements.txt
+├── [Feb  9 00:18]  destroy_all.py
+├── [Feb  8 21:31]  hometask.png
+├── [Feb  8 22:13]  README.md
 ├── [Nov 21 12:18]  r.gif
-└── [Nov 26 10:38]  terraform
-    └── [Feb  8 14:50]  aws
-        ├── [Feb  7 11:48]  main.tf
-        ├── [Feb  8 10:05]  outputs.tf
-        ├── [Dec  2 14:38]  per-region
-        │   ├── [Feb  7 17:51]  main.tf
-        │   ├── [Feb  6 01:16]  outputs.tf
-        │   └── [Feb  6 23:16]  variables.tf
-        ├── [Feb  7 18:11]  provider.tf
-        ├── [Dec  3 00:17]  security
-        │   ├── [Feb  6 01:14]  main.tf
-        │   ├── [Feb  6 22:50]  outputs.tf
-        │   └── [Feb  6 01:13]  variables.tf
-        ├── [Feb  8 14:50]  terraform.tfstate
-        ├── [Feb  8 14:50]  terraform.tfstate.backup
-        ├── [Feb  7 23:27]  variables.auto.tfvars
-        ├── [Feb  7 23:27]  variables.tf
-        └── [Dec  1 09:22]  vm
-            ├── [Feb  5 22:13]  main.tf
-            ├── [Feb  5 22:45]  outputs.tf
-            └── [Feb  5 22:42]  variables.tf
+├── [Feb  8 23:36]  run_deploy.py
+├── [Feb  9 00:39]  run_failover.py
+├── [Nov 26 10:38]  terraform
+│   └── [Feb  9 00:03]  aws
+│       ├── [Feb  7 11:48]  main.tf
+│       ├── [Feb  8 21:32]  outputs.tf
+│       ├── [Dec  2 14:38]  per-region
+│       │   ├── [Feb  7 17:51]  main.tf
+│       │   ├── [Feb  6 01:16]  outputs.tf
+│       │   └── [Feb  6 23:16]  variables.tf
+│       ├── [Feb  7 18:11]  provider.tf
+│       ├── [Dec  3 00:17]  security
+│       │   ├── [Feb  6 01:14]  main.tf
+│       │   ├── [Feb  6 22:50]  outputs.tf
+│       │   └── [Feb  6 01:13]  variables.tf
+│       ├── [Feb  9 00:03]  terraform.tfstate
+│       ├── [Feb  9 00:00]  terraform.tfstate.backup
+│       ├── [Feb  8 22:15]  variables.auto.tfvars
+│       ├── [Feb  7 23:27]  variables.tf
+│       └── [Dec  1 09:22]  vm
+│           ├── [Feb  5 22:13]  main.tf
+│           ├── [Feb  5 22:45]  outputs.tf
+│           └── [Feb  5 22:42]  variables.tf
+└── [Feb  9 00:44]  test_failover.py
 
-43 directories, 63 files
+49 directories, 73 files
 ```
 
 ## Project topology
