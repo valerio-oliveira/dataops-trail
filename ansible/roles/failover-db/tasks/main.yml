@@ -1,0 +1,7 @@
+---
+- name: Promote replication node to master
+  become: yes
+  become_user: postgres
+  community.postgresql.postgresql_query:
+    db: postgres
+    query: SELECT pg_promote();

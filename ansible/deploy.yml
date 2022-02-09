@@ -1,6 +1,8 @@
 ---
 - hosts: site1-db
   remote_user: admin
+  args:
+    warn: false
   roles:
     - each-host
   vars:
@@ -8,6 +10,8 @@
 
 - hosts: site1-app
   remote_user: admin
+  args:
+    warn: false
   roles:
     - each-host
   vars:
@@ -15,6 +19,8 @@
 
 - hosts: site1-svc
   remote_user: admin
+  args:
+    warn: false
   roles:
     - each-host
   vars:
@@ -22,6 +28,8 @@
 
 - hosts: site2-db
   remote_user: admin
+  args:
+    warn: false
   roles:
     - each-host
   vars:
@@ -29,6 +37,8 @@
 
 - hosts: site2-app
   remote_user: admin
+  args:
+    warn: false
   roles:
     - each-host
   vars:
@@ -36,6 +46,8 @@
 
 - hosts: site2-svc
   remote_user: admin
+  args:
+    warn: false
   roles:
     - each-host
   vars:
@@ -45,22 +57,30 @@
 
 - hosts: allsites-db
   remote_user: admin
+  args:
+    warn: false
   roles:
     - dbserver
 
 - hosts: site1-db
   remote_user: admin
+  args:
+    warn: false
   roles:
     - database
 
 - hosts: site2-db
   remote_user: admin
+  args:
+    warn: false
   roles:
     - replication
     - zabbix-agent
 
 - hosts: allsites-app
   remote_user: admin
+  args:
+    warn: false
   roles:
     - docker
     - appserver
@@ -68,5 +88,7 @@
 
 - hosts: allsites-svc
   remote_user: admin
+  args:
+    warn: false
   roles:
     - haproxy

@@ -84,7 +84,7 @@ data "template_file" "site2_appserver_env" {
   template = file("../../ansible/roles/appserver/templates/.env")
   vars = {
     secret    = "${var.appserver_secret_key}"
-    dbhost    = "${module.site1.database_data["private_ip"]}"
+    dbhost    = "${module.site2.database_data["private_ip"]}"
     dbport    = var.dbport
     dbname    = "${var.dbname}"
     dbuser    = "${var.dbuser}"

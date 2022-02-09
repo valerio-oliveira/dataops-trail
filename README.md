@@ -24,7 +24,7 @@ This table of contents is under construction. It will get updated as it reflects
   - [x] [Database replication](#database-replication)
   - [x] [Application server](#application-server)
   - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
-  - 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
+  - [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
   - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [ ] [References](#references)
@@ -37,29 +37,31 @@ This project consists of a high availability cluster running on two AWS Regions.
 
 The infrastructure was created with Terraform 1.1.5, whereas the deployment was performed on AWS EC2 Debian v. 10 virtual machines using Ansible v. 2.12.1.
 
-The Web application was built to a container using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
+The Web application was built into a container using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
+
+Moreover, this project is subdivided into tree projects:
+
+- Application project: includes the REST application code and Dockerfile
+- Terraform project: creates the infrastructure layer
+- Ansible project: handles the deployment of applications and their dependencies
 
 ### Region 1 contains:
 
 - A service host with HAProxy load balancer
-- An application host running the Web application (Django/Python v. 3.2.5)
+- An application host running 3 instances of the Web application (Django/Python v. 3.2.5)
 - The database host running the Main PostgreSQL v. 13.5 database
 
 ### Region 2 contains:
 
 - A seccond service host with HAProxy load balancer
-- Another application host running the Web application (Django/Python v. 3.2.5)
+- Another application host running 3 more instances of the Web application (Django/Python v. 3.2.5)
 - The database host running the Replica PostgreSQL v. 13.5 database
+
+The strategy chosen for running the application cluster
 
 ---
 
 ## Project tree
-
-This project is subdivided into tree projects:
-
-- Application project: includes the REST application code and Dockerfile
-- Terraform project: creates the infrastructure layer
-- Ansible project: handles the deployment of applications and their dependencies
 
 This is the project tree so far:
 
@@ -240,7 +242,7 @@ docker push valerionet/haproxyht:latest
 
 ## Terraformation
 
-In order to be able to provision the infrastructure with Terraform, create the variables.auto.tfvars file into ./terraform/aws directory.
+In order to get able to provision the infrastructure with Terraform, create the variables.auto.tfvars file into ./terraform/aws directory.
 
 variables.auto.tfvars
 

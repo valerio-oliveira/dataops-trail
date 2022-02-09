@@ -1,8 +1,8 @@
 ---
-- name: Copy site1.env file to host
+- name: Copy site1.env and site2.env files to host
   become: yes
   ansible.builtin.copy:
-    src: "{{ itenm }}"
+    src: "{{ item }}"
     dest: /tmp/.
     mode: "0600"
   loop:

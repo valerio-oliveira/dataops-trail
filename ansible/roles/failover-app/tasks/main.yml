@@ -1,0 +1,19 @@
+---
+- name: Copy site2 .env file to container
+  become: yes
+  ansible.builtin.shell: "docker cp /tmp/site2.env hometask{{ item }}:/usr/src/app/.env"
+  loop:
+    - 1
+    - 2
+    - 3
+
+- name: Restart hometask app
+  become: yes
+  community.docker.docker_container:
+    name: "hometask{{ item }}"
+    state: started
+    restart: yes
+  loop:
+    - 1
+    - 2
+    - 3

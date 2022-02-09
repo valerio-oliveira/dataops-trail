@@ -1,0 +1,12 @@
+---
+- hosts: site1-db
+  remote_user: admin
+  args:
+    warn: false
+
+    - name: Stop PostgreSQL service on main node
+      become: yes
+      ansible.builtin.systemd:
+        name: postgresql.service
+        state: stopped
+        enabled: no
