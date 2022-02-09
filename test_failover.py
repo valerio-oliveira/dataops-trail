@@ -10,6 +10,6 @@ time.sleep(3)
 run_stop_main_db
 time.sleep(3)
 run_failover
-time.sleep(10)
-# time.sleep(420)  # wait 7 min before destroy
+# time.sleep(10)
+time.sleep(60*7)  # wait 7 min before destroy
 destroy_all

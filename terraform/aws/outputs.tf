@@ -60,7 +60,7 @@ resource "null_resource" "ansible_hosts_output" {
 }
 
 data "template_file" "site1_appserver_env" {
-  template = file("../../ansible/roles/appserver/templates/.env")
+  template = file("../../ansible/roles/appserver/templates/model.env")
   vars = {
     secret    = "${var.appserver_secret_key}"
     dbhost    = "${module.site1.database_data["private_ip"]}"
@@ -81,7 +81,7 @@ resource "null_resource" "site1_appserver_env_output" {
 }
 
 data "template_file" "site2_appserver_env" {
-  template = file("../../ansible/roles/appserver/templates/.env")
+  template = file("../../ansible/roles/appserver/templates/model.env")
   vars = {
     secret    = "${var.appserver_secret_key}"
     dbhost    = "${module.site2.database_data["private_ip"]}"
@@ -139,13 +139,7 @@ defaults
     errorfile 500 /etc/haproxy/errors/500.http
     errorfile 502 /etc/haproxy/errors/502.http
     errorfile 503 /etc/haproxy/errors/503.http
-    errorfile 504 /etc/haproxy/errors/504.http
-
-frontend main
-    bind *:8000
-    default_backend hometask
-
-backend hometask
+    errorfile 504 /etc/haproxy/errors/.env
     balance roundrobin
     server hometask1_1 ${module.site1.application_data["private_ip"]}:8001
     server hometask1_2 ${module.site1.application_data["private_ip"]}:8002

@@ -33,11 +33,11 @@ This table of contents is under construction. It will get updated as it reflects
 
 ## Presentation
 
-This project consists of a high availability cluster running on two AWS Regions.
+This project consists in a high availability cluster running on two AWS Regions.
 
 The infrastructure was created with Terraform 1.1.5, whereas the deployment was performed on AWS EC2 Debian v. 10 virtual machines using Ansible v. 2.12.1.
 
-The Web application was built into a container using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
+The Web application was built into a Docker image using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
 
 Moreover, this project is subdivided into tree projects:
 
@@ -47,7 +47,7 @@ Moreover, this project is subdivided into tree projects:
 
 ### Region 1 contains:
 
-- A service host with HAProxy load balancer
+- A service host with HAProxy load balancer and
 - An application host running 3 instances of the Web application (Django/Python v. 3.2.5)
 - The database host running the Main PostgreSQL v. 13.5 database
 
