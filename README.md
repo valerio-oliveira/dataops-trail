@@ -127,9 +127,14 @@ docker push valerionet/haproxyht:latest
 
 ---
 
-## Terraform setup
+## Preparing to deploy
 
-Just after pulling this project to your local machine, in order to be able to use Terraform, you need to create the "variables.auto.tfvars" file into ./terraform/aws directory, and set variable values as described below. I assume you already have installed and configured Terraform and Ansible in your machine.
+Just after pulling this project into your local machine, you will need to do take two steps before deploy the application:
+
+- Create the "Inventories" directory under "ansible" directory
+- Create the "variables.auto.tfvars" into ./terraform/aws directory, and set the project variables values.
+
+I assume you already have installed and configured Terraform and Ansible in your machine.
 
 variables.auto.tfvars
 
@@ -152,9 +157,13 @@ haproxy_conf         = "../../ansible/roles/haproxy/files"
 
 ## Deployment
 
-Make sure you have created the "variables.auto.tfvars" file, just as described in the topic above, before you run the deployment.
+Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment.
 
-Tu run both Infra provisioning with Terraform and Software provisioning with Ansible:
+### The simple way
+
+Use the following Python scripts to make the deployment easier.
+
+Tu deploy the application and get it runnning:
 
 ```bash
 puthon3 run_deploy.py
@@ -171,8 +180,6 @@ To destroy the environment:
 ```bash
 puthon3 destroy_all.py
 ```
-
-Use the following Python scripts to make the executions easier.
 
 ### Manual process
 
