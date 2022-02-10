@@ -9,7 +9,7 @@ variables/
 host*.*
 lsof -i:22
 tf_host_aws*
-inventories/
+hosts
 temp
 temp/
 # Local .terraform directories

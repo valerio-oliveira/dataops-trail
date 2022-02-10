@@ -37,19 +37,19 @@ This project consists in a high availability cluster running on two AWS Regions.
 
 The infrastructure was created with Terraform 1.1.5, whereas the deployment was performed on AWS EC2 Debian v. 10 virtual machines using Ansible v. 2.12.1.
 
-The Web application was built into a Docker image using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook builds the REST service.
+The Web application was built into a Docker image using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook get it to build the REST application.
 
 Moreover, this project is subdivided into tree projects:
 
 - Application project: includes the REST application code and Dockerfile
 - Terraform project: creates the infrastructure layer
-- Ansible project: handles the deployment of applications and their dependencies
+- Ansible project: handles the application deployment its dependencies
 
 ### Region 1 contains:
 
-- A service host with HAProxy load balancer and
-- An application host running 3 instances of the Web application (Django/Python v. 3.2.5)
-- The database host running the Main PostgreSQL v. 13.5 database
+- An EC2 service host with HAProxy load balancer and
+- An EC2 application host running 3 instances of the Web application (Django/Python v. 3.2.5)
+- An EC2 database host running the Main PostgreSQL v. 13.5 database
 
 ### Region 2 contains:
 
@@ -57,7 +57,7 @@ Moreover, this project is subdivided into tree projects:
 - Another application host running 3 more instances of the Web application (Django/Python v. 3.2.5)
 - The database host running the Replica PostgreSQL v. 13.5 database
 
-The strategy behind the choice for running the application cluster
+The application cluster take advantage of the low latency the two Regions
 
 ---
 
@@ -258,16 +258,16 @@ docker push valerionet/haproxyht:latest
 
 ## Terraformation
 
-In order to get able to provision the infrastructure with Terraform, create the variables.auto.tfvars file into ./terraform/aws directory.
+To become able to provision the infrastructure with Terraform, create the variables.auto.tfvars file into ./terraform/aws directory, and set the variables as .
 
 variables.auto.tfvars
 
 ```terraform
 terraform_access_key = "..."        # insert here your access key for terraform
 terraform_secret_key = "..."        # insert here your secret key for terraform
-application_ports    = [22, 80, 8000]
-database_ports       = [22, 80, 5432]
-service_ports        = [22, 80, 8000, 5432]
+application_ports    = [22, 8001, 8002, 8003]
+database_ports       = [22, 5432]
+service_ports        = [22, 8000]
 ansible_inventories  = "../../ansible/inventories"
 ssh_public_key       = "..."        # insert here the ssh public key for remote hosts' admin user
 appserver_secret_key = "django-..." # insert here the django server secret key
