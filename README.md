@@ -14,11 +14,11 @@
 This table of contents is under construction. It will get updated as it reflects the project's progress.
 
 - [x] [Presentation](#presention)
+- [x] [Preparing to deploy](#preparing-to-deploy)
+- [x] [Deployment](#deployment)
 - [x] [Project topology](#project-topology)
 - [x] [Application environment](#application-environment)
   - [x] [Dockerizing](#dockerizing)
-- [x] [Preparing to deploy](#preparing-to-deploy)
-- [x] [Deployment](#deployment)
 - [x] [Ansible in action](#ansible-in-action)
   - [x] [Database server](#database-server)
   - [x] [Database replication](#database-replication)
@@ -63,10 +63,10 @@ The application cluster takes advantage of the low latency between the Regions, 
 
 ## Preparing to deploy
 
-Just after pulling this project into your local machine, you will need to do take two steps before deploy the application:
+Just after pulling this project into your local machine, you will need to take two steps before deploying the application:
 
-- Create the "Inventories" directory under "ansible" directory
-- Create the "variables.auto.tfvars" into ./terraform/aws directory, and set the project variables values.
+- Create the "inventories" directory into the "ansible" directory
+- Create the "variables.auto.tfvars" into the ./terraform/aws directory, and set the values for the project variables.
 
 I assume that you already have installed and configured Terraform and Ansible in your machine.
 
@@ -119,29 +119,57 @@ puthon3 destroy_all.py
 
 ### Manual process
 
-Initializing Terraform
+To run all processes manually, you will need to create a couple of directories and files that are automatically created when running through the Python scripts.
+
+#### Infrastructure
+
+Create the "inventories" directory into the "ansible" directory.
 
 ```shell
+❯ cd ansible
+
+❯ mkdir inventories
+
+❯ cd ..
+```
+
+Into the Terraform project directory, initialize Terraform, create the project plan, and run it to provision the infrastructure.
+
+```shell
+❯ cd terraform/aws
+
 ❯ terraform init
+
+❯ terraform plan -out "hometask_plan"
+
+❯ terraform apply "hometask_plan"
+
+❯ cd ../../
 ```
 
-Checking the project plan
+#### The software layer
+
+To install all software layer, including Database engine, databases, REST application container instances, and load balancer, go to the ansible directory and run the "deploy.yml" playbook as follows:
 
 ```shell
-❯ terraform plan -out "revolut_plan"
+❯ cd ansible
+
+❯ ansible-playbook -i inventories deploy.yml
+
+❯ cd ../
 ```
 
-Applying the named plan
+#### Destroying the environment
+
+To destroy the infrastructure you created, go to the terraform directory and run the following command:
 
 ```shell
-❯ terraform apply "revolut_plan"
-```
+❯ cd terraform/aws
 
-Destroying the infrastructure created
-
-```shell
 ❯ terraform destroy
 ```
+
+When asked if you really want to destroy all resources, just type "yes" anr press return to proceed.
 
 ---
 
