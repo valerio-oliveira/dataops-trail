@@ -258,7 +258,7 @@ docker push valerionet/haproxyht:latest
 
 ## Terraformation
 
-To become able to provision the infrastructure with Terraform, create the variables.auto.tfvars file into ./terraform/aws directory, and set the variables as .
+In order to be able to provision use Terraform, you need to create the "variables.auto.tfvars" file into ./terraform/aws directory, and set the variables values as described below.
 
 variables.auto.tfvars
 
