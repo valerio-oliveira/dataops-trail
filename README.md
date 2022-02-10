@@ -17,7 +17,7 @@ This table of contents is under construction. It will get updated as it reflects
 - [x] [Project topology](#project-topology)
 - [x] [Application environment](#application-environment)
   - [x] [Dockerizing](#dockerizing)
-- [x] [Terraform setup](#terraform-setup)
+- [x] [Preparing to deploy](#preparing-to-deploy)
 - [x] [Deployment](#deployment)
 - [x] [Ansible in action](#ansible-in-action)
   - [x] [Database server](#database-server)
@@ -58,6 +58,90 @@ Moreover, this project is subdivided into tree subprojects:
 - The database host running the Replica PostgreSQL v. 13.5 database
 
 The application cluster takes advantage of the low latency between the Regions, delivered by the VPC Peer, and enables all docker images (three in each Region) to be part of the application cluster.
+
+---
+
+## Preparing to deploy
+
+Just after pulling this project into your local machine, you will need to do take two steps before deploy the application:
+
+- Create the "Inventories" directory under "ansible" directory
+- Create the "variables.auto.tfvars" into ./terraform/aws directory, and set the project variables values.
+
+I assume that you already have installed and configured Terraform and Ansible in your machine.
+
+variables.auto.tfvars
+
+```terraform
+terraform_access_key = "..."        # insert here your access key for terraform
+terraform_secret_key = "..."        # insert here your secret key for terraform
+application_ports    = [22, 8001, 8002, 8003]
+database_ports       = [22, 5432]
+service_ports        = [22, 8000]
+ansible_inventories  = "../../ansible/inventories"
+ssh_public_key       = "..."        # insert here the ssh public key for remote hosts' admin user
+appserver_secret_key = "django-..." # insert here the django server secret key
+dbport               = 5432
+dbname               = "revolutdb"  # set a name for the application database as you wish
+dbuser               = "dbuser"     # set a name for the application's user
+dbpass               = "..."        # set a pasword for the application's user
+dbappname            = "Birthday Application"
+haproxy_conf         = "../../ansible/roles/haproxy/files"
+```
+
+---
+
+## Deployment
+
+Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment.
+
+### The simple way
+
+Use the following Python scripts to make the deployment easier.
+
+Tu deploy the application and get it runnning:
+
+```bash
+puthon3 run_deploy.py
+```
+
+To proceed the failover:
+
+```bash
+puthon3 run_failover.py
+```
+
+To destroy the environment:
+
+```bash
+puthon3 destroy_all.py
+```
+
+### Manual process
+
+Initializing Terraform
+
+```shell
+❯ terraform init
+```
+
+Checking the project plan
+
+```shell
+❯ terraform plan -out "revolut_plan"
+```
+
+Applying the named plan
+
+```shell
+❯ terraform apply "revolut_plan"
+```
+
+Destroying the infrastructure created
+
+```shell
+❯ terraform destroy
+```
 
 ---
 
@@ -123,88 +207,6 @@ Deploying to the Docker hub
 
 ```shell
 docker push valerionet/haproxyht:latest
-```
-
----
-
-## Preparing to deploy
-
-Just after pulling this project into your local machine, you will need to do take two steps before deploy the application:
-
-- Create the "Inventories" directory under "ansible" directory
-- Create the "variables.auto.tfvars" into ./terraform/aws directory, and set the project variables values.
-
-I assume you already have installed and configured Terraform and Ansible in your machine.
-
-variables.auto.tfvars
-
-```terraform
-terraform_access_key = "..."        # insert here your access key for terraform
-terraform_secret_key = "..."        # insert here your secret key for terraform
-application_ports    = [22, 8001, 8002, 8003]
-database_ports       = [22, 5432]
-service_ports        = [22, 8000]
-ansible_inventories  = "../../ansible/inventories"
-ssh_public_key       = "..."        # insert here the ssh public key for remote hosts' admin user
-appserver_secret_key = "django-..." # insert here the django server secret key
-dbport               = 5432
-dbname               = "revolutdb"  # set a name for the application database as you wish
-dbuser               = "dbuser"     # set a name for the application's user
-dbpass               = "..."        # set a pasword for the application's user
-dbappname            = "Birthday Application"
-haproxy_conf         = "../../ansible/roles/haproxy/files"
-```
-
-## Deployment
-
-Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment.
-
-### The simple way
-
-Use the following Python scripts to make the deployment easier.
-
-Tu deploy the application and get it runnning:
-
-```bash
-puthon3 run_deploy.py
-```
-
-To proceed the failover:
-
-```bash
-puthon3 run_failover.py
-```
-
-To destroy the environment:
-
-```bash
-puthon3 destroy_all.py
-```
-
-### Manual process
-
-Initializing Terraform
-
-```shell
-❯ terraform init
-```
-
-Checking the project plan
-
-```shell
-❯ terraform plan -out "revolut_plan"
-```
-
-Applying the named plan
-
-```shell
-❯ terraform apply "revolut_plan"
-```
-
-Destroying the infrastructure created
-
-```shell
-❯ terraform destroy
 ```
 
 ---
