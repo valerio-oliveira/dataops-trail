@@ -139,7 +139,13 @@ defaults
     errorfile 500 /etc/haproxy/errors/500.http
     errorfile 502 /etc/haproxy/errors/502.http
     errorfile 503 /etc/haproxy/errors/503.http
-    errorfile 504 /etc/haproxy/errors/.env
+    errorfile 504 /etc/haproxy/errors/504.http
+
+frontend main
+    bind *:8000
+    default_backend hometask
+
+backend hometask
     balance roundrobin
     server hometask1_1 ${module.site1.application_data["private_ip"]}:8001
     server hometask1_2 ${module.site1.application_data["private_ip"]}:8002
@@ -147,7 +153,6 @@ defaults
     server hometask2_1 ${module.site2.application_data["private_ip"]}:8001
     server hometask2_2 ${module.site2.application_data["private_ip"]}:8002
     server hometask2_3 ${module.site2.application_data["private_ip"]}:8003
-
 EOF
   filename = format("%s/%s", var.haproxy_conf, "haproxy.cfg")
 }
