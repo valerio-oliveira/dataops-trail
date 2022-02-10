@@ -6,13 +6,27 @@ dir_name = './inventories/'
 dir_exists = os.path.exists(dir_name)
 if not dir_exists:
     os.makedirs(dir_name)
+os.chdir('../')
+
+os.system('echo "--- PROVISIONING INFRASTRUCTURE" >> logs.txt')
+os.system('date >> logs.txt')
+os.system('echo "---" >> logs.txt')
 
 os.chdir('terraform/aws/')
 os.system('terraform init')
-os.system('clear ; echo "------- TERRAFORM START -------" ; date ; echo "-------------------------------" ; terraform apply -auto-approve ; echo "-------------------------------" ; date ; echo "------ TERRAFORM FINISH -------"')
+os.system('terraform apply -auto-approve')
 os.chdir('../../')
+
 time.sleep(3)
 
+os.system('echo "--- DEPLOYING WEB SERVICE" >> logs.txt')
+os.system('date >> logs.txt')
+os.system('echo "---" >> logs.txt')
+
 os.chdir('ansible/')
-os.system('echo "-------- ANSIBLE START --------" ; date ; echo "-------------------------------" ; ansible-playbook -i inventories --forks 1 deploy.yml; echo "-------------------------------" ; date ; echo "------- ANSIBLE FINISH --------"')
+os.system('ansible-playbook -i inventories --forks 1 deploy.yml')
 os.chdir('../')
+
+os.system('echo "---" >> logs.txt')
+os.system('date >> logs.txt')
+os.system('echo "--- END" >> logs.txt')
