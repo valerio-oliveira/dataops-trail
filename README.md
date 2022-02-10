@@ -14,11 +14,11 @@
 This table of contents is under construction. It will get updated as it reflects the project's progress.
 
 - [x] [Presentation](#presention)
-- [x] [Project tree](#project-tree)
 - [x] [Project topology](#project-topology)
 - [x] [Application environment](#application-environment)
-- [x] [Dockerizing](#dockerizing)
-- [x] [Terraformation](#terraformation)
+  - [x] [Dockerizing](#dockerizing)
+- [x] [Terraform setup](#terraform-setup)
+- [x] [Deployment](#deployment)
 - [x] [Ansible in action](#ansible-in-action)
   - [x] [Database server](#database-server)
   - [x] [Database replication](#database-replication)
@@ -35,15 +35,15 @@ This table of contents is under construction. It will get updated as it reflects
 
 This project consists in a high availability cluster running on two AWS Regions.
 
-The infrastructure was created with Terraform 1.1.5, whereas the deployment was performed on AWS EC2 Debian v. 10 virtual machines using Ansible v. 2.12.1.
+The infrastructure was provisioned with Terraform 1.1.5, whereas the the software layer was deployed using Ansible v. 2.12.1.
 
-The Web application was built into a Docker image using Docker v. 20.10.12 and is available on Dockerhub, from where the playbook get it to build the REST application.
+The Web application was built into a Docker image with Docker v. 20.10.12 and is available on Dockerhub, from where the playbook gets it.
 
-Moreover, this project is subdivided into tree projects:
+Moreover, this project is subdivided into tree subprojects:
 
 - Application project: includes the REST application code and Dockerfile
 - Terraform project: creates the infrastructure layer
-- Ansible project: handles the application deployment its dependencies
+- Ansible project: handles the software layer deployment
 
 ### Region 1 contains:
 
@@ -57,146 +57,13 @@ Moreover, this project is subdivided into tree projects:
 - Another application host running 3 more instances of the Web application (Django/Python v. 3.2.5)
 - The database host running the Replica PostgreSQL v. 13.5 database
 
-The application cluster take advantage of the low latency the two Regions
+The application cluster takes advantage of the low latency between the Regions, delivered by the VPC Peer, and enables all docker images (three in each Region) to be part of the application cluster.
 
 ---
 
-## Project tree
-
-This is the project tree so far:
-
-```shell
-❯ tree -D -I __pycache__
-.
-├── [Feb  9 00:42]  ansible
-│   ├── [Feb  8 11:35]  ansible.cfg
-│   ├── [Feb  9 00:02]  deploy.yml
-│   ├── [Feb  9 00:27]  failover.yml
-│   ├── [Feb  8 09:30]  inventories
-│   │   └── [Feb  8 23:12]  hosts
-│   ├── [Feb  9 00:19]  roles
-│   │   ├── [Feb  7 23:26]  appserver
-│   │   │   ├── [Feb  9 00:15]  files
-│   │   │   │   ├── [Feb  8 23:12]  site1.env
-│   │   │   │   └── [Feb  9 00:15]  site2.env
-│   │   │   ├── [Jan 31 08:15]  handlers
-│   │   │   ├── [Feb  6 14:56]  tasks
-│   │   │   │   ├── [Feb  8 22:40]  app.yml
-│   │   │   │   └── [Feb  8 21:48]  main.yml
-│   │   │   └── [Feb  7 23:28]  templates
-│   │   ├── [Nov 29 01:16]  database
-│   │   │   ├── [Nov 29 01:16]  handlers
-│   │   │   └── [Nov 29 01:17]  tasks
-│   │   │       └── [Feb  6 18:28]  main.yml
-│   │   ├── [Nov 29 01:16]  dbserver
-│   │   │   ├── [Nov 22 19:33]  handlers
-│   │   │   │   └── [Feb  1 16:35]  main.yml
-│   │   │   └── [Feb  6 11:22]  tasks
-│   │   │       ├── [Feb  6 11:22]  access.yml
-│   │   │       ├── [Feb  6 00:47]  install.yml
-│   │   │       ├── [Feb  6 11:57]  main.yml
-│   │   │       └── [Feb  6 00:48]  setup.yml
-│   │   ├── [Feb  6 14:55]  docker
-│   │   │   ├── [Feb  6 14:55]  handlers
-│   │   │   └── [Feb  6 18:49]  tasks
-│   │   │       ├── [Feb  6 19:34]  install.yml
-│   │   │       └── [Feb  6 18:53]  main.yml
-│   │   ├── [Feb  6 14:57]  each-host
-│   │   │   ├── [Feb  5 23:48]  handlers
-│   │   │   │   └── [Feb  5 23:48]  main.yml
-│   │   │   └── [Feb  5 23:48]  tasks
-│   │   │       └── [Feb  5 23:55]  main.yml
-│   │   ├── [Feb  9 00:19]  failover-app
-│   │   │   ├── [Feb  9 00:19]  handlers
-│   │   │   └── [Feb  9 00:20]  tasks
-│   │   │       └── [Feb  9 00:34]  main.yml
-│   │   ├── [Feb  9 00:32]  failover-db
-│   │   │   ├── [Feb  8 23:33]  handlers
-│   │   │   └── [Feb  9 00:21]  tasks
-│   │   │       └── [Feb  9 00:33]  main.yml
-│   │   ├── [Feb  6 15:05]  haproxy
-│   │   │   ├── [Feb  9 00:00]  files
-│   │   │   ├── [Feb  6 02:21]  handlers
-│   │   │   └── [Feb  7 21:10]  tasks
-│   │   │       ├── [Feb  7 11:35]  install.yml
-│   │   │       └── [Feb  7 11:38]  main.yml
-│   │   ├── [Nov 29 04:18]  replication
-│   │   │   ├── [Feb  1 16:33]  handlers
-│   │   │   │   └── [Feb  1 16:36]  mail.yml
-│   │   │   └── [Nov 29 04:18]  tasks
-│   │   │       └── [Feb  6 10:40]  main.yml
-│   │   └── [Feb  8 11:26]  zabbix-agent
-│   │       ├── [Feb  1 09:46]  handlers
-│   │       ├── [Feb  2 22:24]  tasks
-│   │       │   └── [Feb  8 11:52]  main.yml
-│   │       ├── [Feb  8 11:29]  templates
-│   │       │   └── [Feb  8 11:44]  zabbix_agentd.conf.j2
-│   │       └── [Feb  8 11:31]  vars
-│   │           └── [Feb  8 11:31]  debian.yml
-│   ├── [Feb  9 00:43]  stop_main_db.yml
-│   ├── [Feb  7 23:31]  templates
-│   │   └── [Feb  8 00:21]  hosts
-│   └── [Feb  9 00:00]  terraform.tfstate
-├── [Nov 28 16:12]  __ansible.__cfg__
-├── [Feb  2 17:20]  application
-│   ├── [Nov 17 02:54]  db.sqlite3
-│   ├── [Feb  8 15:38]  Dockerfile
-│   ├── [Jan 31 02:03]  hometaskapp
-│   │   ├── [Nov 17 00:17]  admin.py
-│   │   ├── [Nov 17 00:17]  apps.py
-│   │   ├── [Nov 21 21:27]  dao
-│   │   │   ├── [Nov 21 21:27]  conpg.py
-│   │   │   └── [Nov 19 15:57]  username.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 02:54]  migrations
-│   │   │   └── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 17 00:17]  models.py
-│   │   ├── [Nov 17 00:17]  tests.py
-│   │   ├── [Nov 17 03:41]  urls.py
-│   │   └── [Jan 31 02:03]  views.py
-│   ├── [Nov 20 01:43]  hometaskproject
-│   │   ├── [Nov 17 00:17]  asgi.py
-│   │   ├── [Nov 17 00:17]  __init__.py
-│   │   ├── [Nov 20 01:43]  settings.py
-│   │   ├── [Nov 17 01:10]  urls.py
-│   │   └── [Nov 17 00:17]  wsgi.py
-│   ├── [Nov 17 00:17]  manage.py
-│   └── [Feb  5 00:26]  requirements.txt
-├── [Feb  9 00:18]  destroy_all.py
-├── [Feb  8 21:31]  hometask.png
-├── [Feb  8 22:13]  README.md
-├── [Nov 21 12:18]  r.gif
-├── [Feb  8 23:36]  run_deploy.py
-├── [Feb  9 00:39]  run_failover.py
-├── [Nov 26 10:38]  terraform
-│   └── [Feb  9 00:03]  aws
-│       ├── [Feb  7 11:48]  main.tf
-│       ├── [Feb  8 21:32]  outputs.tf
-│       ├── [Dec  2 14:38]  per-region
-│       │   ├── [Feb  7 17:51]  main.tf
-│       │   ├── [Feb  6 01:16]  outputs.tf
-│       │   └── [Feb  6 23:16]  variables.tf
-│       ├── [Feb  7 18:11]  provider.tf
-│       ├── [Dec  3 00:17]  security
-│       │   ├── [Feb  6 01:14]  main.tf
-│       │   ├── [Feb  6 22:50]  outputs.tf
-│       │   └── [Feb  6 01:13]  variables.tf
-│       ├── [Feb  9 00:03]  terraform.tfstate
-│       ├── [Feb  9 00:00]  terraform.tfstate.backup
-│       ├── [Feb  8 22:15]  variables.auto.tfvars
-│       ├── [Feb  7 23:27]  variables.tf
-│       └── [Dec  1 09:22]  vm
-│           ├── [Feb  5 22:13]  main.tf
-│           ├── [Feb  5 22:45]  outputs.tf
-│           └── [Feb  5 22:42]  variables.tf
-└── [Feb  9 00:44]  test_failover.py
-
-49 directories, 73 files
-```
-
 ## Project topology
 
-The infrastructure was provisioned as well as the software layer was deployed following this topology:
+The follows this topology:
 
 <div>
   <p align="left">
@@ -206,21 +73,25 @@ The infrastructure was provisioned as well as the software layer was deployed fo
 
 ## Application environment
 
-The .env file currently present in the application folder exists just to build the application's Docker image.
+The .env file currently present in the application folder exists just to build the Docker image. It will be replaced during the deployment process.
+
+### Details
+
+After provisioning the infrastructure, among other files Terraform will create two files, "site1.env" and "site2.env", which will later be copied to the service host.
+
+Ansible will then replace the .env file by the "site1.env" file content into all application containers.
+
+The "site2.env" file will be kept in case of Site1 gets unavailable.
+
+### Dockerizing
+
+The application image was built and deployed into my Docker hub repository.
 
 Docker image in Dockerhub
 
 ```Docker
 docker push valerionet/haproxyht:tagname
 ```
-
-After provisioning the infrastructure, among other files Terraform will create two .env files (site1.env and site2.env), which will later be copied to the service host.
-
-Ansible will then replace the .env file into the application container by the site1.env file content. The site2.env file will be kept in case of Site1 gets unavailable, and the database failover have to be performed.
-
-## Dockerizing
-
-The application image was built and deployed into my Docker hub repository as follow:
 
 The application's Dockerfile
 
@@ -256,9 +127,9 @@ docker push valerionet/haproxyht:latest
 
 ---
 
-## Terraformation
+## Terraform setup
 
-In order to be able to provision use Terraform, you need to create the "variables.auto.tfvars" file into ./terraform/aws directory, and set the variables values as described below.
+Just after pulling this project to your local machine, in order to be able to use Terraform, you need to create the "variables.auto.tfvars" file into ./terraform/aws directory, and set variable values as described below. I assume you already have installed and configured Terraform and Ansible in your machine.
 
 variables.auto.tfvars
 
@@ -279,29 +150,51 @@ dbappname            = "Birthday Application"
 haproxy_conf         = "../../ansible/roles/haproxy/files"
 ```
 
-The steps bellow shall be taken in the "aws" directory.
+## Deployment
 
-At the first time running a Terraform project, Terraform has to be initialized.
+Make sure you have created the "variables.auto.tfvars" file, just as described in the topic above, before you run the deployment.
 
-Initializing
+Tu run both Infra provisioning with Terraform and Software provisioning with Ansible:
+
+```bash
+puthon3 run_deploy.py
+```
+
+To proceed the failover:
+
+```bash
+puthon3 run_failover.py
+```
+
+To destroy the environment:
+
+```bash
+puthon3 destroy_all.py
+```
+
+Use the following Python scripts to make the executions easier.
+
+### Manual process
+
+Initializing Terraform
 
 ```shell
 ❯ terraform init
 ```
 
-Plannning
+Checking the project plan
 
 ```shell
 ❯ terraform plan -out "revolut_plan"
 ```
 
-Applying
+Applying the named plan
 
 ```shell
 ❯ terraform apply "revolut_plan"
 ```
 
-Destroying
+Destroying the infrastructure created
 
 ```shell
 ❯ terraform destroy
@@ -311,7 +204,7 @@ Destroying
 
 ## Ansible in action
 
-As the most of the key happens into the Ansible playbook, execution details for each role will get updated little by little.
+As the most of the work is performed by the Ansible playbook, execution details for each role are not written yet. It will get updated little by little.
 
 Run the following command into the ./ansible directory:
 
@@ -324,11 +217,11 @@ ansible-playbook -i inventories --forks 1 deploy.yml
 Validating the PostgreSQL instalation and the database creation:
 
 ```bash
-❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@3.82.150.254
+❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@x.x.x.x
 
-admin@site1-db-19:~$ sudo su - postgres
+admin@site1-db-x:~$ sudo su - postgres
 
-postgres@site1-db-19:~$ psql -d revolutdb -c "select * from base.users;"
+postgres@site1-db-x:~$ psql -d revolutdb -c "select * from base.users;"
 
  username | birthday
 ----------+----------
