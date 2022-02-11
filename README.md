@@ -42,7 +42,7 @@ The Web application was built into a Docker image with Docker v. 20.10.12 and is
 Moreover, this project is subdivided into tree subprojects:
 
 - Application project: includes the REST application code and Dockerfile
-- Terraform project: creates the infrastructure layer
+- Terraform project: creates the infrastructure resources
 - Ansible project: handles the software layer deployment
 
 ### Region 1 contains:
@@ -72,7 +72,7 @@ I assume that you already have installed and configured Terraform and Ansible in
 
 variables.auto.tfvars
 
-```terraform
+```py
 terraform_access_key = "..."        # insert here your access key for terraform
 terraform_secret_key = "..."        # insert here your secret key for terraform
 application_ports    = [22, 8001, 8002, 8003]
@@ -123,6 +123,8 @@ To run all processes manually, you will need to create a couple of directories a
 
 #### Infrastructure
 
+---
+
 Create the "inventories" directory into the "ansible" directory.
 
 ```shell
@@ -149,7 +151,9 @@ Into the Terraform project directory, initialize Terraform, create the project p
 
 #### The software layer
 
-To install all software layer, including Database engine, databases, REST application container instances, and load balancer, go to the ansible directory and run the "deploy.yml" playbook as follows:
+---
+
+To install all software layer, including Database engine cluster, REST application container instances, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
 
 ```shell
 ❯ cd ansible
@@ -161,12 +165,16 @@ To install all software layer, including Database engine, databases, REST applic
 
 #### Destroying the environment
 
-To destroy the infrastructure you created, go to the terraform directory and run the following command:
+---
+
+To destroy the infrastructure you created, go to the Terraform directory and run the following command:
 
 ```shell
 ❯ cd terraform/aws
 
 ❯ terraform destroy
+
+❯ cd ..
 ```
 
 When asked if you really want to destroy all resources, just type "yes" anr press return to proceed.
@@ -175,7 +183,7 @@ When asked if you really want to destroy all resources, just type "yes" anr pres
 
 ## Project topology
 
-The follows this topology:
+The project follows this topology:
 
 <div>
   <p align="left">
@@ -199,13 +207,13 @@ The "site2.env" file will be kept in case of Site1 gets unavailable.
 
 The application image was built and deployed into my Docker hub repository.
 
-Docker image in Dockerhub
+Get Docker image in Dockerhub
 
 ```Docker
 docker push valerionet/haproxyht:tagname
 ```
 
-The application's Dockerfile
+Tis is the application's Dockerfile
 
 ```docker
 FROM python:3
@@ -225,13 +233,13 @@ RUN python3 manage.py migrate
 CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
 ```
 
-Building the application docker image locally
+Building the application Docker image locally
 
 ```shell
 docker build -t valerionet/haproxyht:latest .
 ```
 
-Deploying to the Docker hub
+Deploying to Docker hub
 
 ```shell
 docker push valerionet/haproxyht:latest
@@ -241,9 +249,9 @@ docker push valerionet/haproxyht:latest
 
 ## Ansible in action
 
-As the most of the work is performed by the Ansible playbook, execution details for each role are not written yet. It will get updated little by little.
+As the most of the work is performed by Ansible playbook, details for every role are not written yet. It will be updated here little by little in near future.
 
-Run the following command into the ./ansible directory:
+To start deploying the application, Run the following command into the ./ansible directory:
 
 ```shell
 ansible-playbook -i inventories --forks 1 deploy.yml
@@ -251,7 +259,7 @@ ansible-playbook -i inventories --forks 1 deploy.yml
 
 ### Database server
 
-Validating the PostgreSQL instalation and the database creation:
+Validating PostgreSQL instalation and the database creation:
 
 ```bash
 ❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@x.x.x.x
@@ -294,7 +302,7 @@ Validating replication
 
 ## References
 
-These are some of the many links I made used of.
+These are some of the many references I made used of
 
 [Installing Python](https://linuxhint.com/install-python-3-9-linux-mint/)
 
