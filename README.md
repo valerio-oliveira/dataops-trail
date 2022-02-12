@@ -315,7 +315,7 @@ The main resource on the service host is HAProxy load balancer. All requests to 
 
 In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report.
 
-> Accessing the /stats route on "http://<ServiceHostAddress>:81/stats":
+> Accessing the /stats route on "http://ServiceHostAddress:81/stats":
 
 <div>
   <p align="left">
@@ -329,18 +329,18 @@ In this project there are six application instances, three in each Region. It is
 
 In case of the main database gets unavailable for any reason, the DataOps team will run the database-failover playbook.
 
-The failover process consists in two steps:
+The failover process consists of two steps:
 
 - promoting the standby to main database; and
-- to redirect all application requests to the new main database server.
+- redirecting all application requests to the new main database server.
 
 ---
 
 ### Region Failover
 
-In case of the entire main Region gets unavailable, the DataOps team shall run the same database-playbook.
+In case of the entire main Region gets unavailable, the DataOps team shall run the same database-failover playbook as before.
 
-In addition to proceed the database-failover, the region failover will require DNS redireting.
+In addition, the Region failover will require DNS redireting.
 
 > About DNS
 
@@ -350,21 +350,23 @@ As DNS management itself is not part of the scope of this project, it is importa
 
 ### Monitoring with Zabbix and Grafana
 
-As monitoring is one of database administrator's main responsibilities, I'm currently wirking on Zabbix and Grafana instalations on the service EC2 host.
+As monitoring is one of database administrator's main responsibilities, I'm currently wirking on Zabbix and Grafana instalations on the service cluster.
 
 ## CI/CD with Jenkins
 
-Another next step will be creating a Jenkins pipeline to deploy new versions of the application image.
+A next step will be creating a Jenkins pipeline to deploy new versions of the application image.
 
-Once this aproach will demand a webhook on the server side, I've configured a local Gitlab service where I'm deploying the application's source code already.
+Once this aproach will demand a Web hook on the server side, I've configured a local Gitlab service where application's source code is getting commited to.
+
+On the GitLab repository, a Web hook will be set to trigger the pipeline, which will start the building new image, uploading to Git hub, and triggering the Ansible playbook. The Ansible playbook, in its turn, will update the application containers.
 
 ## Orchestration with Kubernetes
 
-A next step in the near future on my learning path will be implementing container orchestration using Kubernetes.
+Another next step in the near future on my learning path will be implementing container orchestration using Kubernetes.
 
 ## Personel considerations
 
-This project is a landmark on my career as a Database Administration not migrating but expanding as a DataOps Engineer, a role that I didn't even know existed one week before I started the project.
+This project is a landmark on my career as a Database Administration since I am expanding my competences as a DataOps Engineer.
 
 It pushed me to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues on a DevOps squad close to me.
 
@@ -386,4 +388,4 @@ These are some of the many references I made used of
 
 [Docker container pull creation](https://github.com/do-community/ansible-playbooks/tree/master/docker_ubuntu1804)
 
-[Install docker on debian with Ansible](https://yasha.solutions/install-docker-on-debian-with-ansible/)
+[Install Docker on Debian with Ansible](https://yasha.solutions/install-docker-on-debian-with-ansible/)
