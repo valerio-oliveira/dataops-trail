@@ -25,7 +25,7 @@ This table of contents is under construction. It will get updated as it reflects
   - [x] [Database replication](#database-replication)
   - [x] [The application server](#the-application-server)
   - [x] [The service host](#the-service-host)
-  - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
+  - [x] [Load balancing with HAProxy](#load-balancing-with-haproxy)
   - [x] [Database failover](#database-failover)
   - [x] [Region failover](#region-failover)
   - [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
@@ -36,40 +36,43 @@ This table of contents is under construction. It will get updated as it reflects
 
 ## Presentation
 
-This project consists in a high availability cluster running on two AWS Regions. I have chose to use non native tools in order to reduce coupling among the project and the Cloud provider.
+This project consists in a high availability cluster running on two AWS Regions. I have chose to use non native tools in order to reduce coupling among project and Cloud provider.
 
 The infrastructure was provisioned with Terraform 1.1.5, whereas the the software layer was deployed using Ansible v. 2.12.1.
 
 The Web application was built into a Docker image with Docker v. 20.10.12 and is available on Dockerhub, from where the playbook gets it.
 
-Moreover, this project is subdivided into tree subprojects:
+Moreover, this project is divided into tree subprojects:
 
-- Application project: includes the REST application code and Dockerfile
+- Application project: includes the Web application code and Dockerfile
 - Terraform project: creates the infrastructure resources
 - Ansible project: handles the software layer deployment
 
 ### Region 1 contains:
 
-- An EC2 service host with HAProxy load balancer and
+- An EC2 service host with HAProxy load balancer and in the future other services
 - An EC2 application host running 3 instances of the Web application (Django/Python v. 3.2.5)
-- An EC2 database host running the Main PostgreSQL v. 13.5 database
+- An EC2 database host running the main PostgreSQL v. 13.5 database
 
 ### Region 2 contains:
 
 - A seccond service host with HAProxy load balancer
-- Another application host running 3 more instances of the Web application (Django/Python v. 3.2.5)
-- The database host running the Replica PostgreSQL v. 13.5 database
+- Another application host running 3 more instances of the Web application
+- A database host running the Standby database server
 
-The application cluster takes advantage of the low latency between the Regions, delivered by the VPC Peer, and enables all docker images (three in each Region) to be part of the application cluster.
+The cluster takes advantage of the low latency between two Regions when connected using a VPC Peer connection.
+It enables not only the database replication but also scales the aplication with six docker images (three in each Region).
 
 ## Preparing to deploy
 
-After pulling this project into your local machine, you will need to take two steps before deploying the application:
+After pulling this project into your local machine, you will need to take two steps in ordeer to deploying the application:
 
 - Create the "inventories" directory into the "ansible" directory
 - Create the "variables.auto.tfvars" into the ./terraform/aws/ directory, and set the values for the project variables
 
-I assume that you have already Terraform and Ansible installed and configured in your machine.
+\* These steps are taken automaticaly if you choose to run the deployment from the python scripts as mentioned in the next section.
+
+At this point, I assume that you have already Terraform and Ansible installed and configured in your machine.
 
 > variables.auto.tfvars
 
@@ -148,7 +151,7 @@ To run all processes manually, you will need to create a couple of directories a
 
 #### The software layer
 
-> To install all software layer, including Database engine cluster, REST application container instances, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
+> To install all software layer, including Database engine cluster, the Web application cluster, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
 
 ```shell
 ❯ cd ansible
@@ -158,11 +161,9 @@ To run all processes manually, you will need to create a couple of directories a
 ❯ cd ../
 ```
 
+To destroy the infrastructure you have created, go to the Terraform directory.
+
 > Destroying the environment
-
----
-
-To destroy the infrastructure you created, go to the Terraform directory and run the following command:
 
 ```shell
 ❯ cd terraform/aws
@@ -186,11 +187,11 @@ The project follows this topology:
 
 ## Application environment
 
-The .env file currently present in the application folder exists just to build the Docker image. It will be replaced during the deployment process.
+The .env file currently present in the application directory exists just to build the Docker image. It will be replaced during the deployment process.
 
 ### Details
 
-After provisioning the infrastructure, among other files Terraform will create two files, "site1.env" and "site2.env", which will later be copied to the service host.
+After provisioning the infrastructure, among other files Terraform will create "site1.env" and "site2.env" files, which will later be copied to the service host.
 
 Ansible will then replace the .env file by the "site1.env" file content into all application containers.
 
@@ -202,19 +203,19 @@ All the application "hardware-representing" components are created with Terrafor
 
 Some configuration parameters - security groups inbound ingress ports for instance -, are defined into the "variables.auto.tfvars" file.
 
-Other parameters are set into configurations files used by Ansible playbooks. The way those files are filled or created differs purposely.
+Other parameters are set into configuration files used by Ansible playbooks. The way those files are filled or created differs from one each other purposely.
 
 ## Dockerizing
 
 The application image was built and deployed into my Docker hub repository.
 
-Push Docker image from Dockerhub
+> Push Docker image from Docker hub
 
 ```Docker
-docker push valerionet/haproxyht:tagname
+❯ docker push valerionet/haproxyht:tagname
 ```
 
-The application's Dockerfile
+> The application's Dockerfile
 
 ```docker
 FROM python:3
@@ -234,16 +235,16 @@ RUN python3 manage.py migrate
 CMD [ "python3", "manage.py", "runserver", "0.0.0.0:8000" ]
 ```
 
-Building the application Docker image locally
+> Building the application Docker image locally
 
 ```shell
-docker build -t valerionet/haproxyht:latest .
+❯ docker build -t valerionet/haproxyht:latest .
 ```
 
-Deploying to Docker hub
+> Deploying to Docker hub
 
 ```shell
-docker push valerionet/haproxyht:latest
+❯ docker push valerionet/haproxyht:latest
 ```
 
 ## Ansible in action
@@ -253,7 +254,7 @@ As the most of the work is performed by Ansible playbook, details for every role
 To start deploying the application, Run the following command into the ./ansible directory:
 
 ```shell
-ansible-playbook -i inventories --forks 1 deploy.yml
+❯ ansible-playbook -i inventories --forks 1 deploy.yml
 ```
 
 \* The "--forks 1" directive will only be needed if Ansible is configured to ask to conform first ssh access to the remote servers.
@@ -313,7 +314,7 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select \* from pg_stat_wal_receiver
 
 ---
 
-### Load balancing with Haproxy
+### Load balancing with HAProxy
 
 The main resource on the service host is the HAProxy load balancer. All requests to the application cluster are made through it.
 
