@@ -21,7 +21,7 @@ This table of contents is under construction. It will get updated as it reflects
 - [x] [Terraformation](#terraformation)
 - [x] [Dockerizing](#dockerizing)
 - [x] [Ansible in action](#ansible-in-action)
-  - [x] [The database server](#the-database-server)
+  - [x] [Database running](#database-running)
   - [x] [Database replication](#database-replication)
   - [x] [The application server](#the-application-server)
   - [x] [The service host](#the-service-host)
@@ -36,11 +36,11 @@ This table of contents is under construction. It will get updated as it reflects
 
 ## Presentation
 
-This project consists in a high availability cluster running on two AWS Regions. I have chose to use non native tools in order to reduce coupling among project and Cloud provider.
+This project consists in a high availability cluster running on two AWS Regions. I have chose to use non cloud native tools in order to reduce coupling among project and cloud provider.
 
-The infrastructure was provisioned with Terraform 1.1.5, whereas the the software layer was deployed using Ansible v. 2.12.1.
+The infrastructure was provisioned with Terraform 1.1.5, whereas the software layer was deployed using Ansible v. 2.12.1.
 
-The Web application was built into a Docker image with Docker v. 20.10.12 and is available on Dockerhub, from where the playbook gets it.
+The Web application was built into a Docker image with Docker v. 20.10.12 and is available on Docker hub, from where the playbook gets it.
 
 Moreover, this project is divided into tree subprojects:
 
@@ -50,7 +50,7 @@ Moreover, this project is divided into tree subprojects:
 
 ### Region 1 contains:
 
-- An EC2 service host with HAProxy load balancer and in the future other services
+- An EC2 service host with HAProxy load balancer
 - An EC2 application host running 3 instances of the Web application (Django/Python v. 3.2.5)
 - An EC2 database host running the main PostgreSQL v. 13.5 database
 
@@ -58,21 +58,22 @@ Moreover, this project is divided into tree subprojects:
 
 - A seccond service host with HAProxy load balancer
 - Another application host running 3 more instances of the Web application
-- A database host running the Standby database server
+- A database host running the Standby database
 
-The cluster takes advantage of the low latency between two Regions when connected using a VPC Peer connection.
-It enables not only the database replication but also scales the aplication with six docker images (three in each Region).
+The cluster takes advantage of the low latency offered by a VPC Peer connection between two Regions.
+
+It enables not only the database replication but also scales the aplication among six docker images (three in each Region).
 
 ## Preparing to deploy
 
-After pulling this project into your local machine, you will need to take two steps in ordeer to deploying the application:
+After pulling this project into your local machine, you will need to take two steps in order to deploying:
 
 - Create the "inventories" directory into the "ansible" directory
-- Create the "variables.auto.tfvars" into the ./terraform/aws/ directory, and set the values for the project variables
+- Create the "variables.auto.tfvars" into the ./terraform/aws/ directory, and set values for the project variables
 
-\* These steps are taken automaticaly if you choose to run the deployment from the python scripts as mentioned in the next section.
+\* These steps are taken automaticaly if you choose to deploy with the Python scripts as mentioned in the next section.
 
-At this point, I assume that you have already Terraform and Ansible installed and configured in your machine.
+At this point, I assume that you have Terraform and Ansible installed and configured in your machine already.
 
 > variables.auto.tfvars
 
@@ -99,7 +100,7 @@ Make sure you have created the "variables.auto.tfvars" file as described in the 
 
 ### The simple way
 
-Use the following Python scripts to make the deployment easier.
+Use the following Python scripts to easy the deployment.
 
 > To deploy the application and get it runnning:
 
@@ -121,7 +122,7 @@ Use the following Python scripts to make the deployment easier.
 
 ### Manual process
 
-To run all processes manually, you will need to create a couple of directories and files that are automatically created when running through the Python scripts.
+To run all processes manually, you will need to create a couple of directories and files that are automatically.
 
 #### Infrastructure
 
@@ -135,7 +136,7 @@ To run all processes manually, you will need to create a couple of directories a
 ❯ cd ..
 ```
 
-> Into the Terraform project directory, initialize Terraform, create the project plan, and run it to provision the infrastructure.
+> Into the "terraform/aws" directory, initialize Terraform, create the project plan, and run it to provision the infrastructure.
 
 ```shell
 ❯ cd terraform/aws
@@ -177,7 +178,7 @@ When asked if you really want to destroy all resources, just type "yes" anr pres
 
 ## Project topology
 
-The project follows this topology:
+This project follows this topology. Items dimmed in gray are to be implemented yet.
 
 <div>
   <p align="left">
@@ -191,29 +192,23 @@ The .env file currently present in the application directory exists just to buil
 
 ### Details
 
-After provisioning the infrastructure, among other files Terraform will create "site1.env" and "site2.env" files, which will later be copied to the service host.
+After provisioning the infrastructure, among other files Terraform will create "site1.env" and "site2.env" files, which will later be copied to the application host.
 
 Ansible will then replace the .env file by the "site1.env" file content into all application containers.
 
-The "site2.env" file will be kept in case of Site1 gets unavailable.
+The "site2.env" file will be kept to be used in case of Site1 gets unavailable.
 
 ## Terraformation
 
-All the application "hardware-representing" components are created with Terraform.
+All the project's "hardware-representing" components are created with Terraform.
 
-Some configuration parameters - security groups inbound ingress ports for instance -, are defined into the "variables.auto.tfvars" file.
+Some configuration parameters - security groups inbound ingress ports for instance - are defined into the "variables.auto.tfvars" file.
 
 Other parameters are set into configuration files used by Ansible playbooks. The way those files are filled or created differs from one each other purposely.
 
 ## Dockerizing
 
 The application image was built and deployed into my Docker hub repository.
-
-> Push Docker image from Docker hub
-
-```Docker
-❯ docker push valerionet/haproxyht:tagname
-```
 
 > The application's Dockerfile
 
@@ -257,11 +252,11 @@ To start deploying the application, Run the following command into the ./ansible
 ❯ ansible-playbook -i inventories --forks 1 deploy.yml
 ```
 
-\* The "--forks 1" directive will only be needed if Ansible is configured to ask to conform first ssh access to the remote servers.
+\* The "--forks 1" directive will only be needed if in your local machine Ansible is configured to ask to confirm "yes" at first ssh access to remote servers.
 
 ---
 
-### The database server
+### Database running
 
 Validating PostgreSQL instalation and the database creation after deployment.
 
@@ -282,7 +277,7 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select * from base.users;"
 
 ### Database replication
 
-After deployment, it is expected that the database cluster will be working as a charm. You may validate this running the folowing commands:
+After deployment, it is expected that the database cluster will be working. You may validate this by running the following commands:
 
 > On the main host:
 
@@ -316,9 +311,17 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select \* from pg_stat_wal_receiver
 
 ### Load balancing with HAProxy
 
-The main resource on the service host is the HAProxy load balancer. All requests to the application cluster are made through it.
+The main resource on the service host is HAProxy load balancer. All requests to the application cluster are made through it.
 
-The load balancer distributes all requests among the application instances. in this project there are six of them, three in each Region.
+In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report.
+
+> Accessing the /stats route on "http://<ServiceHostAddress>:81/stats":
+
+<div>
+  <p align="left">
+    <img src="haproxy_stats.png" alt="Logo">
+  </p>
+</div>
 
 ---
 

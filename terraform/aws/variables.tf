@@ -70,6 +70,14 @@ variable "haproxy_conf" {
   type = string
 }
 
+variable "haproxy_user" {
+  type = string
+}
+
+variable "haproxy_pass" {
+  type = string
+}
+
 variable "terraform_access_key" {
   type = string
 }

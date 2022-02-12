@@ -141,6 +141,15 @@ defaults
     errorfile 503 /etc/haproxy/errors/503.http
     errorfile 504 /etc/haproxy/errors/504.http
 
+listen stats
+    mode http
+    bind *:81
+    stats enable
+    stats show-node
+    stats hide-version
+    stats uri /stats
+    stats auth ${var.haproxy_user}:${var.haproxy_pass}
+
 frontend main
     bind *:8000
     default_backend hometask
