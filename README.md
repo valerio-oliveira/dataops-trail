@@ -182,7 +182,7 @@ This project follows this topology. Items dimmed in gray are to be implemented y
 
 <div>
   <p align="left">
-    <img src="hometask.png" alt="Logo">
+    <img src="topology.png" alt="Logo">
   </p>
 </div>
 
