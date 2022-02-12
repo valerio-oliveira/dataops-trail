@@ -18,15 +18,17 @@ This table of contents is under construction. It will get updated as it reflects
 - [x] [Deployment](#deployment)
 - [x] [Project topology](#project-topology)
 - [x] [Application environment](#application-environment)
-  - [x] [Dockerizing](#dockerizing)
+- [x] [Terraformation](#terraformation)
+- [x] [Dockerizing](#dockerizing)
 - [x] [Ansible in action](#ansible-in-action)
   - [x] [Database server](#database-server)
   - [x] [Database replication](#database-replication)
   - [x] [Application server](#application-server)
   - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
   - [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
-  - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
+- [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
+- [x] [Personel considerations](#personel-considerations)
 - [ ] [References](#references)
 
 ---
@@ -63,14 +65,14 @@ The application cluster takes advantage of the low latency between the Regions, 
 
 ## Preparing to deploy
 
-Just after pulling this project into your local machine, you will need to take two steps before deploying the application:
+After pulling this project into your local machine, you will need to take two steps before deploying the application:
 
 - Create the "inventories" directory into the "ansible" directory
-- Create the "variables.auto.tfvars" into the ./terraform/aws directory, and set the values for the project variables.
+- Create the "variables.auto.tfvars" into the ./terraform/aws/ directory, and set the values for the project variables
 
-I assume that you already have installed and configured Terraform and Ansible in your machine.
+I assume that you have already Terraform and Ansible installed and configured in your machine.
 
-variables.auto.tfvars
+> variables.auto.tfvars
 
 ```py
 terraform_access_key = "..."        # insert here your access key for terraform
@@ -93,28 +95,28 @@ haproxy_conf         = "../../ansible/roles/haproxy/files"
 
 ## Deployment
 
-Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment.
+Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment process.
 
 ### The simple way
 
 Use the following Python scripts to make the deployment easier.
 
-Tu deploy the application and get it runnning:
+> To deploy the application and get it runnning:
 
 ```bash
-puthon3 run_deploy.py
+❯ puthon3 run_deploy.py
 ```
 
-To proceed the failover:
+> To proceed the failover:
 
 ```bash
-puthon3 run_failover.py
+❯ puthon3 run_failover.py
 ```
 
-To destroy the environment:
+> To destroy the environment:
 
 ```bash
-puthon3 destroy_all.py
+❯ puthon3 destroy_all.py
 ```
 
 ### Manual process
@@ -123,9 +125,7 @@ To run all processes manually, you will need to create a couple of directories a
 
 #### Infrastructure
 
----
-
-Create the "inventories" directory into the "ansible" directory.
+> Create the "inventories" directory into the "ansible" directory.
 
 ```shell
 ❯ cd ansible
@@ -135,7 +135,7 @@ Create the "inventories" directory into the "ansible" directory.
 ❯ cd ..
 ```
 
-Into the Terraform project directory, initialize Terraform, create the project plan, and run it to provision the infrastructure.
+> Into the Terraform project directory, initialize Terraform, create the project plan, and run it to provision the infrastructure.
 
 ```shell
 ❯ cd terraform/aws
@@ -151,9 +151,7 @@ Into the Terraform project directory, initialize Terraform, create the project p
 
 #### The software layer
 
----
-
-To install all software layer, including Database engine cluster, REST application container instances, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
+> To install all software layer, including Database engine cluster, REST application container instances, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
 
 ```shell
 ❯ cd ansible
@@ -163,7 +161,7 @@ To install all software layer, including Database engine cluster, REST applicati
 ❯ cd ../
 ```
 
-#### Destroying the environment
+> Destroying the environment
 
 ---
 
@@ -203,17 +201,25 @@ Ansible will then replace the .env file by the "site1.env" file content into all
 
 The "site2.env" file will be kept in case of Site1 gets unavailable.
 
-### Dockerizing
+## Terraformation
+
+All the application "hardware-representing" components are created with Terraform.
+
+Some configuration parameters - security groups inbound ingress ports for instance -, are defined into the "variables.auto.tfvars" file.
+
+Other parameters are set into configurations files used by Ansible playbooks. The way those files are filled or created differs purposely.
+
+## Dockerizing
 
 The application image was built and deployed into my Docker hub repository.
 
-Get Docker image in Dockerhub
+Push Docker image from Dockerhub
 
 ```Docker
 docker push valerionet/haproxyht:tagname
 ```
 
-Tis is the application's Dockerfile
+The application's Dockerfile
 
 ```docker
 FROM python:3
@@ -257,7 +263,9 @@ To start deploying the application, Run the following command into the ./ansible
 ansible-playbook -i inventories --forks 1 deploy.yml
 ```
 
-### Database server
+\* The "--forks 1" directive will only be needed if Ansible is configured to ask to conform first ssh access to the remote servers.
+
+## The database server
 
 Validating PostgreSQL instalation and the database creation:
 
@@ -276,27 +284,64 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select * from base.users;"
 
 ### Database replication
 
-Validating replication
+### The application server
+
+### The service host
+
+## Load balancing with Haproxy
+
+The main resource on the service host is the HAProxy load balancer. All requests to the application cluster are made through it.
+
+The load balancer distributes all requests among the application instances. in this project there are six of them, three in each Region.
 
 ---
 
-### Application server
+## Database Failover
+
+In case of the main database gets unavailable for any reason, the DataOps team will run the database-failover playbook.
+
+The failover process consists in two steps:
+
+- promoting the standby to main database; and
+- to redirect all application requests to the new main database server.
 
 ---
 
-### Monitoring with Zabbix and Grafana
+## Region Failover
+
+In case of the entire main Region gets unavailable, the DataOps team shall run the same database-playbook.
+
+In addition to proceed the database-failover, the region failover will require DNS redireting.
+
+### About DNS
+
+As DNS management itself is not part of the scope of this project, it is important to mention that in case of a Region gets down, redirecting the DNS to the seccond load balancer is part of the failover process.
 
 ---
 
-### Load balancing with Haproxy
+## Monitoring with Zabbix and Grafana
 
----
-
-### CI/CD with Jenkins
+As monitoring is one of database administrator's main responsibilities, I'm currently wirking on Zabbix and Grafana instalations on the service EC2 host.
 
 ---
 
 ## Orchestration with Kubernetes
+
+A next step in the near future on my learning path will be implementing container orchestration using Kubernetes.
+
+---
+
+## CI/CD with Jenkins
+
+Another next step will be creating a Jenkins pipeline to deploy new versions of the application image.
+
+Once this aproach will demand a webhook on the server side, I've configured a local Gitlab service where I'm deploying the application's source code already.
+
+---
+
+## Personel considerations
+
+I have chose to use non native tools in order to reduce among the cloud and the project.
 
 ---
 
