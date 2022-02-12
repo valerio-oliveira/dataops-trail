@@ -21,21 +21,22 @@ This table of contents is under construction. It will get updated as it reflects
 - [x] [Terraformation](#terraformation)
 - [x] [Dockerizing](#dockerizing)
 - [x] [Ansible in action](#ansible-in-action)
-  - [x] [Database server](#database-server)
+  - [x] [The database server](#the-database-server)
   - [x] [Database replication](#database-replication)
-  - [x] [Application server](#application-server)
+  - [x] [The application server](#the-application-server)
+  - [x] [The service host](#the-service-host)
   - [x] [Load balancing with Haproxy](#load-balancing-with-haproxy)
+  - [x] [Database failover](#database-failover)
+  - [x] [Region failover](#region-failover)
   - [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
 - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [x] [Personel considerations](#personel-considerations)
 - [ ] [References](#references)
 
----
-
 ## Presentation
 
-This project consists in a high availability cluster running on two AWS Regions.
+This project consists in a high availability cluster running on two AWS Regions. I have chose to use non native tools in order to reduce coupling among the project and the Cloud provider.
 
 The infrastructure was provisioned with Terraform 1.1.5, whereas the the software layer was deployed using Ansible v. 2.12.1.
 
@@ -60,8 +61,6 @@ Moreover, this project is subdivided into tree subprojects:
 - The database host running the Replica PostgreSQL v. 13.5 database
 
 The application cluster takes advantage of the low latency between the Regions, delivered by the VPC Peer, and enables all docker images (three in each Region) to be part of the application cluster.
-
----
 
 ## Preparing to deploy
 
@@ -90,8 +89,6 @@ dbpass               = "..."        # set a pasword for the application's user
 dbappname            = "Birthday Application"
 haproxy_conf         = "../../ansible/roles/haproxy/files"
 ```
-
----
 
 ## Deployment
 
@@ -177,8 +174,6 @@ To destroy the infrastructure you created, go to the Terraform directory and run
 
 When asked if you really want to destroy all resources, just type "yes" anr press return to proceed.
 
----
-
 ## Project topology
 
 The project follows this topology:
@@ -251,8 +246,6 @@ Deploying to Docker hub
 docker push valerionet/haproxyht:latest
 ```
 
----
-
 ## Ansible in action
 
 As the most of the work is performed by Ansible playbook, details for every role are not written yet. It will be updated here little by little in near future.
@@ -265,9 +258,11 @@ ansible-playbook -i inventories --forks 1 deploy.yml
 
 \* The "--forks 1" directive will only be needed if Ansible is configured to ask to conform first ssh access to the remote servers.
 
-## The database server
+---
 
-Validating PostgreSQL instalation and the database creation:
+### The database server
+
+Validating PostgreSQL instalation and the database creation after deployment.
 
 ```bash
 ❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@x.x.x.x
@@ -282,13 +277,43 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select * from base.users;"
 
 ```
 
+---
+
 ### Database replication
+
+After deployment, it is expected that the database cluster will be working as a charm. You may validate this running the folowing commands:
+
+> On the main host:
+
+```bash
+❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@x.x.x.x
+
+admin@site1-db-x:~$ sudo su - postgres
+
+postgres@site1-db-x:~$ psql -d revolutdb -c "select * from pg_stat_replication;"
+```
+
+> On the standby:
+
+```bash
+❯ ssh -i ./REVOLUT/exam_01/PEM/aws admin@x.x.x.x
+
+admin@site1-db-x:~$ sudo su - postgres
+
+postgres@site1-db-x:~$ psql -d revolutdb -c "select \* from pg_stat_wal_receiver;"
+```
+
+---
 
 ### The application server
 
+---
+
 ### The service host
 
-## Load balancing with Haproxy
+---
+
+### Load balancing with Haproxy
 
 The main resource on the service host is the HAProxy load balancer. All requests to the application cluster are made through it.
 
@@ -296,7 +321,7 @@ The load balancer distributes all requests among the application instances. in t
 
 ---
 
-## Database Failover
+### Database failover
 
 In case of the main database gets unavailable for any reason, the DataOps team will run the database-failover playbook.
 
@@ -307,29 +332,21 @@ The failover process consists in two steps:
 
 ---
 
-## Region Failover
+### Region Failover
 
 In case of the entire main Region gets unavailable, the DataOps team shall run the same database-playbook.
 
 In addition to proceed the database-failover, the region failover will require DNS redireting.
 
-### About DNS
+> About DNS
 
 As DNS management itself is not part of the scope of this project, it is important to mention that in case of a Region gets down, redirecting the DNS to the seccond load balancer is part of the failover process.
 
 ---
 
-## Monitoring with Zabbix and Grafana
+### Monitoring with Zabbix and Grafana
 
 As monitoring is one of database administrator's main responsibilities, I'm currently wirking on Zabbix and Grafana instalations on the service EC2 host.
-
----
-
-## Orchestration with Kubernetes
-
-A next step in the near future on my learning path will be implementing container orchestration using Kubernetes.
-
----
 
 ## CI/CD with Jenkins
 
@@ -337,13 +354,17 @@ Another next step will be creating a Jenkins pipeline to deploy new versions of 
 
 Once this aproach will demand a webhook on the server side, I've configured a local Gitlab service where I'm deploying the application's source code already.
 
----
+## Orchestration with Kubernetes
+
+A next step in the near future on my learning path will be implementing container orchestration using Kubernetes.
 
 ## Personel considerations
 
-I have chose to use non native tools in order to reduce among the cloud and the project.
+This project is a landmark on my career as a Database Administration not migrating but expanding as a DataOps Engineer, a role that I didn't even know existed one week before I started the project.
 
----
+It pushed me to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues on a DevOps squad close to me.
+
+Just to mention my previous experience before taking this chalenge, appart from administering databases I am a software developer, and I've recently achieved the Azure AZ-900 and DP-900 certifications, both gave me a general understanding of cloud computing.
 
 ## References
 
