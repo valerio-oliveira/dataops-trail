@@ -5,7 +5,7 @@
     <a href="https://www.linkedin.com/in/valerio-oliveira/?locale=en_US">Visit my LinkedIn</a> · <a href="mailto:valerio.net@gmail.com">E-mail me</a>
   </div>
   <p align="center">
-    <img src="r.gif" alt="Logo" width=240 height=172>
+    <img src="resources/r.gif" alt="Logo" width=240 height=172>
   </p>
 </div>
 
@@ -13,7 +13,7 @@
 
 This table of contents is under construction. It will get updated as it reflects the project's progress.
 
-- [x] [Presentation](#presention)
+- [x] [Presentation](#presentation)
 - [x] [Preparing to deploy](#preparing-to-deploy)
 - [x] [Deployment](#deployment)
 - [x] [Project topology](#project-topology)
@@ -178,7 +178,7 @@ The project follows this topology. Items dimmed in gray are to be implemented ye
 
 <div>
   <p align="left">
-    <img src="topology.png" alt="Logo">
+    <img src="resources/topology.png" alt="Logo">
   </p>
 </div>
 
@@ -317,7 +317,7 @@ In this project there are six application instances, three in each Region. It is
 
 <div>
   <p align="left">
-    <img src="haproxy_stats.png" alt="Logo">
+    <img src="resources/haproxy_stats.png" alt="Logo">
   </p>
 </div>
 
