@@ -7,19 +7,26 @@
 - name: Download Zabbix repo package
   get_url:
     url: "{{ zabbix_repo_url }}"
-    dest: /tmp/zabbix.deb
+    dest: /tmp/zabbix_srv.deb
 
 - name: Install Zabbix repo
   become: yes
   apt:
-    deb: /tmp/zabbix.deb
+    deb: /tmp/zabbix_srv.deb
     state: present
 
-- name: Install Zabbix agent
+- name: Install Zabbix server, frontend, and agent
   become: yes
   apt:
-    name: zabbix-agent
+    name: "{{ item }}"
+    force_apt_get: yes
     state: present
     update_cache: yes
-
-- include_tasks: setup.yml
+  loop:
+    - apache2
+    - apache2-utils
+    - zabbix-server-pgsql
+    - zabbix-frontend-php
+    - certbot
+    - python3-certbot-nginx
+    - python3-certbot-apache

@@ -1,6 +1,8 @@
 import os
 import time
 
+os.chdir('../')
+
 os.chdir('ansible/')
 dir_name = './inventories/'
 dir_exists = os.path.exists(dir_name)

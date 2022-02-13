@@ -1,5 +1,7 @@
 import os
 
+os.chdir('../')
+
 os.system('echo "--- Start failover" >> logs.txt')
 os.system('date >> logs.txt')
 

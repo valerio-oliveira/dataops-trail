@@ -1,0 +1,2 @@
+zabbix_version: 5.4
+zabbix_repo_url: wget https://repo.zabbix.com/zabbix/{{ zabbix_version }}/debian/pool/main/z/zabbix-release/zabbix-release_{{ zabbix_version }}-1+debian10_all.deb

@@ -1,5 +1,7 @@
 import os
 
+os.chdir('../')
+
 os.system('echo "--- Destroying" >> logs.txt')
 os.system('date >> logs.txt')
 

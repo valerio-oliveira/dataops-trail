@@ -1,0 +1,23 @@
+---
+- name: Install service packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+    force_apt_get: yes
+    state: latest
+    update_cache: yes
+  loop:
+    - htop
+    - lsof
+    - mcedit
+    - dstat
+    - mtr
+    - gnupg2
+    - python3-pip
+  tags:
+    - base packages
+  notify: update packages
+
+- include_tasks: install.yml
+
+- include_tasks: setup.yml

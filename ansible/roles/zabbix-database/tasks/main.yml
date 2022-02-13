@@ -1,0 +1,22 @@
+---
+- name: Create database
+  become: yes
+  become_user: postgres
+  postgresql_db:
+    name: "{{ zabbix_db_name }}"
+
+- name: Create user
+  become: yes
+  become_user: postgres
+  postgresql_user:
+    db: "{{ zabbix_db_name }}"
+    user: "{{ zabbix_db_user }}"
+    password: "{{ zabbix_db_user_password }}"
+
+- name: Set database owner
+  become: yes
+  become_user: postgres
+  postgresql_owner:
+    db: "{{ zabbix_db_name }}"
+    new_owner: "{{ zabbix_db_user }}"
+    obj_type: database

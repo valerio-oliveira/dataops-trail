@@ -66,12 +66,10 @@ It enables not only the database replication but also scales the aplication amon
 
 ## Preparing to deploy
 
-After pulling this project into your local machine, you will need to take two steps in order to deploying:
+After pulling this project into your local machine, you will need to take two steps in order to deploy it:
 
 - Create the "inventories" directory into the "ansible" directory
 - Create the "variables.auto.tfvars" into the ./terraform/aws/ directory, and set values for the project variables
-
-\* These steps are taken automaticaly if you choose to deploy with the Python scripts as mentioned in the next section.
 
 At this point, I assume that you have Terraform and Ansible installed and configured in your machine already.
 
@@ -82,7 +80,7 @@ terraform_access_key = "..."        # insert here your access key for terraform
 terraform_secret_key = "..."        # insert here your secret key for terraform
 application_ports    = [22, 8001, 8002, 8003]
 database_ports       = [22, 5432]
-service_ports        = [22, 8000]
+service_ports        = [22, 81, 8000]
 ansible_inventories  = "../../ansible/inventories"
 ssh_public_key       = "..."        # insert here the ssh public key for remote hosts' admin user
 appserver_secret_key = "django-..." # insert here the django server secret key
@@ -96,7 +94,7 @@ haproxy_conf         = "../../ansible/roles/haproxy/files"
 
 ## Deployment
 
-Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment process.
+Make sure you have created the "variables.auto.tfvars" file as described in the topic above before you run the deployment commands.
 
 ### The simple way
 
@@ -122,9 +120,7 @@ Use the following Python scripts to easy the deployment.
 
 ### Manual process
 
-To run all processes manually, you will need to create a couple of directories and files that are automatically.
-
-#### Infrastructure
+To run all processes manually, you will need to create the "inventories" directory.
 
 > Create the "inventories" directory into the "ansible" directory.
 
@@ -136,7 +132,7 @@ To run all processes manually, you will need to create a couple of directories a
 ❯ cd ..
 ```
 
-> Into the "terraform/aws" directory, initialize Terraform, create the project plan, and run it to provision the infrastructure.
+> Into the "terraform/aws" directory, initialize Terraform, create the project plan, and apply it to provision the infrastructure.
 
 ```shell
 ❯ cd terraform/aws
@@ -152,7 +148,7 @@ To run all processes manually, you will need to create a couple of directories a
 
 #### The software layer
 
-> To install all software layer, including Database engine cluster, the Web application cluster, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
+> To install the entire software layer, including Database engine cluster, the Web application cluster, and load balancer cluster, go to the ansible directory and run the "deploy.yml" playbook:
 
 ```shell
 ❯ cd ansible
@@ -174,11 +170,11 @@ To destroy the infrastructure you have created, go to the Terraform directory.
 ❯ cd ..
 ```
 
-When asked if you really want to destroy all resources, just type "yes" anr press return to proceed.
+When asked if you really want to destroy all resources, just type "yes" and press return to proceed.
 
 ## Project topology
 
-This project follows this topology. Items dimmed in gray are to be implemented yet.
+The project follows this topology. Items dimmed in gray are to be implemented yet.
 
 <div>
   <p align="left">
@@ -277,7 +273,7 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select * from base.users;"
 
 ### Database replication
 
-After deployment, it is expected that the database cluster will be working. You may validate this by running the following commands:
+After the deployment, it is expected that the database cluster work like a charm. You may validate this by running the following commands:
 
 > On the main host:
 
@@ -302,6 +298,8 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select \* from pg_stat_wal_receiver
 ---
 
 ### The application server
+
+...
 
 ---
 
@@ -366,15 +364,11 @@ Another next step in the near future on my learning path will be implementing co
 
 ## Personel considerations
 
-This project is a landmark on my career as a Database Administration since I am expanding my competences as a DataOps Engineer.
-
-It pushed me to learn and embrace the DevOps practices and tools: concepts that I know from my coleagues on a DevOps squad close to me.
-
-Just to mention my previous experience before taking this chalenge, appart from administering databases I am a software developer, and I've recently achieved the Azure AZ-900 and DP-900 certifications, both gave me a general understanding of cloud computing.
+This project is a landmark on my career as a Software Developer and Database Administrator since it helped me to expand my competences as a DevOps practitioner. It filled the gaps I had on undestanding the full development life cycle. Putting in practice the knowledge aquired is part and parcel on validating it, and I strongly recommend anyone who want to master a tech role to create their own Tech-Trail.
 
 ## References
 
-These are some of the many references I made used of
+These are just a few of the many references I made used of:
 
 [Installing Python](https://linuxhint.com/install-python-3-9-linux-mint/)
 
@@ -389,3 +383,5 @@ These are some of the many references I made used of
 [Docker container pull creation](https://github.com/do-community/ansible-playbooks/tree/master/docker_ubuntu1804)
 
 [Install Docker on Debian with Ansible](https://yasha.solutions/install-docker-on-debian-with-ansible/)
+
+[Zabbix Docs](#https://www.zabbix.com/manuals)
