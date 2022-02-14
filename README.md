@@ -21,15 +21,15 @@ This table of contents is under construction. It will get updated as it reflects
 - [x] [Terraformation](#terraformation)
 - [x] [Dockerizing](#dockerizing)
 - [x] [Ansible in action](#ansible-in-action)
-  - [x] [Database running](#database-running)
-  - [x] [Database replication](#database-replication)
-  - [x] [The application server](#the-application-server)
-  - [x] [The service host](#the-service-host)
-  - [x] [Load balancing with HAProxy](#load-balancing-with-haproxy)
-  - [x] [Database failover](#database-failover)
-  - [x] [Region failover](#region-failover)
-  - [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
+- [x] [Database running](#database-running)
+- [x] [Database replication](#database-replication)
+- [x] [The application server](#the-application-server)
+- [x] [The service host](#the-service-host)
+- [x] [Load balancing with HAProxy](#load-balancing-with-haproxy)
+- [x] [Database failover](#database-failover)
+- [x] [Region failover](#region-failover)
 - [x] [Running tests](#running-tests)
+- [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
 - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [x] [Personel considerations](#personel-considerations)
@@ -337,15 +337,9 @@ The main resource on the service host is HAProxy load balancer. All requests to 
 
 In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report. In this project it is on "http://ServiceHostAddress:81/stats".
 
----
-
-### Monitoring with Zabbix and Grafana
-
-As monitoring is one of database administrator's main responsibilities, I'm currently working on Zabbix and Grafana instalation playbooks.
-
 ## Running tests
 
-As a way to validate the the cluster's efficiency, I have written a simple test application running on multiple threads, each one sending a certain number of requests to the Web application. The result was the interesting detection of limitations to processing requests.
+As a way to validate the the cluster's efficiency, I have written a simple test application running on multiple threads, each one sending a certain number of requests to the Web application.
 
 > HAProxy load average test with 4 threads:
 
@@ -371,13 +365,21 @@ As a way to validate the the cluster's efficiency, I have written a simple test 
   </p>
 </div>
 
-After scaling tests to 150 threads, an issue was detected. As each thread sends hundreds of requests, the cluster is unable to process requests at the tame speed they arrive. As result, at some point some of those requests started to get connection timeout.
+After scaling tests to 150 threads, an issue was detected. As each thread sends hundreds of requests, at some point some of those requests started to get connection timeout.
 
-It sugests that I have to add a queue control for the application. So I'll be able to see the queue growing and take a decision to, for example, add more instances to the application cluster.
+At first I thought that I'd have to improve queue control for the application. I figured out later that the bottleneck is in the 1-Code CPU on my Free Tier AWS instance.
 
-## Queue control with RabbitMQ
+> Load bottleneck on database CPU:
 
-...
+<div>
+  <p align="left">
+    <img src="resources/test_load.png" alt="Logo">
+  </p>
+</div>
+
+## Monitoring with Zabbix and Grafana
+
+As monitoring is one of database administrator's main responsibilities, I'm currently working on Zabbix and Grafana instalation playbooks.
 
 ## CI/CD with Jenkins
 
