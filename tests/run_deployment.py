@@ -31,3 +31,5 @@ os.chdir('../')
 
 os.system('echo "--- End creating" >> logs.txt')
 os.system('date >> logs.txt')
+
+os.chdir('tests/')
