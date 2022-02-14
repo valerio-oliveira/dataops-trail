@@ -15,6 +15,6 @@ def run_stress_test(host, repeating):
         i = i+1
 
 
-run_stress_test(host="54.161.73.197", repeating=100)
+run_stress_test(host="54.161.73.197", repeating=300)
 
 exit()
