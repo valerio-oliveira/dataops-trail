@@ -253,7 +253,7 @@ To start deploying the application, Run the following command into the ./ansible
 
 ---
 
-### Database running
+### Database is running
 
 Validating PostgreSQL instalation and the database creation after deployment.
 
@@ -274,7 +274,7 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select * from base.users;"
 
 ### Database replication
 
-After the deployment, it is expected that the database cluster work like a charm. You may validate this by running the following commands:
+After the deployment, you may validate that the database cluster is working by running the following commands:
 
 > On the main host:
 
@@ -300,19 +300,11 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select \* from pg_stat_wal_receiver
 
 ### The application server
 
-...
+The application server is designed to host the Web application cluster instances. Besides, a Zabbix client is active collecting usage statistics.
 
 ---
 
 ### The service host
-
----
-
-### Load balancing with HAProxy
-
-The main resource on the service host is HAProxy load balancer. All requests to the application cluster are made through it.
-
-In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report. In this project it is on "http://ServiceHostAddress:81/stats".
 
 ---
 
@@ -339,13 +331,21 @@ As DNS management itself is not part of the scope of this project, it is importa
 
 ---
 
+### Load balancing with HAProxy
+
+The main resource on the service host is HAProxy load balancer. All requests to the application cluster are made through it.
+
+In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report. In this project it is on "http://ServiceHostAddress:81/stats".
+
+---
+
 ### Monitoring with Zabbix and Grafana
 
-As monitoring is one of database administrator's main responsibilities, I'm currently wirking on Zabbix and Grafana instalations on the service cluster.
+As monitoring is one of database administrator's main responsibilities, I'm currently working on Zabbix and Grafana instalation playbooks.
 
 ## Running tests
 
-As a way to validate the the cluster's efficiency, I have written a simple test application running on multiple threads, each one sending a certain number of requests to the Web application.
+As a way to validate the the cluster's efficiency, I have written a simple test application running on multiple threads, each one sending a certain number of requests to the Web application. The result was the interesting detection of limitations to processing requests.
 
 > HAProxy load average test with 4 threads:
 
@@ -371,11 +371,11 @@ As a way to validate the the cluster's efficiency, I have written a simple test 
   </p>
 </div>
 
-After scaling to 150 connections, an issue was detected. As each thread sends hundreds of requests, at some point some of those requests started to get a connection timeout.
+After scaling tests to 150 threads, an issue was detected. As each thread sends hundreds of requests, the cluster is unable to process requests at the tame speed they arrive. As result, at some point some of those requests started to get connection timeout.
 
-It sugests that I have to add a queue control between the load balancer and the application. So I'll be able to see the queue growing and take a decision to, for example, add more instances to the application cluster.
+It sugests that I have to add a queue control for the application. So I'll be able to see the queue growing and take a decision to, for example, add more instances to the application cluster.
 
-### Queue control
+## Queue control with RabbitMQ
 
 ...
 

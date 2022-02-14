@@ -5,9 +5,19 @@ import random
 from utils.randoms import *
 from utils.html import *
 
-load_balancer_ip = "54.161.73.197"
 num_threads = 150
 num_requests = 100
+
+
+def get_hosts_value(var_name):
+    with open("../ansible/inventories/hosts") as conf:
+        for line in conf:
+            if "site1_svc_public_ip" in line:
+                name, value = line.split("=")
+                return str(value).strip()
+
+
+load_balancer_ip = get_hosts_value("site1_svc_public_ip")
 
 
 def run_test(host, repeating):
