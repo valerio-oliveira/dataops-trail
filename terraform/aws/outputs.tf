@@ -111,6 +111,7 @@ global
     stats timeout 30s
     user haproxy
     group haproxy
+    maxconn 2000
     daemon
 
     # Default SSL material locations
@@ -151,6 +152,7 @@ listen stats
     stats auth ${var.haproxy_user}:${var.haproxy_pass}
 
 frontend main
+    maxconn 2000
     bind *:8000
     default_backend hometask
 

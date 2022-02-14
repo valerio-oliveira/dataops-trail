@@ -29,6 +29,7 @@ This table of contents is under construction. It will get updated as it reflects
   - [x] [Database failover](#database-failover)
   - [x] [Region failover](#region-failover)
   - [ ] 👉 [Monitoring with Zabbix and Grafana](#monitoring-with-zabbix-and-grafana)
+- [x] [Running tests](#running-tests)
 - [ ] [CI/CD with Jenkins](#cicd-with-jenkins)
 - [ ] [Orchestration with Kubernetes](#orchestration-with-kubernetes)
 - [x] [Personel considerations](#personel-considerations)
@@ -311,15 +312,7 @@ postgres@site1-db-x:~$ psql -d revolutdb -c "select \* from pg_stat_wal_receiver
 
 The main resource on the service host is HAProxy load balancer. All requests to the application cluster are made through it.
 
-In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report.
-
-> Accessing the /stats route on "http://ServiceHostAddress:81/stats":
-
-<div>
-  <p align="left">
-    <img src="resources/haproxy_stats.png" alt="Logo">
-  </p>
-</div>
+In this project there are six application instances, three in each Region. It is possible to monitor the application cluster health by using the HAProxy statistics report. In this project it is on "http://ServiceHostAddress:81/stats".
 
 ---
 
@@ -350,6 +343,42 @@ As DNS management itself is not part of the scope of this project, it is importa
 
 As monitoring is one of database administrator's main responsibilities, I'm currently wirking on Zabbix and Grafana instalations on the service cluster.
 
+## Running tests
+
+As a way to validate the the cluster's efficiency, I have written a simple test application running on multiple threads, each one sending a certain number of requests to the Web application.
+
+> HAProxy load average test with 4 threads:
+
+<div>
+  <p align="left">
+    <img src="resources/test_threads_4.png" alt="Logo">
+  </p>
+</div>
+
+> HAProxy load average test with 50 threads:
+
+<div>
+  <p align="left">
+    <img src="resources/test_threads_50.png" alt="Logo">
+  </p>
+</div>
+
+> HAProxy load average test with 150 threads:
+
+<div>
+  <p align="left">
+    <img src="resources/test_threads_150.png" alt="Logo">
+  </p>
+</div>
+
+After scaling to 150 connections, an issue was detected. As each thread sends hundreds of requests, at some point some of those requests started to get a connection timeout.
+
+It sugests that I have to add a queue control between the load balancer and the application. So I'll be able to see the queue growing and take a decision to, for example, add more instances to the application cluster.
+
+### Queue control
+
+...
+
 ## CI/CD with Jenkins
 
 A next step will be creating a Jenkins pipeline to deploy new versions of the application image.
@@ -364,7 +393,7 @@ Another next step in the near future on my learning path will be implementing co
 
 ## Personel considerations
 
-This project is a landmark on my career as a Software Developer and Database Administrator since it helped me to expand my competences as a DevOps practitioner. It filled the gaps I had on undestanding the full development life cycle. Putting in practice the knowledge aquired is part and parcel on validating it, and I strongly recommend anyone who want to master a tech role to create their own Tech-Trail.
+This project is a landmark on my career as a Software Developer and Database Administrator since it helped me to expand my competences as a DevOps practitioner. It filled the gaps I had on undestanding the full development life cycle. Putting in practice the knowledge aquired is part and parcel on validating it, and I strongly recommend anyone who want to master a tech role to create their own Tech-Trail just as i did.
 
 ## References
 
